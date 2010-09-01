@@ -20,8 +20,8 @@
 				
 				/* Apply a return key event to each cell in the table */
 				keys.event.action( null, null, function (nCell) {
-					/* Block KeyTable from performing any events while jEditable is in edit mode */
-					keys.block = true;
+					/* Tell KeyTable it is only allowed to catch tab events while jEditable is in edit mode */
+					keys.block = 'catch-tabs';
 					
 					/* Initialise the Editable instance for this table */
 					$(nCell).editable( function (sVal) {
@@ -41,6 +41,11 @@
 					/* Dispatch click event to go into edit mode - Saf 4 needs a timeout... */
 					setTimeout( function () { $(nCell).click(); }, 0 );
 				} );
+				/* Send blur to inputs when KeyTable focus moves. */
+				keys.event.blur( null, null, function (nCell) {
+					$("input:enabled", nCell).trigger('blur');
+				} );
+
 			} );
 		</script>
 	</head>
@@ -489,9 +494,9 @@
 	
 	/* Apply a return key event to each cell in the table */
 	keys.event.action( null, null, function (nCell) {
-		/* Block KeyTable from performing any events while jEditable is in edit mode */
-		keys.block = true;
-		
+		/* Tell KeyTable it is only allowed to catch tab events while jEditable is in edit mode */
+		keys.block = 'catch-tabs';
+	
 		/* Initialise the Editable instance for this table */
 		$(nCell).editable( function (sVal) {
 			/* Submit function (local only) - unblock KeyTable */
@@ -510,6 +515,11 @@
 		/* Dispatch click event to go into edit mode - Saf 4 needs a timeout... */
 		setTimeout( function () { $(nCell).click(); }, 0 );
 	} );
+	/* Send blur to inputs when KeyTable focus moves. */
+	keys.event.blur( null, null, function (nCell) {
+		$("input:enabled", nCell).trigger('blur');
+	} );
+
 } );</pre>
 			
 			
