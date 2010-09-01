@@ -26,6 +26,8 @@ function KeyTable ( oInit )
 	 * Variable: block
 	 * Purpose:  Flag whether or not KeyTable events should be processed
 	 * Scope:    KeyTable - public
+	 * Notes:    If set to 'catch-tabs', only tab keypresses will be
+	 *           processed.
 	 */
 	this.block = false;
 	
@@ -600,7 +602,15 @@ function KeyTable ( oInit )
 	function _fnKey ( e )
 	{
 		/* If user or system has blocked KeyTable from doing anything, just ignore this event */
-		if ( _that.block || !_bKeyCapture )
+		if ( !_bKeyCapture )
+		{
+			return true;
+		}
+		// Ignore this event when blocked, *unless* the event is a
+		// tab key and we've been asked to catch those.
+		if ( _that.block &&
+		     !((_that.block === 'catch-tabs') &&
+		       (e.keyCode === 9)))
 		{
 			return true;
 		}
