@@ -43,7 +43,9 @@
 				} );
 				/* Send blur to inputs when KeyTable focus moves. */
 				keys.event.blur( null, null, function (nCell) {
-					$("input:enabled", nCell).trigger('blur');
+					if (nCell) {
+						$("input:enabled", nCell).trigger('blur');
+					}
 				} );
 
 			} );
@@ -517,7 +519,9 @@
 	} );
 	/* Send blur to inputs when KeyTable focus moves. */
 	keys.event.blur( null, null, function (nCell) {
-		$("input:enabled", nCell).trigger('blur');
+		if (nCell) {
+			$("input:enabled", nCell).trigger('blur');
+		}
 	} );
 
 } );</pre>
