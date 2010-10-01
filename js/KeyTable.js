@@ -1,6 +1,6 @@
 /*
  * File:        KeyTable.js
- * Version:     1.1.6
+ * Version:     1.1.7 dev
  * CVS:         $Idj$
  * Description: Keyboard navigation for HTML tables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -955,6 +955,8 @@ function KeyTable ( oInit )
 		
 		if ( typeof oInit.table == 'undefined' ) {
 			oInit.table = jQuery('table.KeyTable')[0];
+		} else {
+			$(oInit.table).addClass('KeyTable');
 		}
 		
 		if ( typeof oInit.focusClass != 'undefined' ) {
