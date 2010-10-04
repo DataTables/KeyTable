@@ -475,6 +475,16 @@ function KeyTable ( oInit )
 			iWidth = nTarget.offsetWidth;
 			aiPos = _fnGetPos( nTarget );
 			
+			/* Take account of scrolling in DataTables 1.7 - remove scrolling since that would add to
+			 * the positioning calculation
+			 */
+			if ( _oDatatable && typeof oSettings.oScroll != 'undefined' &&
+			  (oSettings.oScroll.sX !== "" || oSettings.oScroll.xY !== "") )
+			{
+				aiPos[1] -= $(oSettings.nTable.parentNode).scrollTop();
+				aiPos[0] -= $(oSettings.nTable.parentNode).scrollLeft();
+			}
+			
 			/* Correct viewport positioning for vertical scrolling */
 			if ( aiPos[1]+iHeight > iScrollTop+iViewportHeight )
 			{
