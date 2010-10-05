@@ -479,7 +479,7 @@ function KeyTable ( oInit )
 			 * the positioning calculation
 			 */
 			if ( _oDatatable && typeof oSettings.oScroll != 'undefined' &&
-			  (oSettings.oScroll.sX !== "" || oSettings.oScroll.xY !== "") )
+			  (oSettings.oScroll.sX !== "" || oSettings.oScroll.sY !== "") )
 			{
 				aiPos[1] -= $(oSettings.nTable.parentNode).scrollTop();
 				aiPos[0] -= $(oSettings.nTable.parentNode).scrollLeft();
@@ -512,7 +512,7 @@ function KeyTable ( oInit )
 		
 		/* Take account of scrolling in DataTables 1.7 */
 		if ( _oDatatable && typeof oSettings.oScroll != 'undefined' &&
-		  (oSettings.oScroll.sX !== "" || oSettings.oScroll.xY !== "") )
+		  (oSettings.oScroll.sX !== "" || oSettings.oScroll.sY !== "") )
 		{
 			var dtScrollBody = oSettings.nTable.parentNode;
 			iViewportHeight = dtScrollBody.clientHeight;
