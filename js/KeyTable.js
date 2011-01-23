@@ -1067,11 +1067,11 @@ function KeyTable ( oInit )
 		
 		if ( _oDatatable )
 		{
-			jQuery('td', _oDatatable.fnGetNodes()).click( _fnClick );
+			jQuery('tbody td', _oDatatable.fnSettings().nTable).live( 'click', _fnClick );
 		}
 		else
 		{
-			jQuery('td', _nBody).click( _fnClick );
+			jQuery('td', _nBody).live( 'click', _fnClick );
 		}
 		
 		/* Loose table focus when click outside the table */
