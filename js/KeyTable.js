@@ -409,6 +409,7 @@ function KeyTable ( oInit )
 		
 		/* Add the new class to highlight the focused cell */
 		jQuery(nTarget).addClass( _sFocusClass );
+		jQuery(nTarget).parent().addClass( _sFocusClass );
 		
 		/* If it's a DataTable then we need to jump the paging to the relevant page */
 		var oSettings;
@@ -573,6 +574,7 @@ function KeyTable ( oInit )
 	function _fnRemoveFocus( nTarget )
 	{
 		jQuery(nTarget).removeClass( _sFocusClass );
+		jQuery(nTarget).parent().removeClass( _sFocusClass );
 		_fnEventFire( "blur", _iOldX, _iOldY );
 	}
 	
