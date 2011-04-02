@@ -11,8 +11,12 @@
  * Project:     Just a little bit of fun :-)
  * Contact:     www.sprymedia.co.uk/contact
  * 
- * Copyright 2009-2010 Allan Jardine, all rights reserved.
+ * Copyright 2009-2011 Allan Jardine, all rights reserved.
  *
+ * This source file is free software, under either the GPL v2 license or a
+ * BSD style license, available at:
+ *   http://datatables.net/license_gpl2
+ *   http://datatables.net/license_bsd
  */
 
 
