@@ -972,7 +972,7 @@ function KeyTable ( oInit )
 		if ( typeof oInit.table == 'undefined' ) {
 			oInit.table = jQuery('table.KeyTable')[0];
 		} else {
-			$(oInit.table).addClass('KeyTable');
+			jQuery(oInit.table).addClass('KeyTable');
 		}
 		
 		if ( typeof oInit.focusClass != 'undefined' ) {
