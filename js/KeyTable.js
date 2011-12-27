@@ -672,7 +672,10 @@ function KeyTable ( oInit )
 				{
 					/* Only lose focus if there isn't an escape handler on the cell */
 					_fnBlur();
+					return;
 				}
+				x = _iOldX;
+				y = _iOldY;
 				break;
 			
 			case -1:
