@@ -547,6 +547,9 @@ function KeyTable ( oInit )
 				dtScrollBody.scrollLeft = nTarget.offsetLeft;
 			}
 		}
+
+		/* Focused - so we want to capture the keys */
+		_fnCaptureKeys();
 		
 		/* Fire of the focus event if there is one */
 		_fnEventFire( "focus", _iOldX, _iOldY );
