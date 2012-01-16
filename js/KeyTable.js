@@ -1,6 +1,6 @@
 /*
  * File:        KeyTable.js
- * Version:     1.1.7 dev
+ * Version:     1.1.7
  * CVS:         $Idj$
  * Description: Keyboard navigation for HTML tables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
