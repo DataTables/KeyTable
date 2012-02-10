@@ -1,6 +1,6 @@
 /*
  * File:        KeyTable.js
- * Version:     1.1.7
+ * Version:     1.1.8.dev
  * CVS:         $Idj$
  * Description: Keyboard navigation for HTML tables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -1108,4 +1108,10 @@ function KeyTable ( oInit )
 	
 	/* Initialise our new object */
 	_fnInit( oInit, this );
-}
+};
+
+
+KeyTable.VERSION = "1.1.8.dev";
+KeyTable.prototype.VERSION = KeyTable.VERSION;
+
+
