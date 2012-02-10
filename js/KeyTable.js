@@ -603,8 +603,29 @@ function KeyTable ( oInit )
 		_fnSetFocus( nTarget );
 		_fnCaptureKeys();
 	}
-	
-	
+
+
+	/*
+	 * Function: _fnDblClick
+	 * Purpose:  Focus on the element and fire "action"
+	 * Returns:  -
+	 * Inputs:   event:e - double click event
+	 */
+	function _fnDblClick( e ) 
+	{
+		var nTarget = this;
+	    	while ( nTarget.nodeName != "TD" )
+	    	{
+	      		nTarget = nTarget.parentNode;
+	    	}
+	    
+	    	_fnSetFocus( nTarget );
+	    	_fnEventFire( "action", _iOldX, _iOldY );
+	    	// TODO
+	    	//_fnCaptureKeys(); not sure if necessary, so don't call!?
+	} 	
+
+
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Key events
@@ -978,7 +999,7 @@ function KeyTable ( oInit )
 		if ( typeof oInit.table == 'undefined' ) {
 			oInit.table = jQuery('table.KeyTable')[0];
 		} else {
-			$(oInit.table).addClass('KeyTable');
+			jQuery(oInit.table).addClass('KeyTable');
 		}
 		
 		if ( typeof oInit.focusClass != 'undefined' ) {
@@ -1083,7 +1104,24 @@ function KeyTable ( oInit )
 		}
 		else
 		{
-			jQuery('td', _nBody).live( 'click', _fnClick );
+			/* handle click and double-click events */
+     			jQuery('td', _nBody).live( 'click', function(event) {
+            			// save this
+            			var cc = this;
+            			// this function is called after the delay to handle the single-lick event
+            			_iTimeout = setTimeout( function(event) { _fnClick.call( cc, event); _iTimeout = null; }, 100);
+        		})
+        		.live( 'dblclick', function(event) {
+          			var cc = this;
+          
+			        // clear the timeout since this is a double-click, so the single-click does not run
+			        if (_iTimeout) {
+			          	clearTimeout(_iTimeout);
+		        		_iTimeout = null;
+		          	}
+		          	_fnDblClick.call( cc, event);
+		          	// ?? event.stopPropagation();   
+		        });			
 		}
 		
 		/* Loose table focus when click outside the table */
