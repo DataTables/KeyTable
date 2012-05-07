@@ -146,6 +146,15 @@ function KeyTable ( oInit )
 	 */
 	var _sFocusClass = "focus";
 	
+		
+	/*
+	 * Variable: sParentFocusClass
+	 * Purpose:  Class that should be used for focusing on a cell. 
+	 * 	Sets the class of the parent.
+	 * Scope:    KeyTable - private
+	 */
+	var _sParentFocusClass = "focus";
+	
 	/*
 	 * Variable: _bKeyCapture
 	 * Purpose:  Flag for should KeyTable capture key events or not
@@ -413,7 +422,7 @@ function KeyTable ( oInit )
 		
 		/* Add the new class to highlight the focused cell */
 		jQuery(nTarget).addClass( _sFocusClass );
-		jQuery(nTarget).parent().addClass( _sFocusClass );
+		jQuery(nTarget).parent().addClass( _sParentFocusClass );
 		
 		/* If it's a DataTable then we need to jump the paging to the relevant page */
 		var oSettings;
@@ -996,6 +1005,14 @@ function KeyTable ( oInit )
 		if ( typeof oInit.form == 'undefined' ) {
 			oInit.form = false;
 		}
+		
+		if ( typeof oInit.parentFocusClass != 'undefined' ) {
+			_sParentFocusClass = oInit.parentFocusClass;
+		}
+		else{
+			_sParentFocusClass = _sFocusClass;
+		}
+		
 		_bForm = oInit.form;
 		
 		/* Cache the tbody node of interest */
