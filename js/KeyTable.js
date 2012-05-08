@@ -495,8 +495,8 @@ function KeyTable ( oInit )
 			if ( _oDatatable && typeof oSettings.oScroll != 'undefined' &&
 			  (oSettings.oScroll.sX !== "" || oSettings.oScroll.sY !== "") )
 			{
-				aiPos[1] -= $(oSettings.nTable.parentNode).scrollTop();
-				aiPos[0] -= $(oSettings.nTable.parentNode).scrollLeft();
+				aiPos[1] -= jQuery(oSettings.nTable.parentNode).scrollTop();
+				aiPos[0] -= jQuery(oSettings.nTable.parentNode).scrollLeft();
 			}
 			
 			/* Correct viewport positioning for vertical scrolling */
@@ -590,7 +590,7 @@ function KeyTable ( oInit )
 	function _fnRemoveFocus( nTarget )
 	{
 		jQuery(nTarget).removeClass( _sFocusClass );
-		jQuery(nTarget).parent().removeClass( _sFocusClass );
+		jQuery(nTarget).parent().removeClass( _sParentFocusClass );
 		_fnEventFire( "blur", _iOldX, _iOldY );
 	}
 	
@@ -987,7 +987,7 @@ function KeyTable ( oInit )
 		if ( typeof oInit.table == 'undefined' ) {
 			oInit.table = jQuery('table.KeyTable')[0];
 		} else {
-			$(oInit.table).addClass('KeyTable');
+			jQuery(oInit.table).addClass('KeyTable');
 		}
 		
 		if ( typeof oInit.focusClass != 'undefined' ) {
