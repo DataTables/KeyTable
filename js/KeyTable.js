@@ -106,6 +106,18 @@ function KeyTable ( oInit )
 	};
 	
 	
+	/*
+	 * Function: fnBlur
+	 * Purpose:  Blur the current focus
+	 * Returns:  -
+	 * Inputs:   -
+	 */
+	this.fnBlur = function()
+	{
+		_fnBlur();
+	};
+	
+	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Private parameters
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
