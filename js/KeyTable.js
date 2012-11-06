@@ -432,7 +432,23 @@ function KeyTable ( oInit )
 		if ( _oDatatable )
 		{
 			oSettings = _oDatatable.fnSettings();
-			var iRow = _fnFindDtCell( nTarget )[1];
+			var aCoords = _fnFindDtCell( nTarget );
+
+			// Confirm we have a target, RowGrouping groups will return null here
+			if ( !aCoords ) {
+				/* Undo the new highlight */
+				_fnRemoveFocus( nTarget );
+
+				/* Redo the old focus */
+				jQuery(_nOldFocus).addClass( _sFocusClass );
+				jQuery(_nOldFocus).parent().addClass( _sFocusClass );
+
+				/* @memo: Could add logic to expand containing group if its currently hidden */
+
+				return false;
+			}
+			
+			var iRow = aCoords[1];
 			var bKeyCaptureCache = _bKeyCapture;
 			
 			/* Page forwards */
