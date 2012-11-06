@@ -659,7 +659,8 @@ function KeyTable ( oInit )
 		}
 		var
 			x, y,
-			iTableWidth = _nBody.getElementsByTagName('tr')[0].getElementsByTagName('td').length, 
+			// +1 because nOldFocus.siblings does not include nOldFocus
+			iTableWidth = jQuery(_nOldFocus).siblings('td').length + 1,
 			iTableHeight;
 		
 		/* Get table height and width - done here so as to be dynamic (if table is updated) */
