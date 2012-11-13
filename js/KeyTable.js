@@ -630,6 +630,24 @@ function KeyTable ( oInit )
 		
 		_fnSetFocus( nTarget );
 		_fnCaptureKeys();
+		
+		// Refresh coordinates
+		if ( _oDatatable )
+		{
+			/*
+			 * Locate the current node in the DataTable overriding the old positions - the reason for
+			 * is is that there might have been some DataTables interaction between the last focus and
+			 * now
+			 */
+			var aDtPos = _fnFindDtCell( _nOldFocus );
+			if ( aDtPos === null )
+			{
+				/* If the table has been updated such that the focused cell can't be seen - do nothing */
+				return;
+			}
+			_iOldX = aDtPos[ 0 ];
+			_iOldY = aDtPos[ 1 ];
+		}
 	}
 	
 	
