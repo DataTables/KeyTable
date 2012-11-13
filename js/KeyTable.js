@@ -103,6 +103,8 @@ function KeyTable ( oInit )
 		{
 			_fnSetFocus( _fnCellFromCoords(x, y) );
 		}
+		
+		_refreshCoordinates();
 	};
 	
 	
@@ -630,7 +632,10 @@ function KeyTable ( oInit )
 		
 		_fnSetFocus( nTarget );
 		_fnCaptureKeys();
-		
+		_refreshCoordinates();
+	}
+
+	function _refreshCoordinates() {
 		// Refresh coordinates
 		if ( _oDatatable )
 		{
