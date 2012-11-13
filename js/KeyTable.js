@@ -103,6 +103,8 @@ function KeyTable ( oInit )
 		{
 			_fnSetFocus( _fnCellFromCoords(x, y) );
 		}
+		
+		_refreshCoordinates();
 	};
 	
 	
@@ -432,7 +434,23 @@ function KeyTable ( oInit )
 		if ( _oDatatable )
 		{
 			oSettings = _oDatatable.fnSettings();
-			var iRow = _fnFindDtCell( nTarget )[1];
+			var aCoords = _fnFindDtCell( nTarget );
+
+			// Confirm we have a target, RowGrouping groups will return null here
+			if ( !aCoords ) {
+				/* Undo the new highlight */
+				_fnRemoveFocus( nTarget );
+
+				/* Redo the old focus */
+				jQuery(_nOldFocus).addClass( _sFocusClass );
+				jQuery(_nOldFocus).parent().addClass( _sFocusClass );
+
+				/* @memo: Could add logic to expand containing group if its currently hidden */
+
+				return false;
+			}
+			
+			var iRow = aCoords[1];
 			var bKeyCaptureCache = _bKeyCapture;
 			
 			/* Page forwards */
@@ -614,6 +632,27 @@ function KeyTable ( oInit )
 		
 		_fnSetFocus( nTarget );
 		_fnCaptureKeys();
+		_refreshCoordinates();
+	}
+
+	function _refreshCoordinates() {
+		// Refresh coordinates
+		if ( _oDatatable )
+		{
+			/*
+			 * Locate the current node in the DataTable overriding the old positions - the reason for
+			 * is is that there might have been some DataTables interaction between the last focus and
+			 * now
+			 */
+			var aDtPos = _fnFindDtCell( _nOldFocus );
+			if ( aDtPos === null )
+			{
+				/* If the table has been updated such that the focused cell can't be seen - do nothing */
+				return;
+			}
+			_iOldX = aDtPos[ 0 ];
+			_iOldY = aDtPos[ 1 ];
+		}
 	}
 	
 	
@@ -643,7 +682,8 @@ function KeyTable ( oInit )
 		}
 		var
 			x, y,
-			iTableWidth = _nBody.getElementsByTagName('tr')[0].getElementsByTagName('td').length, 
+			// +1 because nOldFocus.siblings does not include nOldFocus
+			iTableWidth = jQuery(_nOldFocus).siblings('td').length + 1,
 			iTableHeight;
 		
 		/* Get table height and width - done here so as to be dynamic (if table is updated) */
