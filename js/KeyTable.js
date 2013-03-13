@@ -11,7 +11,7 @@
  * Project:     Just a little bit of fun :-)
  * Contact:     www.sprymedia.co.uk/contact
  * 
- * Copyright 2009-2011 Allan Jardine, all rights reserved.
+ * Copyright 2009-2013 Allan Jardine, all rights reserved.
  *
  * This source file is free software, under either the GPL v2 license or a
  * BSD style license, available at:
@@ -1091,11 +1091,11 @@ function KeyTable ( oInit )
 		
 		if ( _oDatatable )
 		{
-			jQuery('tbody td', _oDatatable.fnSettings().nTable).live( 'click', _fnClick );
+			jQuery(_oDatatable.fnSettings().nTable).on( 'click', 'td', _fnClick );
 		}
 		else
 		{
-			jQuery('td', _nBody).live( 'click', _fnClick );
+			jQuery(_nBody).on( 'click', 'td', _fnClick );
 		}
 		
 		/* Loose table focus when click outside the table */
