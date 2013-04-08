@@ -484,10 +484,10 @@ function KeyTable ( oInit )
 		if ( bAutoScroll )
 		{
 			/* Scroll the viewport such that the new cell is fully visible in the rendered window */
-			iViewportHeight = document.documentElement.clientHeight;
-			iViewportWidth = document.documentElement.clientWidth;
-			iScrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-			iScrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+			iViewportHeight = $(window).height();
+			iViewportWidth = $(window).width();
+			iScrollTop = $(document).scrollTop();
+			iScrollLeft = $(document).scrollLeft();
 			iHeight = nTarget.offsetHeight;
 			iWidth = nTarget.offsetWidth;
 			aiPos = _fnGetPos( nTarget );
@@ -1080,7 +1080,7 @@ function KeyTable ( oInit )
 		 * Mozilla or Opera change their implemention in future, this will need to be updated... 
 		 * although at the time of writing (14th March 2009) Minefield still uses the 3.0 behaviour.
 		 */
-		if ( jQuery.browser.mozilla || jQuery.browser.opera )
+		if ( jQuery.browser && (jQuery.browser.mozilla || jQuery.browser.opera) )
 		{
 			jQuery(document).bind( "keypress", _fnKey );
 		}
