@@ -1065,29 +1065,8 @@ function KeyTable ( oInit )
 			_fnCaptureKeys();
 		}
 		
-		/*
-		 * Add event listeners
-		 * Well - I hate myself for doing this, but it would appear that key events in browsers are
-		 * a complete mess, particulay when you consider arrow keys, which of course are one of the
-		 * main areas of interest here. So basically for arrow keys, there is no keypress event in
-		 * Safari and IE, while there is in Firefox and Opera. But Firefox and Opera don't repeat the
-		 * keydown event for an arrow key. OUCH. See the following two articles for more:
-		 *   http://www.quirksmode.org/dom/events/keys.html
-		 *   https://lists.webkit.org/pipermail/webkit-dev/2007-December/002992.html
-		 *   http://unixpapa.com/js/key.html
-		 * PPK considers the IE / Safari method correct (good enough for me!) so we (urgh) detect
-		 * Mozilla and Opera and apply keypress for them, while everything else gets keydown. If
-		 * Mozilla or Opera change their implemention in future, this will need to be updated... 
-		 * although at the time of writing (14th March 2009) Minefield still uses the 3.0 behaviour.
-		 */
-		if ( jQuery.browser && (jQuery.browser.mozilla || jQuery.browser.opera) )
-		{
-			jQuery(document).bind( "keypress", _fnKey );
-		}
-		else
-		{
-			jQuery(document).bind( "keydown", _fnKey );
-		}
+		/* Add event listeners */
+		jQuery(document).bind( "keydown", _fnKey );
 		
 		if ( _oDatatable )
 		{
