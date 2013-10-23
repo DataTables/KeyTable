@@ -673,7 +673,8 @@ function KeyTable ( oInit )
 		
 		/* Capture shift+tab to match the left arrow key */
 		var iKey = (e.keyCode == 9 && e.shiftKey) ? -1 : e.keyCode;
-		
+	    console.log(iKey);
+
 		switch( iKey )
 		{
 			case 13: /* return */
@@ -735,6 +736,17 @@ function KeyTable ( oInit )
 				}
 				break;
 			
+            case 36: /* home */
+                x = _iOldX;
+                y = 0;
+                break;
+
+            case 33: /* page up */
+                x = _iOldX;
+                y = _iOldY - 10;
+                if (y < 0) y = 0;
+                break;
+
 			case 9: /* tab */
 			case 39: /* right arrow */
 				if ( _iOldX < iTableWidth-1 ) {
@@ -776,7 +788,20 @@ function KeyTable ( oInit )
 					return false;
 				}
 				break;
-			
+		
+            case 35: /* end */
+                x = _iOldX;
+                y = iTableHeight-1;
+                break;
+
+            case 34: /* page down */
+                x = _iOldX;
+                y = _iOldY+10;
+                if (y > iTableHeight-1) {
+                    y = iTableHeight-1;
+                }
+                break;
+
 			default: /* Nothing we are interested in */
 				return true;
 		}
