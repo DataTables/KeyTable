@@ -673,7 +673,6 @@ function KeyTable ( oInit )
 		
 		/* Capture shift+tab to match the left arrow key */
 		var iKey = (e.keyCode == 9 && e.shiftKey) ? -1 : e.keyCode;
-	    console.log(iKey);
 
 		switch( iKey )
 		{
