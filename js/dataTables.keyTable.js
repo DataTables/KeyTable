@@ -1,6 +1,6 @@
 /*
  * File:        KeyTable.js
- * Version:     1.1.8.dev
+ * Version:     1.2.0-dev
  * CVS:         $Idj$
  * Description: Keyboard navigation for HTML tables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -179,7 +179,8 @@ function KeyTable ( oInit )
 	
 	/*
 	 * Variable: _oDatatable
-	 * Purpose:  DataTables object for if we are actually using a DataTables table
+	 * Purpose:  DataTables settings object for if we are actually using a 
+	 *           DataTables table
 	 * Scope:    KeyTable - private
 	 */
 	var _oDatatable = null;
@@ -431,7 +432,7 @@ function KeyTable ( oInit )
 		var oSettings;
 		if ( _oDatatable )
 		{
-			oSettings = _oDatatable.fnSettings();
+			oSettings = _oDatatable;
 			var iRow = _fnFindDtCell( nTarget )[1];
 			var bKeyCaptureCache = _bKeyCapture;
 			
@@ -654,8 +655,7 @@ function KeyTable ( oInit )
 			 * is is that there might have been some DataTables interaction between the last focus and
 			 * now
 			 */
-			var oSettings = _oDatatable.fnSettings();
-			iTableHeight = oSettings.aiDisplay.length;
+			iTableHeight = _oDatatable.aiDisplay.length;
 			
 			var aDtPos = _fnFindDtCell( _nOldFocus );
 			if ( aDtPos === null )
@@ -853,10 +853,9 @@ function KeyTable ( oInit )
 	{
 		if ( _oDatatable )
 		{
-			var oSettings = _oDatatable.fnSettings();
-			if ( typeof oSettings.aoData[ oSettings.aiDisplay[ y ] ] != 'undefined' )
+			if ( typeof _oDatatable.aoData[ _oDatatable.aiDisplay[ y ] ] != 'undefined' )
 			{
-				return oSettings.aoData[ oSettings.aiDisplay[ y ] ].nTr.getElementsByTagName('td')[x];
+				return _oDatatable.aoData[ _oDatatable.aiDisplay[ y ] ].nTr.getElementsByTagName('td')[x];
 			}
 			else
 			{
@@ -881,10 +880,9 @@ function KeyTable ( oInit )
 	{
 		if ( _oDatatable )
 		{
-			var oSettings = _oDatatable.fnSettings();
 			return [
 				jQuery('td', n.parentNode).index(n),
-				jQuery('tr', n.parentNode.parentNode).index(n.parentNode) + oSettings._iDisplayStart
+				jQuery('tr', n.parentNode.parentNode).index(n.parentNode) + _oDatatable._iDisplayStart
 			];
 		}
 		else
@@ -961,10 +959,9 @@ function KeyTable ( oInit )
 	 */
 	function _fnFindDtCell( nTarget )
 	{
-		var oSettings = _oDatatable.fnSettings();
-		for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
+		for ( var i=0, iLen=_oDatatable.aiDisplay.length ; i<iLen ; i++ )
 		{
-			var nTr = oSettings.aoData[ oSettings.aiDisplay[i] ].nTr;
+			var nTr = _oDatatable.aoData[ _oDatatable.aiDisplay[i] ].nTr;
 			var nTds = nTr.getElementsByTagName('td');
 			for ( var j=0, jLen=nTds.length ; j<jLen ; j++ )
 			{
@@ -997,7 +994,7 @@ function KeyTable ( oInit )
 	 *   bool:initScroll - scroll the view port on load, default true
 	 *   int:tabIndex - the tab index to give the hidden input element
 	 */
-	function _fnInit( oInit, that )
+	function _fnInit( table, datatable, oInit, that )
 	{
 		/* Save scope */
 		_that = that;
@@ -1010,19 +1007,16 @@ function KeyTable ( oInit )
 		if ( typeof oInit.focus == 'undefined' ) {
 			oInit.focus = [0,0];
 		}
-		
-		if ( typeof oInit.table == 'undefined' ) {
-			oInit.table = jQuery('table.KeyTable')[0];
-		} else {
-			$(oInit.table).addClass('KeyTable');
-		}
+
+		oInit.table = table;
+		$(oInit.table).addClass('KeyTable');
 		
 		if ( typeof oInit.focusClass != 'undefined' ) {
 			_sFocusClass = oInit.focusClass;
 		}
 		
-		if ( typeof oInit.datatable != 'undefined' ) {
-			_oDatatable = oInit.datatable;
+		if ( typeof datatable != 'undefined' ) {
+			_oDatatable = datatable;
 		}
 		
 		if ( typeof oInit.initScroll == 'undefined' ) {
@@ -1094,7 +1088,7 @@ function KeyTable ( oInit )
 		
 		if ( _oDatatable )
 		{
-			jQuery(_oDatatable.fnSettings().nTable).on( 'click', 'td', _fnClick );
+			jQuery(_oDatatable.nTable).on( 'click', 'td', _fnClick );
 		}
 		else
 		{
@@ -1121,12 +1115,28 @@ function KeyTable ( oInit )
 		} );
 	}
 	
+	var table, dataTable;
+
+	if ( oInit === undefined ) {
+		table = jQuery('table.KeyTable')[0];
+		datatable = null;
+	}
+	else if ( $.isPlainObject( oInit ) ) {
+		table = oInit.table;
+		datatable = oInit.datatable;
+	}
+	else {
+		datatable = new $.fn.dataTable.Api( oInit ).settings()[0];
+		table = datatable.nTable;
+	}
 	/* Initialise our new object */
-	_fnInit( oInit, this );
+	_fnInit( table, datatable, oInit, this );
 };
 
 
-KeyTable.VERSION = "1.1.8.dev";
-KeyTable.prototype.VERSION = KeyTable.VERSION;
+KeyTable.version = "1.2.0-dev";
 
+
+$.fn.dataTable.KeyTable = KeyTable;
+$.fn.DataTable.KeyTable = KeyTable;
 

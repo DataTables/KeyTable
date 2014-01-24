@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="1">
+
+<css lib="datatables keytable" />
+<js lib="jquery datatables keytable">
+<![CDATA[
+$(document).ready(function() {
+	var table = $('#example').DataTable();
+
+	new $.fn.dataTable.KeyTable( table );
+} );
+]]>
+</js>
+
+<title lib="KeyTable">Basic initialisation</title>
+
+<info><![CDATA[
+
+KeyTable allows you to use keyboard navigation on a DataTables enhanced table, like an Excel spreadsheet. The focused cell is shown through the CSS class ('focus') which in the case below is simply a blue border. Use your keyboard's arrow keys and click the cells in the table to navigate.
+
+This example simply shows key table being initialised on a DataTable, but [events](events.html) can be listened for through the KeyTable API which provide interaction options.
+
+]]></info>
+
+</dt-example>

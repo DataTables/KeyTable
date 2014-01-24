@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="0">
+
+<title lib="KeyTable">KeyTable examples</title>
+
+<js lib="jquery" />
+<info><![CDATA[
+
+KeyTable provides enhanced accessibility and navigation options for DataTables enhanced tables, by allowing Excel like cell navigation on any table. Events (focus, blur, action etc) can be assigned to individual cells, columns, rows or all cells to allow advanced interaction options.. Key features include:
+
+* Easy to use spreadsheet like interaction
+* Fully integrated with DataTables
+* Wide range of supported events
+* Works without DataTables if you just want a plain table
+
+]]></info>
+
+</dt-example>

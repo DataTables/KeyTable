@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="4">
+
+<css lib="datatables keytable" />
+<js lib="jquery datatables keytable">
+<![CDATA[
+$(document).ready(function() {
+	$('#example').addClass('KeyTable');
+	new $.fn.dataTable.KeyTable();
+} );
+]]>
+</js>
+
+<title lib="KeyTable">Plain HTML table</title>
+
+<info><![CDATA[
+
+As well as being usable with DataTables, KeyTable can also be used with a plain HTML table. Please note that this ability is deprecated and will be removed in KeyTable 1.3.
+
+This example shows KeyTable being initialised without any parameter, which instructs it to search for any table with the class `KeyTable` which will be used.
+
+]]></info>
+
+</dt-example>
