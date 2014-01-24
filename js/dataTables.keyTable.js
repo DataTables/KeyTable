@@ -21,8 +21,17 @@
  * For details please refer to: http://www.datatables.net
  */
 
+// Global scope for KeyTable for backwards compatibility. Will be removed in 1.3
+var KeyTable;
 
-function KeyTable ( oInit )
+
+(function(window, document, undefined) {
+
+
+var factory = function( $, DataTable ) {
+"use strict";
+
+KeyTable = function ( oInit )
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * API parameters
@@ -427,8 +436,8 @@ function KeyTable ( oInit )
 		}
 		
 		/* Add the new class to highlight the focused cell */
-		jQuery(nTarget).addClass( _sFocusClass );
-		jQuery(nTarget).parent().addClass( _sFocusClass );
+		$(nTarget).addClass( _sFocusClass );
+		$(nTarget).parent().addClass( _sFocusClass );
 		
 		/* If it's a DataTable then we need to jump the paging to the relevant page */
 		var oSettings;
@@ -595,8 +604,8 @@ function KeyTable ( oInit )
 	 */
 	function _fnRemoveFocus( nTarget )
 	{
-		jQuery(nTarget).removeClass( _sFocusClass );
-		jQuery(nTarget).parent().removeClass( _sFocusClass );
+		$(nTarget).removeClass( _sFocusClass );
+		$(nTarget).parent().removeClass( _sFocusClass );
 		_fnEventFire( "blur", _iOldX, _iOldY );
 	}
 	
@@ -866,7 +875,7 @@ function KeyTable ( oInit )
 		}
 		else
 		{
-			return jQuery('tr:eq('+y+')>td:eq('+x+')', _nBody )[0];
+			return $('tr:eq('+y+')>td:eq('+x+')', _nBody )[0];
 		}
 	}
 	
@@ -883,15 +892,15 @@ function KeyTable ( oInit )
 		if ( _oDatatable )
 		{
 			return [
-				jQuery('td', n.parentNode).index(n),
-				jQuery('tr', n.parentNode.parentNode).index(n.parentNode) + _oDatatable._iDisplayStart
+				$('td', n.parentNode).index(n),
+				$('tr', n.parentNode.parentNode).index(n.parentNode) + _oDatatable._iDisplayStart
 			];
 		}
 		else
 		{
 			return [
-				jQuery('td', n.parentNode).index(n),
-				jQuery('tr', n.parentNode.parentNode).index(n.parentNode)
+				$('td', n.parentNode).index(n),
+				$('tr', n.parentNode.parentNode).index(n.parentNode)
 			];
 		}
 	}
@@ -1050,7 +1059,7 @@ function KeyTable ( oInit )
 			nDiv.appendChild(_nInput);
 			oInit.table.parentNode.insertBefore( nDiv, oInit.table.nextSibling );
 			
-			jQuery(_nInput).focus( function () {
+			$(_nInput).focus( function () {
 				/* See if we want to 'tab into' the table or out */
 				if ( !_bInputFocused )
 				{
@@ -1086,19 +1095,19 @@ function KeyTable ( oInit )
 		}
 		
 		/* Add event listeners */
-		jQuery(document).bind( "keydown", _fnKey );
+		$(document).bind( "keydown", _fnKey );
 		
 		if ( _oDatatable )
 		{
-			jQuery(_oDatatable.nTable).on( 'click', 'td', _fnClick );
+			$(_oDatatable.nTable).on( 'click', 'td', _fnClick );
 		}
 		else
 		{
-			jQuery(_nBody).on( 'click', 'td', _fnClick );
+			$(_nBody).on( 'click', 'td', _fnClick );
 		}
 		
 		/* Loose table focus when click outside the table */
-		jQuery(document).click( function(e) {
+		$(document).click( function(e) {
 			var nTarget = e.target;
 			var bTableClick = false;
 			while ( nTarget )
@@ -1120,7 +1129,7 @@ function KeyTable ( oInit )
 	var table, dataTable;
 
 	if ( oInit === undefined ) {
-		table = jQuery('table.KeyTable')[0];
+		table = $('table.KeyTable')[0];
 		datatable = null;
 	}
 	else if ( $.isPlainObject( oInit ) ) {
@@ -1142,3 +1151,19 @@ KeyTable.version = "1.2.0-dev";
 $.fn.dataTable.KeyTable = KeyTable;
 $.fn.DataTable.KeyTable = KeyTable;
 
+
+return KeyTable;
+}; // /factory
+
+
+// Define as an AMD module if possible
+if ( typeof define === 'function' && define.amd ) {
+	define( 'datatables-keytable', ['jquery', 'datatables'], factory );
+}
+else if ( jQuery && !jQuery.fn.dataTable.KeyTable ) {
+	// Otherwise simply initialise as normal, stopping multiple evaluation
+	factory( jQuery, jQuery.fn.dataTable );
+}
+
+
+})(window, document);
