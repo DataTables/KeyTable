@@ -1,5 +1,5 @@
 /*! KeyTable 1.2.1
- * ©2010-2014 SpryMedia Ltd - datatables.net/license
+ * ©2009-2014 SpryMedia Ltd - datatables.net/license
  */
 
 /**
