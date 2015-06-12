@@ -48,7 +48,7 @@ var KeyTable = function ( dt, opts ) {
 		/** @type {DataTable.Api} DataTables' API instance */
 		dt: new DataTable.Api( dt ),
 
-		enabled: true,
+		enable: true
 	};
 
 	// DOM items
@@ -75,6 +75,12 @@ KeyTable.prototype = {
 	blur: function ()
 	{
 		this._blur();
+	},
+
+
+	enable: function ( state )
+	{
+		this.s.enable = state;
 	},
 
 
@@ -132,7 +138,14 @@ KeyTable.prototype = {
 			} );
 		}
 
-		dt.on( 'destroy', function () {
+		if ( this.c.editor ) {
+			dt.on( 'key.kt', function ( e, dt, key, orig ) {
+				that._editor( key, orig );
+			} );
+		}
+
+		dt.on( 'destroy.kt', function () {
+			dt.off( '.kt' );
 			$( dt.table().body() ).off( 'click.keyTable', 'th, td' );
 			$( document.body )
 				.off( 'keydown.keyTable' )
@@ -141,9 +154,16 @@ KeyTable.prototype = {
 	},
 
 
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Private methods
+	 */
+
+
 	_blur: function ()
 	{
-		if ( ! this.s.enabled || ! this.s.lastFocus ) {
+		if ( ! this.s.enable || ! this.s.lastFocus ) {
 			return;
 		}
 
@@ -153,6 +173,70 @@ KeyTable.prototype = {
 		this.s.lastFocus = null;
 
 		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
+	},
+
+
+	_columns: function ()
+	{
+		var dt = this.s.dt;
+		var user = dt.columns( this.c.columns ).indexes();
+		var out = [];
+
+		dt.columns( ':visible' ).every( function (i) {
+			if ( user.indexOf( i ) !== -1 ) {
+				out.push( i );
+			}
+		} );
+
+		return out;
+	},
+
+
+	_editor: function ( key, orig )
+	{
+		var dt = this.s.dt;
+		var editor = this.c.editor;
+
+		orig.stopPropagation();
+
+		editor.inline( this.s.lastFocus.index() );
+
+		// Excel style - select all
+		var input = $('div.DTE input');
+		if ( input.length ) {
+			input[0].select();
+		}
+
+		// Reduce the keys the Keys listens for
+		dt.keys.enable( 'navigation-only' );
+
+		// On blur of the navigation submit
+		dt.one( 'key-blur.editor', function () {
+			if ( editor.displayed() ) {
+				editor.submit();
+			}
+		} );
+
+		// Restore full key navigation on close
+		editor.one( 'close', function () {
+			dt.keys.enable( true );
+			dt.off( 'key-blur.editor' );
+		} );
+	},
+
+
+	/**
+	 * Emit an event on the DataTable for listeners
+	 *
+	 * @param  {string} name Event name
+	 * @param  {array} args Event arguments
+	 * @private
+	 */
+	_emitEvent: function ( name, args )
+	{
+		this.s.dt.iterator( 'table', function ( ctx, i ) {
+			$(ctx.nTable).triggerHandler( name, args );
+		} );
 	},
 
 
@@ -181,43 +265,14 @@ KeyTable.prototype = {
 	},
 
 
-	_scroll: function ( container, scroller, cell, posOff )
-	{
-		var offset = cell[posOff]();
-		var height = cell.outerHeight();
-		var width = cell.outerWidth();
-
-		var scrollTop = scroller.scrollTop();
-		var scrollLeft = scroller.scrollLeft();
-		var containerHeight = container.height();
-		var containerWidth = container.width();
-
-		// Top correction
-		if ( offset.top < scrollTop ) {
-			scroller.scrollTop( offset.top );
-		}
-
-		// Left correction
-		if ( offset.left < scrollLeft ) {
-			scroller.scrollLeft( offset.left );
-		}
-
-		// Bottom correction
-		if ( offset.top + height > scrollTop + containerHeight ) {
-			scroller.scrollTop( offset.top + height - containerHeight );
-		}
-
-		// Right correction
-		if ( offset.left + width > scrollLeft + containerWidth ) {
-			scroller.scrollLeft( offset.left + width - containerWidth );
-		}
-	},
-
-
 
 	_key: function ( e )
 	{
-		if ( ! this.s.enabled ) {
+		if ( ! this.s.enable ) {
+			return;
+		}
+
+		if ( e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey ) {
 			return;
 		}
 
@@ -230,18 +285,15 @@ KeyTable.prototype = {
 		var that = this;
 		var dt = this.s.dt;
 
-		// xxx different enablement levels? Might want tab/shift-tab to respond for example
-		// might want another level so up and down function
-		// and full on / full off modes
-		// disable( 'arrows' ) ?
-
 		switch( e.keyCode ) {
 			case 9: // tab
 				this._shift( e, e.shiftKey ? 'left' : 'right' );
 				break;
 
 			case 27: // esc
-				this._blur();
+				if ( this.s.blurable && this.s.enable === true ) {
+					this._blur();
+				}
 				break;
 
 			case 33: // page up (previous page)
@@ -289,41 +341,45 @@ KeyTable.prototype = {
 				break;
 
 			default:
-				// Everything else
-				this._emitEvent( 'key', [ dt, e.keyCode, e ] );
+				// Everything else - pass through only when fully enabled
+				if ( this.s.enable === true ) {
+					this._emitEvent( 'key', [ dt, e.keyCode, e ] );
+				}
 				break;
 		}
 	},
 
 
-	_columns: function ()
+	_scroll: function ( container, scroller, cell, posOff )
 	{
-		var dt = this.s.dt;
-		var user = dt.columns( this.c.columns ).indexes();
-		var out = [];
+		var offset = cell[posOff]();
+		var height = cell.outerHeight();
+		var width = cell.outerWidth();
 
-		dt.columns( ':visible' ).every( function (i) {
-			if ( user.indexOf( i ) !== -1 ) {
-				out.push( i );
-			}
-		} );
+		var scrollTop = scroller.scrollTop();
+		var scrollLeft = scroller.scrollLeft();
+		var containerHeight = container.height();
+		var containerWidth = container.width();
 
-		return out;
-	},
+		// Top correction
+		if ( offset.top < scrollTop ) {
+			scroller.scrollTop( offset.top );
+		}
 
+		// Left correction
+		if ( offset.left < scrollLeft ) {
+			scroller.scrollLeft( offset.left );
+		}
 
-	/**
-	 * Emit an event on the DataTable for listeners
-	 *
-	 * @param  {string} name Event name
-	 * @param  {array} args Event arguments
-	 * @private
-	 */
-	_emitEvent: function ( name, args )
-	{
-		this.s.dt.iterator( 'table', function ( ctx, i ) {
-			$(ctx.nTable).triggerHandler( name, args );
-		} );
+		// Bottom correction
+		if ( offset.top + height > scrollTop + containerHeight ) {
+			scroller.scrollTop( offset.top + height - containerHeight );
+		}
+
+		// Right correction
+		if ( offset.left + width > scrollLeft + containerWidth ) {
+			scroller.scrollLeft( offset.left + width - containerWidth );
+		}
 	},
 
 
@@ -432,7 +488,7 @@ KeyTable.prototype = {
 		div.children().on( 'focus', function () {
 			// xxx focus the table
 		} );
-	},
+	}
 };
 
 KeyTable.defaults = {
@@ -444,7 +500,9 @@ KeyTable.defaults = {
 
 	blurable: true,
 
-	columns: '' // all
+	columns: '', // all
+
+	editor: null
 };
 
 
@@ -470,6 +528,42 @@ DataTable.Api.register( 'cell.blur()', function () {
 			ctx.keytable.blur();
 		}
 	} );
+} );
+
+DataTable.Api.register( 'keys.enable()', function ( opts ) {
+	return this.iterator( 'table', function (ctx) {
+		if ( ctx.keytable ) {
+			ctx.keytable.enable( opts );
+		}
+	} );
+} );
+
+DataTable.Api.register( 'keys.disable()', function () {
+	return this.iterator( 'table', function (ctx) {
+		if ( ctx.keytable ) {
+			ctx.keytable.enable( false );
+		}
+	} );
+} );
+
+
+// Attach a listener to the document which listens for DataTables initialisation
+// events so we can automatically initialise
+$(document).on( 'init.dt.dtk', function (e, settings, json) {
+	if ( e.namespace !== 'dt' ) {
+		return;
+	}
+
+	var init = settings.oInit.keys;
+	var defaults = DataTable.defaults.keys;
+
+	if ( init || defaults ) {
+		var opts = $.extend( {}, init, defaults );
+
+		if ( init !== false ) {
+			new KeyTable( settings, opts  );
+		}
+	}
 } );
 
 
