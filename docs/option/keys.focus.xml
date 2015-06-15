@@ -29,4 +29,8 @@ $('#myTable').DataTable( {
 } );
 
 ]]></example>
+
+	<related>kt-init keys.blurable</related>
+	<related>kt-api cell.blur()</related>
+	<related>kt-api cell().focus()</related>
 </dt-option>

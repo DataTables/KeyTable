@@ -31,4 +31,7 @@ $('#myTable').DataTable( {
 ]]></example>
 
 	<related>kt-init tabIndex</related>
+	<related>kt-init keys.focus</related>
+	<related>kt-api cell.blur()</related>
+	<related>kt-api cell().focus()</related>
 </dt-option>
