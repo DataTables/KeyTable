@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="1">
+
+<css lib="datatables keytable" />
+<js lib="jquery datatables keytable">
+<![CDATA[
+$(document).ready(function() {
+	$('#example').DataTable( {
+		keys: true,
+		stateSave: true
+	} );
+} );
+]]>
+</js>
+
+<title lib="KeyTable">State saving</title>
+
+<info><![CDATA[
+
+
+]]></info>
+
+</dt-example>

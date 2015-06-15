@@ -156,15 +156,30 @@ KeyTable.prototype = {
 			} );
 		}
 
-		dt.on( 'destroy.kt', function () {
-			dt.off( '.kt' );
+		// Stave saving
+		if ( dt.settings()[0].oFeatures.bStateSave ) {
+			dt.on( 'stateSaveParams.keyTable', function (e, s, d) {
+				d.keyTable = that.s.lastFocus ?
+					that.s.lastFocus.index() :
+					null;
+			} );
+		}
+
+		dt.on( 'destroy.keyTable', function () {
+			dt.off( '.keyTable' );
 			$( dt.table().body() ).off( 'click.keyTable', 'th, td' );
 			$( document.body )
 				.off( 'keydown.keyTable' )
 				.off( 'click.keyTable' );
 		} );
 
-		if ( this.c.focus ) {
+		// Initial focus comes from state or options
+		var state = dt.state.loaded();
+
+		if ( state && state.keyTable ) {
+			dt.cell( state.keyTable ).focus();
+		}
+		else if ( this.c.focus ) {
 			dt.cell( this.c.focus ).focus();
 		}
 	},
@@ -346,9 +361,10 @@ KeyTable.prototype = {
 		}
 
 		// Event and finish
-		this._emitEvent( 'key-focus', [ this.s.dt, cell ] );
-
 		this.s.lastFocus = cell;
+
+		this._emitEvent( 'key-focus', [ this.s.dt, cell ] );
+		dt.state.save();
 	},
 
 
