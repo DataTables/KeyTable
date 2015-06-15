@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="ssp" order="1">
+
+<css lib="datatables keytable" />
+<js lib="jquery datatables keytable">
+<![CDATA[
+$(document).ready(function() {
+	$('#example').DataTable( {
+		serverSide: true,
+		ajax: "../../../../examples/server_side/scripts/server_processing.php",
+		keys: true
+	} );
+} );
+]]>
+</js>
+
+<title lib="KeyTable">Server-side processing</title>
+
+<info><![CDATA[
+
+
+
+]]></info>
+
+</dt-example>

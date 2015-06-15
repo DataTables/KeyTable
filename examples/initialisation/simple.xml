@@ -5,9 +5,9 @@
 <js lib="jquery datatables keytable">
 <![CDATA[
 $(document).ready(function() {
-	var table = $('#example').DataTable();
-
-	new $.fn.dataTable.KeyTable( table );
+	$('#example').DataTable( {
+		keys: true
+	} );
 } );
 ]]>
 </js>

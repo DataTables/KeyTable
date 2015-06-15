@@ -240,25 +240,67 @@ KeyTable.prototype = {
 	},
 
 
-	_focus: function ( cell )
+	_focus: function ( row, column )
 	{
+		var that = this;
 		var dt = this.s.dt;
+		var pageInfo = dt.page.info();
 
 		if ( this.s.lastFocus ) {
 			this._blur();
 		}
 
-		$( cell.node() ).addClass( this.c.className );
+		if ( typeof row !== 'number' ) {
+			// Convert the cell to a row and column
+			var index = row.index();
+			column = index.column;
+			row = dt
+				.rows( { filter: 'applied', order: 'applied' } )
+				.indexes()
+				.indexOf( index.row );
+
+			// For server-side processing normalise the row by adding the start
+			// point, since `rows().indexes()` includes only rows that are
+			// available at the client-side
+			if ( pageInfo.serverSide ) {
+				row += pageInfo.start;
+			}
+		}
+
+		// Is the row on the current page?
+		if ( row < pageInfo.start || row >= pageInfo.start+pageInfo.length ) {
+			dt
+				.one( 'draw', function () {
+					that._focus( row, column );
+				} )
+				.page( Math.floor( row / pageInfo.length ) )
+				.draw( false );
+
+			return;
+		}
+
+		// De-normalise the server-side processing row, so we select the row
+		// in its displayed position
+		if ( pageInfo.serverSide ) {
+			row -= pageInfo.start;
+		}
+
+		var cell = dt.cell( ':eq('+row+')', column );
+		var node = $( cell.node() );
+
+		node.addClass( this.c.className );
 
 		// Shift viewpoint and page to make cell visible
-		this._scroll( $(window), $(document.body), $(cell.node()), 'offset' );
+		this._scroll( $(window), $(document.body), node, 'offset' );
 
 		var bodyParent = dt.table().body().parentNode;
 		if ( bodyParent !== dt.table().header().parentNode ) {
 			var parent = $(bodyParent.parentNode);
-			this._scroll( parent, parent, $(cell.node()), 'position' );
+
+			this._scroll( parent, parent, node, 'position' );
 		}
 
+		// Event and finish
 		this._emitEvent( 'key-focus', [ this.s.dt, cell ] );
 
 		this.s.lastFocus = cell;
@@ -387,86 +429,84 @@ KeyTable.prototype = {
 	{
 		var that         = this;
 		var dt           = this.s.dt;
+		var pageInfo     = dt.page.info();
+		var rows         = pageInfo.recordsDisplay;
 		var currentCell  = this.s.lastFocus;
 		var columns      = this._columns();
-		var rowCells     = dt.cells( currentCell.index().row, columns ).nodes();
-		var rowNodes     = dt.rows( { filter: 'applied', order: 'applied' } ).nodes();
-		var cellPosition = rowCells.indexOf( currentCell.node() );
-		var rowPosition  = rowNodes.indexOf( currentCell.node().parentNode );
-		var nextCell;
-		var rowNode;
-		var nextRowCells;
-		var prevRowCells;
 
-		// Cache information about the next and previous rows
-		if ( rowPosition < rowNodes.length-1 ) {
-			rowNode = rowNodes[ rowPosition + 1 ];
-			nextRowCells = dt.cells( rowNode, columns ).nodes();
+		if ( ! currentCell ) {
+			return;
 		}
 
-		if ( rowPosition > 0 ) {
-			rowNode = rowNodes[ rowPosition - 1 ];
-			prevRowCells = dt.cells( rowNode, columns ).nodes();
+		var currRow = dt
+			.rows( { filter: 'applied', order: 'applied' } )
+			.indexes()
+			.indexOf( currentCell.index().row );
+
+		// When server-side processing, `rows().indexes()` only gives the rows
+		// that are available at the client-side, so we need to normalise the
+		// row's current position by the display start point
+		if ( pageInfo.serverSide ) {
+			currRow += pageInfo.start;
 		}
 
-		// Perform the move calculation
+		var currCol = dt
+			.columns( columns )
+			.indexes()
+			.indexOf( currentCell.index().column );
+
+		var
+			row = currRow,
+			column = currCol; // row is the display, column is an index
+
 		if ( direction === 'right' ) {
-			if ( cellPosition < rowCells.length - 1 ) {
-				nextCell = rowCells[ cellPosition+1 ];
+			if ( currCol >= columns.length - 1 ) {
+				row++;
+				column = columns[0];
 			}
-			else if ( nextRowCells ) {
-				nextCell = nextRowCells[0];
+			else {
+				column = columns[ currCol+1 ];
 			}
 		}
 		else if ( direction === 'left' ) {
-			if ( cellPosition > 0 ) {
-				nextCell = rowCells[ cellPosition-1 ];
+			if ( currCol === 0 ) {
+				row--;
+				column = columns[ columns.length - 1 ];
 			}
-			else if ( nextRowCells ) {
-				nextCell = prevRowCells[ prevRowCells.length - 1 ];
+			else {
+				column = columns[ currCol-1 ];
 			}
 		}
 		else if ( direction === 'up' ) {
-			if ( prevRowCells ) {
-				nextCell = prevRowCells[ cellPosition ];
-			}
+			row--;
 		}
 		else if ( direction === 'down' ) {
-			if ( nextRowCells ) {
-				nextCell = nextRowCells[ cellPosition ];
-			}
+			row++;
 		}
 
-		// Refocus
-		if ( nextCell ) {
-			// Do we need to shift page?
-			if ( ! dt.cells( nextCell, { page: 'current' } ).any() ) {
-				dt
-					.one( 'draw', function () {
-						that._focus( dt.cell(nextCell) );
-					} )
-					.page( direction === 'right' || direction === 'down' ?
-						'next' :
-						'previous'
-					)
-					.draw( false );
-			}
-			else {
-				this._focus( dt.cell(nextCell) );
-			}
-
+		if ( row    >= 0 && row    < rows &&
+			 column >= 0 && column < columns.length
+		) {
 			e.preventDefault();
+
+			this._focus( row, column );
 		}
 		else if ( ! this.c.blurable ) {
 			// No new focus, but if the table isn't blurable, then don't loose
 			// focus
 			e.preventDefault();
 		}
+		else {
+			this._blur();
+		}
+		// xxx
+		// arrow keys shouldn't blur
 	},
 
 
 	_tabInput: function ()
 	{
+		var that = this;
 		var dt = this.s.dt;
 		var tabIndex = this.c.tabIndex !== null ?
 			this.c.tabIndex :
@@ -483,10 +523,10 @@ KeyTable.prototype = {
 				width: 0,
 				overflow: 'hidden'
 			} )
-			.appendTo( dt.table().node().parentNode );
+			.insertBefore( dt.table().node() );
 
 		div.children().on( 'focus', function () {
-			// xxx focus the table
+			that._focus( dt.cell(':eq(0)') );
 		} );
 	}
 };
@@ -533,7 +573,7 @@ DataTable.Api.register( 'cell.blur()', function () {
 DataTable.Api.register( 'keys.enable()', function ( opts ) {
 	return this.iterator( 'table', function (ctx) {
 		if ( ctx.keytable ) {
-			ctx.keytable.enable( opts );
+			ctx.keytable.enable( opts === undefined ? true : opts );
 		}
 	} );
 } );
