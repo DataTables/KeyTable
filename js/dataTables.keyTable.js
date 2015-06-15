@@ -72,18 +72,30 @@ KeyTable.prototype = {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * API methods for DataTables API interface
 	 */
+	
+	/**
+	 * Blur the table's cell focus
+	 */
 	blur: function ()
 	{
 		this._blur();
 	},
 
-
+	/**
+	 * Enable cell focus for the table
+	 *
+	 * @param  {string} state Can be `true`, `false` or `-string navigation-only`
+	 */
 	enable: function ( state )
 	{
 		this.s.enable = state;
 	},
 
-
+	/**
+	 * Focus on a cell
+	 * @param  {integer} row    Row index
+	 * @param  {integer} column Column index
+	 */
 	focus: function ( row, column )
 	{
 		this._focus( this.s.dt.cell( row, column ) );
@@ -151,6 +163,10 @@ KeyTable.prototype = {
 				.off( 'keydown.keyTable' )
 				.off( 'click.keyTable' );
 		} );
+
+		if ( this.c.focus ) {
+			dt.cell( this.c.focus ).focus();
+		}
 	},
 
 
@@ -160,7 +176,11 @@ KeyTable.prototype = {
 	 * Private methods
 	 */
 
-
+	/**
+	 * Blur the control
+	 *
+	 * @private
+	 */
 	_blur: function ()
 	{
 		if ( ! this.s.enable || ! this.s.lastFocus ) {
@@ -176,6 +196,12 @@ KeyTable.prototype = {
 	},
 
 
+	/**
+	 * Get an array of the column indexes that KeyTable can operate on. This
+	 * is a merge of the user supplied columns and the visible columns.
+	 *
+	 * @private
+	 */
 	_columns: function ()
 	{
 		var dt = this.s.dt;
@@ -192,6 +218,14 @@ KeyTable.prototype = {
 	},
 
 
+	/**
+	 * Perform excel like navigation for Editor by triggering an edit on key
+	 * press
+	 *
+	 * @param  {integer} key Key code for the pressed key
+	 * @param  {object} orig Original event
+	 * @private
+	 */
 	_editor: function ( key, orig )
 	{
 		var dt = this.s.dt;
@@ -201,7 +235,7 @@ KeyTable.prototype = {
 
 		editor.inline( this.s.lastFocus.index() );
 
-		// Excel style - select all
+		// Excel style - select all text
 		var input = $('div.DTE input');
 		if ( input.length ) {
 			input[0].select();
@@ -240,6 +274,17 @@ KeyTable.prototype = {
 	},
 
 
+	/**
+	 * Focus on a particular cell, shifting the table's paging if required
+	 *
+	 * @param  {DataTables.Api|integer} row Can be given as an API instance that
+	 *   contains the cell to focus or as an integer. As the latter it is the
+	 *   visible row index - NOT the data index
+	 * @param  {integer} [column] Not required if a cell is given as the first
+	 *   parameter. Otherwise this is the column data index for the cell to
+	 *   focus on
+	 * @private
+	 */
 	_focus: function ( row, column )
 	{
 		var that = this;
@@ -307,7 +352,12 @@ KeyTable.prototype = {
 	},
 
 
-
+	/**
+	 * Handle key press
+	 *
+	 * @param  {object} e Event
+	 * @private
+	 */
 	_key: function ( e )
 	{
 		if ( ! this.s.enable ) {
@@ -329,7 +379,7 @@ KeyTable.prototype = {
 
 		switch( e.keyCode ) {
 			case 9: // tab
-				this._shift( e, e.shiftKey ? 'left' : 'right' );
+				this._shift( e, e.shiftKey ? 'left' : 'right', true );
 				break;
 
 			case 27: // esc
@@ -392,6 +442,17 @@ KeyTable.prototype = {
 	},
 
 
+	/**
+	 * Scroll a container to make a cell visible in it. This can be used for
+	 * both DataTables scrolling and native window scrolling.
+	 *
+	 * @param  {jQuery} container Scrolling container
+	 * @param  {jQuery} scroller  Item being scrolled
+	 * @param  {jQuery} cell      Cell in the scroller
+	 * @param  {string} posOff    `position` or `offset` - which to use for the
+	 *   calculation. `offset` for the document, otherwise `position`
+	 * @private
+	 */
 	_scroll: function ( container, scroller, cell, posOff )
 	{
 		var offset = cell[posOff]();
@@ -425,7 +486,18 @@ KeyTable.prototype = {
 	},
 
 
-	_shift: function ( e, direction )
+	/**
+	 * Calculate a single offset movement in the table - up, down, left and
+	 * right and then perform the focus if possible
+	 *
+	 * @param  {object}  e           Event object
+	 * @param  {string}  direction   Movement direction
+	 * @param  {boolean} keyBlurable `true` if the key press can result in the
+	 *   table being blurred. This is so arrow keys won't blur the table, but
+	 *   tab will.
+	 * @private
+	 */
+	_shift: function ( e, direction, keyBlurable )
 	{
 		var that         = this;
 		var dt           = this.s.dt;
@@ -491,7 +563,7 @@ KeyTable.prototype = {
 
 			this._focus( row, column );
 		}
-		else if ( ! this.c.blurable ) {
+		else if ( ! keyBlurable || ! this.c.blurable ) {
 			// No new focus, but if the table isn't blurable, then don't loose
 			// focus
 			e.preventDefault();
@@ -499,11 +571,15 @@ KeyTable.prototype = {
 		else {
 			this._blur();
 		}
-		// xxx
-		// arrow keys shouldn't blur
 	},
 
 
+	/**
+	 * Create a hidden input element that can receive focus on behalf of the
+	 * table
+	 *
+	 * @private
+	 */
 	_tabInput: function ()
 	{
 		var that = this;
@@ -526,23 +602,57 @@ KeyTable.prototype = {
 			.insertBefore( dt.table().node() );
 
 		div.children().on( 'focus', function () {
-			that._focus( dt.cell(':eq(0)') );
+			that._focus( dt.cell(':eq(0)', {page: 'current'}) );
 		} );
 	}
 };
 
+
+/**
+ * KeyTable default settings for initialisation
+ *
+ * @namespace
+ * @name KeyTable.defaults
+ * @static
+ */
 KeyTable.defaults = {
-	focus: null, // initial focus selector - table cell selector
-
-	className: 'focus',
-
-	tabIndex: null,
-
+	/**
+	 * Can focus be removed from the table
+	 * @type {Boolean}
+	 */
 	blurable: true,
 
+	/**
+	 * Class to give to the focused cell
+	 * @type {String}
+	 */
+	className: 'focus',
+
+	/**
+	 * Columns that can be focused. This is automatically merged with the
+	 * visible columns as only visible columns can gain focus.
+	 * @type {String}
+	 */
 	columns: '', // all
 
-	editor: null
+	/**
+	 * Editor instance to automatically perform Excel like navigation
+	 * @type {Editor}
+	 */
+	editor: null,
+
+	/**
+	 * Select a cell to automatically select on start up. `null` for no
+	 * automatic selection
+	 * @type {cell-selector}
+	 */
+	focus: null, // initial focus selector - table cell selector
+
+	/**
+	 * Tab index for where the table should sit in the document's tab flow
+	 * @type {integer|null}
+	 */
+	tabIndex: null
 };
 
 
