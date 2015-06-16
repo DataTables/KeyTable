@@ -126,6 +126,10 @@ KeyTable.prototype = {
 
 		// Click to focus
 		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function () {
+			if ( that.s.enable === false ) {
+				return;
+			}
+
 			var cell = dt.cell( this );
 
 			if ( ! cell.any() ) {
@@ -151,7 +155,7 @@ KeyTable.prototype = {
 		}
 
 		if ( this.c.editor ) {
-			dt.on( 'key.kt', function ( e, dt, key, orig ) {
+			dt.on( 'key.kt', function ( e, dt, key, cell, orig ) {
 				that._editor( key, orig );
 			} );
 		}
@@ -305,9 +309,10 @@ KeyTable.prototype = {
 		var that = this;
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
+		var lastFocus = this.s.lastFocus;
 
-		if ( this.s.lastFocus ) {
-			this._blur();
+		if ( ! this.s.enable ) {
+			return;
 		}
 
 		if ( typeof row !== 'number' ) {
@@ -325,6 +330,18 @@ KeyTable.prototype = {
 			if ( pageInfo.serverSide ) {
 				row += pageInfo.start;
 			}
+		}
+
+		var cell = dt.cell( ':eq('+row+')', column );
+
+		if ( lastFocus ) {
+			// Don't trigger a refocus on the same cell
+			if ( lastFocus.node() === cell.node() ) {
+				return;
+			}
+
+			// Otherwise blur the old focus
+			this._blur();
 		}
 
 		// Is the row on the current page?
@@ -345,9 +362,7 @@ KeyTable.prototype = {
 			row -= pageInfo.start;
 		}
 
-		var cell = dt.cell( ':eq('+row+')', column );
 		var node = $( cell.node() );
-
 		node.addClass( this.c.className );
 
 		// Shift viewpoint and page to make cell visible
@@ -451,7 +466,7 @@ KeyTable.prototype = {
 			default:
 				// Everything else - pass through only when fully enabled
 				if ( this.s.enable === true ) {
-					this._emitEvent( 'key', [ dt, e.keyCode, e ] );
+					this._emitEvent( 'key', [ dt, e.keyCode, this.s.lastFocus, e ] );
 				}
 				break;
 		}
@@ -662,7 +677,7 @@ KeyTable.defaults = {
 	 * automatic selection
 	 * @type {cell-selector}
 	 */
-	focus: null, // initial focus selector - table cell selector
+	focus: null,
 
 	/**
 	 * Tab index for where the table should sit in the document's tab flow
@@ -680,14 +695,6 @@ $.fn.dataTable.KeyTable = KeyTable;
 $.fn.DataTable.KeyTable = KeyTable;
 
 
-DataTable.Api.register( 'cell().focus()', function () {
-	return this.iterator( 'cell', function (ctx, row, column) {
-		if ( ctx.keytable ) {
-			ctx.keytable.focus( row, column );
-		}
-	} );
-} );
-
 DataTable.Api.register( 'cell.blur()', function () {
 	return this.iterator( 'table', function (ctx) {
 		if ( ctx.keytable ) {
@@ -696,10 +703,10 @@ DataTable.Api.register( 'cell.blur()', function () {
 	} );
 } );
 
-DataTable.Api.register( 'keys.enable()', function ( opts ) {
-	return this.iterator( 'table', function (ctx) {
+DataTable.Api.register( 'cell().focus()', function () {
+	return this.iterator( 'cell', function (ctx, row, column) {
 		if ( ctx.keytable ) {
-			ctx.keytable.enable( opts === undefined ? true : opts );
+			ctx.keytable.focus( row, column );
 		}
 	} );
 } );
@@ -708,6 +715,14 @@ DataTable.Api.register( 'keys.disable()', function () {
 	return this.iterator( 'table', function (ctx) {
 		if ( ctx.keytable ) {
 			ctx.keytable.enable( false );
+		}
+	} );
+} );
+
+DataTable.Api.register( 'keys.enable()', function ( opts ) {
+	return this.iterator( 'table', function (ctx) {
+		if ( ctx.keytable ) {
+			ctx.keytable.enable( opts === undefined ? true : opts );
 		}
 	} );
 } );
