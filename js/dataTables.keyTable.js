@@ -332,6 +332,10 @@ KeyTable.prototype = {
 			}
 		}
 
+		if ( $.inArray( column, this._columns() ) === -1 ) {
+			return;
+		}
+
 		var cell = dt.cell( ':eq('+row+')', column );
 
 		if ( lastFocus ) {
@@ -560,7 +564,7 @@ KeyTable.prototype = {
 
 		var
 			row = currRow,
-			column = currCol; // row is the display, column is an index
+			column = columns[ currCol ]; // row is the display, column is an index
 
 		if ( direction === 'right' ) {
 			if ( currCol >= columns.length - 1 ) {
@@ -730,7 +734,7 @@ DataTable.Api.register( 'keys.enable()', function ( opts ) {
 
 // Attach a listener to the document which listens for DataTables initialisation
 // events so we can automatically initialise
-$(document).on( 'init.dt.dtk', function (e, settings, json) {
+$(document).on( 'preInit.dt.dtk', function (e, settings, json) {
 	if ( e.namespace !== 'dt' ) {
 		return;
 	}
