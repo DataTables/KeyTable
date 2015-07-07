@@ -10,13 +10,13 @@
 		<description>
 			Enable end user and API modification of the focused cells in the DataTable. Differing levels of enablement are available via the optional parameter.
 		</description>
-		<param name="options" type="string|boolean" default="true">
+		<parameter name="options" type="string|boolean" default="true">
 			This option can be given as the following values:
 
 			* `true` - Fully enable KeyTable
 			* `false` - Fully disable KeyTable (`kt-api keys.disable()`)
 			* `-string navigation-only` - Respond to navigation inputs only
-		</param>
+		</parameter>
 		<returns type="DataTables.Api">DataTables API instance</returns>
 	</type>
 
