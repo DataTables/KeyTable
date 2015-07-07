@@ -153,7 +153,7 @@ KeyTable.prototype = {
 				}
 
 				// If the click was inside the DataTables container, don't blur
-				if ( $(e.target).parents( dt.table().container() ).length ) {
+				if ( $(e.target).parents().filter( dt.table().container() ).length ) {
 					return;
 				}
 
