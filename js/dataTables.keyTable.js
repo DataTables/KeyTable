@@ -145,12 +145,24 @@ KeyTable.prototype = {
 		} );
 
 		// Click blur
-		// xxx don't blur in Editor form
 		if ( this.c.blurable ) {
 			$( document.body ).on( 'click.keyTable', function ( e ) {
-				if ( $.inArray( dt.table().body(), $(e.target).parents('tbody').toArray() ) === -1 ) {
+				// Click on the search input will blur focus
+				if ( $(e.target).parents( '.dataTables_filter' ).length ) {
 					that._blur();
 				}
+
+				// If the click was inside the DataTables container, don't blur
+				if ( $(e.target).parents( dt.table().container() ).length ) {
+					return;
+				}
+
+				// Don't blur in Editor form
+				if ( $(e.target).parents('div.DTE').length ) {
+					return;
+				}
+
+				that._blur();
 			} );
 		}
 
