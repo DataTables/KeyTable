@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-event>
+<dt-event group="keytable">
 	<name>key-blur</name>
 	<summary>KeyTable has blurred focus from a cell</summary>
 	<since>2.0.0</since>

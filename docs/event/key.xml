@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-event>
+<dt-event group="keytable">
 	<name>key</name>
 	<summary>A key event has been detected on the table and is _not_ handled by KeyTable</summary>
 	<since>2.0.0</since>
