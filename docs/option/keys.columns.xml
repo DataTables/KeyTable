@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-option group="keytable">
+<dt-option library="KeyTable">
 	<name>keys.columns</name>
 	<summary>Select the columns that can gain focus</summary>
 	<since>2.0.0</since>

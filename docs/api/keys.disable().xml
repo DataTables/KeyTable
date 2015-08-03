@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-api group="keytable">
+<dt-api library="KeyTable">
 	<name>keys.disable()</name>
 	<summary>Disable KeyTable's interactions (mouse and keyboard)</summary>
 	<since>2.0.0</since>
