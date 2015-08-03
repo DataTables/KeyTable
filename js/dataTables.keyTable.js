@@ -424,6 +424,11 @@ KeyTable.prototype = {
 		var that = this;
 		var dt = this.s.dt;
 
+		// If we are not listening for this key, do nothing
+		if ( this.c.keys && $.inArray( e.keyCode, this.c.keys ) === -1 ) {
+			return;
+		}
+
 		switch( e.keyCode ) {
 			case 9: // tab
 				this._shift( e, e.shiftKey ? 'left' : 'right', true );
@@ -694,6 +699,12 @@ KeyTable.defaults = {
 	 * @type {cell-selector}
 	 */
 	focus: null,
+
+	/**
+	 * Array of keys to listen for
+	 * @type {null|array}
+	 */
+	keys: null,
 
 	/**
 	 * Tab index for where the table should sit in the document's tab flow
