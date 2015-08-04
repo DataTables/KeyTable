@@ -609,7 +609,7 @@ KeyTable.prototype = {
 		}
 
 		if ( row    >= 0 && row    < rows &&
-			 column >= 0 && column < columns.length
+			 column >= 0 && column <= columns.length
 		) {
 			e.preventDefault();
 
