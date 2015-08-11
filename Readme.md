@@ -1,36 +1,33 @@
 # KeyTable
 
-KeyTable provides enhanced accessibility and navigation options for DataTables enhanced tables, by allowing Excel like cell navigation on any table. Events (focus, blur, action etc) can be assigned to individual cells, columns, rows or all cells to allow advanced interaction options.. Key features include:
-
-* Easy to use spreadsheet like interaction
-* Fully integrated with DataTables
-* Wide range of supported events
+KeyTable provides Excel like cell navigation on any table. Events (focus, blur, action etc) can be assigned to individual cells, columns, rows or all cells.
 
 
 # Installation
 
-To use KeyTable, first download DataTables ( http://datatables.net/download ) and place the unzipped KeyTable package into a `extensions` directory in the DataTables package. This will allow the pages in the examples to operate correctly. To see the examples running, open the `examples` directory in your web-browser.
+To use KeyTable the best way to obtain the software is to use the [DataTables downloader](//datatables.net/download). You can also include the individual files from the [DataTables CDN](//cdn.datatables.net). See the [documentation](http://datatables.net/extensions/keytable/) for full details.
 
 
 # Basic usage
 
-KeyTable is initialised using the `C` option that it adds to DataTables' `dom` option. For example:
+FixedHeader is initialised using the `keys` option in the DataTables constructor - a simple boolean `true` will enable the feature. Further options can be specified using this option as an object - see the documentation for details.
 
 ```js
 $(document).ready( function () {
-	var table = $('#example').DataTable();
-	new $.fn.dataTable.KeyTable( table );
+    $('#myTable').DataTable( {
+    	keys: true
+    } );
 } );
 ```
 
 
 # Documentation / support
 
-* Documentation: http://datatables.net/extensions/keytable/
-* DataTables support forums: http://datatables.net/forums
+* [Documentation](https://datatables.net/extensions/fixedheader/)
+* [DataTables support forums](http://datatables.net/forums)
 
 
 # GitHub
 
-If you fancy getting involved with the development of KeyTable and help make it better, please refer to its GitHub repo: https://github.com/DataTables/KeyTable
+If you fancy getting involved with the development of KeyTable and help make it better, please refer to its [GitHub repo](https://github.com/DataTables/KeyTable).
 
