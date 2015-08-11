@@ -344,8 +344,28 @@ KeyTable.prototype = {
 			}
 		}
 
+		// Is the row on the current page? If not, we need to redraw to show the
+		// page
+		if ( row < pageInfo.start || row >= pageInfo.start+pageInfo.length ) {
+			dt
+				.one( 'draw', function () {
+					that._focus( row, column );
+				} )
+				.page( Math.floor( row / pageInfo.length ) )
+				.draw( false );
+
+			return;
+		}
+
+		// In the available columns?
 		if ( $.inArray( column, this._columns() ) === -1 ) {
 			return;
+		}
+
+		// De-normalise the server-side processing row, so we select the row
+		// in its displayed position
+		if ( pageInfo.serverSide ) {
+			row -= pageInfo.start;
 		}
 
 		var cell = dt.cell( ':eq('+row+')', column );
@@ -358,24 +378,6 @@ KeyTable.prototype = {
 
 			// Otherwise blur the old focus
 			this._blur();
-		}
-
-		// Is the row on the current page?
-		if ( row < pageInfo.start || row >= pageInfo.start+pageInfo.length ) {
-			dt
-				.one( 'draw', function () {
-					that._focus( row, column );
-				} )
-				.page( Math.floor( row / pageInfo.length ) )
-				.draw( false );
-
-			return;
-		}
-
-		// De-normalise the server-side processing row, so we select the row
-		// in its displayed position
-		if ( pageInfo.serverSide ) {
-			row -= pageInfo.start;
 		}
 
 		var node = $( cell.node() );
