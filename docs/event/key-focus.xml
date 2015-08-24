@@ -9,10 +9,10 @@
 		<parameter type="object" name="e">
 			jQuery event object
 		</parameter>
-		<parameter type="DataTable.Api" name="datatable">
+		<parameter type="DataTables.Api" name="datatable">
 			DataTable API instance for the table in question
 		</parameter>
-		<parameter type="DataTable.Api" name="key">
+		<parameter type="DataTables.Api" name="key">
 			A DataTables API instance that contains the cell that was focused (`dt-api cell()`)
 		</parameter>
 		<scope>HTML table element</scope>

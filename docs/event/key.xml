@@ -9,13 +9,13 @@
 		<parameter type="object" name="e">
 			jQuery event object
 		</parameter>
-		<parameter type="DataTable.Api" name="datatable">
+		<parameter type="DataTables.Api" name="datatable">
 			DataTable API instance for the table in question
 		</parameter>
 		<parameter type="integer" name="key">
 			The [key code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode) for the pressed key
 		</parameter>
-		<parameter type="DataTable.Api" name="cell">
+		<parameter type="DataTables.Api" name="cell">
 			A DataTables API instance that contains the cell that has focus (`dt-api cell()`)
 		</parameter>
 		<parameter type="object" name="originalEvent">
