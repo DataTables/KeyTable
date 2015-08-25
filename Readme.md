@@ -10,7 +10,7 @@ To use KeyTable the best way to obtain the software is to use the [DataTables do
 
 # Basic usage
 
-FixedHeader is initialised using the `keys` option in the DataTables constructor - a simple boolean `true` will enable the feature. Further options can be specified using this option as an object - see the documentation for details.
+KeyTable is initialised using the `keys` option in the DataTables constructor - a simple boolean `true` will enable the feature. Further options can be specified using this option as an object - see the documentation for details.
 
 ```js
 $(document).ready( function () {
@@ -23,7 +23,7 @@ $(document).ready( function () {
 
 # Documentation / support
 
-* [Documentation](https://datatables.net/extensions/fixedheader/)
+* [Documentation](https://datatables.net/extensions/keytable/)
 * [DataTables support forums](http://datatables.net/forums)
 
 
