@@ -610,8 +610,7 @@ $.extend( KeyTable.prototype, {
 			row++;
 		}
 
-		if ( row    >= 0 && row    < rows &&
-			 column >= 0 && column <= columns.length
+		if ( row >= 0 && row < rows && $.inArray( column, columns ) !== -1
 		) {
 			e.preventDefault();
 
