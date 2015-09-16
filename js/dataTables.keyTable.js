@@ -368,7 +368,7 @@ $.extend( KeyTable.prototype, {
 			row -= pageInfo.start;
 		}
 
-		var cell = dt.cell( ':eq('+row+')', column );
+		var cell = dt.cell( ':eq('+row+')', column, {search: 'applied'} );
 
 		if ( lastFocus ) {
 			// Don't trigger a refocus on the same cell
