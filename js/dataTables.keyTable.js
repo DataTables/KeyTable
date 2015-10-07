@@ -1,11 +1,11 @@
-/*! KeyTable 2.0.1-dev
+/*! KeyTable 2.1.0-dev
  * ©2009-2015 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.0.1-dev
+ * @version     2.1.0-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -24,13 +24,13 @@
 (function( factory ){
 	if ( typeof define === 'function' && define.amd ) {
 		// AMD
-		define( ['jquery', 'datatables'], factory );
+		define( ['jquery', 'datatables.net'], factory );
 	}
 	else if ( typeof exports === 'object' ) {
 		// CommonJS
 		module.exports = function ($) {
 			if ( ! $ ) { $ = require('jquery'); }
-			if ( ! $.fn.dataTable ) { require('datatables')($); }
+			if ( ! $.fn.dataTable ) { require('datatables.net')($); }
 
 			factory( $ );
 		};
@@ -730,7 +730,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.0.1-dev";
+KeyTable.version = "2.1.0-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
