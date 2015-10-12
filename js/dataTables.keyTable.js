@@ -115,6 +115,23 @@ $.extend( KeyTable.prototype, {
 		this._focus( this.s.dt.cell( row, column ) );
 	},
 
+	/**
+	 * Is the cell focused
+	 * @param  {object} cell Cell index to check
+	 * @returns {boolean} true if focused, false otherwise
+	 */
+	focused: function ( cell )
+	{
+		var lastFocus = this.s.lastFocus;
+
+		if ( ! lastFocus ) {
+			return false;
+		}
+
+		var lastIdx = this.s.lastFocus.index();
+		return cell.row === lastIdx.row && cell.column === lastIdx.column;
+	},
+
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Constructor
@@ -767,6 +784,27 @@ DataTable.Api.register( 'keys.enable()', function ( opts ) {
 			ctx.keytable.enable( opts === undefined ? true : opts );
 		}
 	} );
+} );
+
+// Cell selector
+DataTable.ext.selector.cell.push( function ( settings, opts, cells ) {
+	var focused = opts.focused;
+	var kt = settings.keytable;
+	var out = [];
+
+	if ( ! kt || focused === undefined ) {
+		return cells;
+	}
+
+	for ( var i=0, ien=cells.length ; i<ien ; i++ ) {
+		if ( (focused === true &&  kt.focused( cells[i] ) ) ||
+			 (focused === false && ! kt.focused( cells[i] ) )
+		) {
+			out.push( cells[i] );
+		}
+	}
+
+	return out;
 } );
 
 
