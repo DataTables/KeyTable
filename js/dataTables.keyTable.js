@@ -377,7 +377,7 @@ $.extend( KeyTable.prototype, {
 
 		// Is the row on the current page? If not, we need to redraw to show the
 		// page
-		if ( row < pageInfo.start || row >= pageInfo.start+pageInfo.length ) {
+		if ( pageInfo.length !== -1 && (row < pageInfo.start || row >= pageInfo.start+pageInfo.length) ) {
 			dt
 				.one( 'draw', function () {
 					that._focus( row, column );

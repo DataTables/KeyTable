@@ -6,7 +6,8 @@
 <![CDATA[
 $(document).ready(function() {
 	$('#example').DataTable( {
-		keys: true
+		keys: true,
+		"paging": false
 	} );
 } );
 ]]>
