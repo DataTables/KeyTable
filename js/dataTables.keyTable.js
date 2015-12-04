@@ -231,7 +231,15 @@ $.extend( KeyTable.prototype, {
 		var state = dt.state.loaded();
 
 		if ( state && state.keyTable ) {
-			dt.cell( state.keyTable ).focus();
+			// Wait until init is done
+			dt.one( 'init', function () {
+				var cell = dt.cell( state.keyTable );
+
+				// Ensure that the saved cell still exists
+				if ( cell.any() ) {
+					cell.focus();
+				}
+			} );
 		}
 		else if ( this.c.focus ) {
 			dt.cell( this.c.focus ).focus();
