@@ -701,7 +701,7 @@ $.extend( KeyTable.prototype, {
 			.insertBefore( dt.table().node() );
 
 		div.children().on( 'focus', function () {
-			that._focus( dt.cell(':eq(0)', {page: 'current'}) );
+			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}) );
 		} );
 	}
 } );
