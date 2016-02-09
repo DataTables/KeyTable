@@ -178,13 +178,13 @@ $.extend( KeyTable.prototype, {
 		} );
 
 		// Key events
-		$( document.body ).on( 'keydown.keyTable', function (e) {
+		$( document ).on( 'keydown.keyTable', function (e) {
 			that._key( e );
 		} );
 
 		// Click blur
 		if ( this.c.blurable ) {
-			$( document.body ).on( 'click.keyTable', function ( e ) {
+			$( document ).on( 'click.keyTable', function ( e ) {
 				// Click on the search input will blur focus
 				if ( $(e.target).parents( '.dataTables_filter' ).length ) {
 					that._blur();
