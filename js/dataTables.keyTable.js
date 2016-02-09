@@ -205,7 +205,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		if ( this.c.editor ) {
-			dt.on( 'key.kt', function ( e, dt, key, cell, orig ) {
+			dt.on( 'key.keyTable', function ( e, dt, key, cell, orig ) {
 				that._editor( key, orig );
 			} );
 		}
