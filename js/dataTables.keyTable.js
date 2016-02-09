@@ -69,7 +69,10 @@ var KeyTable = function ( dt, opts ) {
 		/** @type {DataTable.Api} DataTables' API instance */
 		dt: new DataTable.Api( dt ),
 
-		enable: true
+		enable: true,
+
+		/** @type {bool} Flag for if a draw is triggered by focus */
+		focusDraw: false
 	};
 
 	// DOM items
@@ -218,6 +221,27 @@ $.extend( KeyTable.prototype, {
 					null;
 			} );
 		}
+
+		// Reload - re-focus on the currently selected item. In SSP mode this
+		// has the effect of keeping the focus in position when changing page as
+		// well (which is different from how client-side processing works).
+		dt.on( 'xhr.keyTable', function ( e ) {
+			if ( that.s.focusDraw ) {
+				// Triggered by server-side processing, and thus `_focus` will
+				// do the refocus on the next draw event
+				return;
+			}
+
+			var lastFocus = that.s.lastFocus;
+
+			if ( lastFocus ) {
+				that.s.lastFocus = null;
+
+				dt.one( 'draw', function () {
+					that._focus( lastFocus );
+				} );
+			}
+		} );
 
 		dt.on( 'destroy.keyTable', function () {
 			dt.off( '.keyTable' );
@@ -393,8 +417,11 @@ $.extend( KeyTable.prototype, {
 		// Is the row on the current page? If not, we need to redraw to show the
 		// page
 		if ( pageInfo.length !== -1 && (row < pageInfo.start || row >= pageInfo.start+pageInfo.length) ) {
+			this.s.focusDraw = true;
+
 			dt
 				.one( 'draw', function () {
+					that.s.focusDraw = false;
 					that._focus( row, column );
 				} )
 				.page( Math.floor( row / pageInfo.length ) )
