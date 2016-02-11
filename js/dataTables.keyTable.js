@@ -1,15 +1,15 @@
-/*! KeyTable 2.1.1-dev
- * ©2009-2015 SpryMedia Ltd - datatables.net/license
+/*! KeyTable 2.1.1
+ * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.1.1-dev
+ * @version     2.1.1
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2009-2015 SpryMedia Ltd.
+ * @copyright   Copyright 2009-2016 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -789,7 +789,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.1.1-dev";
+KeyTable.version = "2.1.1";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
