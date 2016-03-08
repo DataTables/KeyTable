@@ -1,11 +1,11 @@
-/*! KeyTable 2.1.1
+/*! KeyTable 2.1.2-dev
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.1.1
+ * @version     2.1.2-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -333,6 +333,12 @@ $.extend( KeyTable.prototype, {
 		var editor = this.c.editor;
 
 		orig.stopPropagation();
+
+		// Return key should do nothing - for textareas's it would empty the
+		// contents
+		if ( key === 13 ) {
+			orig.preventDefault();
+		}
 
 		editor.inline( this.s.lastFocus.index() );
 
@@ -789,7 +795,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.1.1";
+KeyTable.version = "2.1.2-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
