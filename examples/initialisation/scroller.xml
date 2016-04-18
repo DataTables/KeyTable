@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="4">
+
+<css lib="datatables scroller keytable" />
+<js lib="jquery datatables scroller keytable">
+<![CDATA[
+$(document).ready(function() {
+	var table = $('#example').DataTable( {
+		deferRender:    true,
+		scrollY:        200,
+		scrollCollapse: true,
+		scroller:       true,
+		keys:           true
+	} );
+} );
+]]>
+</js>
+
+<title lib="KeyTable">Scroller integration</title>
+
+<info><![CDATA[
+
+In addition to supporting DataTables' built in scrolling options, KeyTable also supports the [Scroller extension](//datatables.net/extensions/scroller) for DataTables. As you can see in the example below, no additional configuration is required beyond simply enabling Scroller and KeyTable.
+
+]]></info>
+
+</dt-example>

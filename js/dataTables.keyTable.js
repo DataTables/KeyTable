@@ -597,6 +597,15 @@ $.extend( KeyTable.prototype, {
 		var containerHeight = container.height();
 		var containerWidth = container.width();
 
+		// If the table node is positioned absolutely (Scroller) take that into
+		// account to get the position relative to the scrolling container.
+		if ( posOff === 'position' && cell.offsetParent() !== scroller ) {
+			var innerPos = cell.offsetParent().position();
+
+			offset.top += innerPos.top;
+			offset.left += innerPos.left;
+		}
+
 		// Top correction
 		if ( offset.top < scrollTop ) {
 			scroller.scrollTop( offset.top );
