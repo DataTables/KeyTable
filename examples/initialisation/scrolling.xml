@@ -7,10 +7,9 @@
 $(document).ready(function() {
 	var table = $('#example').DataTable( {
 		scrollY: 300,
-		paging: false
+		paging:  false
+		keys:    true
 	} );
-
-	new $.fn.dataTable.KeyTable( table );
 } );
 ]]>
 </js>
