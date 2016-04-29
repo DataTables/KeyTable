@@ -611,12 +611,12 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Bottom correction
-		if ( offset.top + height > scrollTop + containerHeight ) {
+		if ( offset.top + height > scrollTop + containerHeight && height < containerHeight ) {
 			scroller.scrollTop( offset.top + height - containerHeight );
 		}
 
 		// Right correction
-		if ( offset.left + width > scrollLeft + containerWidth ) {
+		if ( offset.left + width > scrollLeft + containerWidth && width < containerWidth ) {
 			scroller.scrollLeft( offset.left + width - containerWidth );
 		}
 	},
