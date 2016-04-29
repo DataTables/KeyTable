@@ -12,7 +12,7 @@
 		<parameter type="DataTables.Api" name="datatable">
 			DataTable API instance for the table in question
 		</parameter>
-		<parameter type="DataTables.Api" name="key">
+		<parameter type="DataTables.Api" name="cell">
 			A DataTables API instance that contains the cell that was blurred (`dt-api cell()`)
 		</parameter>
 		<scope>HTML table element</scope>
