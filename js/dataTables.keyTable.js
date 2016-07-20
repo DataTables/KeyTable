@@ -166,7 +166,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Click to focus
-		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function () {
+		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function (e) {
 			if ( that.s.enable === false ) {
 				return;
 			}
@@ -177,7 +177,7 @@ $.extend( KeyTable.prototype, {
 				return;
 			}
 
-			that._focus( cell, null, false );
+			that._focus( cell, null, false, e );
 		} );
 
 		// Key events
@@ -393,7 +393,7 @@ $.extend( KeyTable.prototype, {
 	 * @param {boolean} [shift=true] Should the viewport be moved to show cell
 	 * @private
 	 */
-	_focus: function ( row, column, shift )
+	_focus: function ( row, column, shift, originalEvent )
 	{
 		var that = this;
 		var dt = this.s.dt;
@@ -478,7 +478,7 @@ $.extend( KeyTable.prototype, {
 		// Event and finish
 		this.s.lastFocus = cell;
 
-		this._emitEvent( 'key-focus', [ this.s.dt, cell ] );
+		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent ] );
 		dt.state.save();
 	},
 
