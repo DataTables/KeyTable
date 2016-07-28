@@ -96,7 +96,7 @@ $.extend( KeyTable.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * API methods for DataTables API interface
 	 */
-	
+
 	/**
 	 * Blur the table's cell focus
 	 */
@@ -399,6 +399,8 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
 		var lastFocus = this.s.lastFocus;
+		if( ! originalEvent)
+			originalEvent = null;
 
 		if ( ! this.s.enable ) {
 			return;
@@ -536,7 +538,7 @@ $.extend( KeyTable.prototype, {
 						that._focus( dt.cell( index < nodes.length ?
 							nodes[ index ] :
 							nodes[ nodes.length-1 ]
-						) );
+						) , null, true, e);
 					} )
 					.page( e.keyCode === 33 ? 'previous' : 'next' )
 					.draw( false );
@@ -549,7 +551,7 @@ $.extend( KeyTable.prototype, {
 
 				this._focus( dt.cell(
 					indexes[ e.keyCode === 35 ? indexes.length-1 : 0 ]
-				) );
+				), null, true, e );
 				break;
 
 			case 37: // left arrow
@@ -696,7 +698,7 @@ $.extend( KeyTable.prototype, {
 		) {
 			e.preventDefault();
 
-			this._focus( row, column );
+			this._focus( row, column, true, e );
 		}
 		else if ( ! keyBlurable || ! this.c.blurable ) {
 			// No new focus, but if the table isn't blurable, then don't loose
@@ -736,8 +738,9 @@ $.extend( KeyTable.prototype, {
 			} )
 			.insertBefore( dt.table().node() );
 
-		div.children().on( 'focus', function () {
-			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}) );
+		div.children().on( 'focus', function (e) {
+			// I am not sure about this one
+			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}), null, true, e );
 		} );
 	}
 } );
