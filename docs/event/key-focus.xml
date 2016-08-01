@@ -5,7 +5,7 @@
 	<since>2.0.0</since>
 
 	<type type="function">
-		<signature>function( e, datatable, cell )</signature>
+		<signature>function( e, datatable, cell, originalEvent )</signature>
 		<parameter type="object" name="e">
 			jQuery event object
 		</parameter>
@@ -14,6 +14,13 @@
 		</parameter>
 		<parameter type="DataTables.Api" name="cell">
 			A DataTables API instance that contains the cell that was focused (`dt-api cell()`)
+		</parameter>
+		<parameter type="object|null" name="originalEvent">
+			The original event that triggered this focus. It may be:
+
+			* A DOM `click` event - e.g. click to focus on a cell
+			* A DOM `focus` event - e.g. using tab to navigate around the page and tabbing into the table.
+			* `null`: no original event - e.g. when using `-api cell().focus()`. 
 		</parameter>
 		<scope>HTML table element</scope>
 	</type>
@@ -40,7 +47,7 @@ var table = $('#example').DataTable( {
 } );
 
 table
-	.on( 'key-focus', function ( e, datatable, cell ) {
+	.on( 'key-focus', function ( e, datatable, cell, originalEvent ) {
 		var rowData = datatable.row( cell.index().row ).data();
 
 		$('#details').html( 'Cell in '+rowData[0]+' focused' );

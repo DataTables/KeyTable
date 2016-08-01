@@ -489,7 +489,7 @@ $.extend( KeyTable.prototype, {
 		// Event and finish
 		this.s.lastFocus = cell;
 
-		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent ] );
+		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent || null ] );
 		dt.state.save();
 	},
 
@@ -748,7 +748,6 @@ $.extend( KeyTable.prototype, {
 			.insertBefore( dt.table().node() );
 
 		div.children().on( 'focus', function (e) {
-			// I am not sure about this one
 			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}), null, true, e );
 		} );
 	},
