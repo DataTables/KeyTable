@@ -353,7 +353,7 @@ $.extend( KeyTable.prototype, {
 		$('div.DTE input, div.DTE textarea').select();
 
 		// Reduce the keys the Keys listens for
-		dt.keys.enable( 'navigation-only' );
+		dt.keys.enable( this.c.editorKeys );
 
 		// On blur of the navigation submit
 		dt.one( 'key-blur.editor', function () {
@@ -499,7 +499,9 @@ $.extend( KeyTable.prototype, {
 	 */
 	_key: function ( e )
 	{
-		if ( ! this.s.enable ) {
+		var enable = this.s.enable;
+		var navEnable = enable === true || enable === 'navigation-only';
+		if ( ! enable ) {
 			return;
 		}
 
@@ -523,62 +525,75 @@ $.extend( KeyTable.prototype, {
 
 		switch( e.keyCode ) {
 			case 9: // tab
+				// `enable` can be tab-only
 				this._shift( e, e.shiftKey ? 'left' : 'right', true );
 				break;
 
 			case 27: // esc
-				if ( this.s.blurable && this.s.enable === true ) {
+				if ( this.s.blurable && enable === true ) {
 					this._blur();
 				}
 				break;
 
 			case 33: // page up (previous page)
 			case 34: // page down (next page)
-				e.preventDefault();
-				var index = dt.cells( {page: 'current'} ).nodes().indexOf( cell.node() );
+				if ( navEnable ) {
+					e.preventDefault();
+					var index = dt.cells( {page: 'current'} ).nodes().indexOf( cell.node() );
 
-				dt
-					.one( 'draw', function () {
-						var nodes = dt.cells( {page: 'current'} ).nodes();
+					dt
+						.one( 'draw', function () {
+							var nodes = dt.cells( {page: 'current'} ).nodes();
 
-						that._focus( dt.cell( index < nodes.length ?
-							nodes[ index ] :
-							nodes[ nodes.length-1 ]
-						) , null, true, e);
-					} )
-					.page( e.keyCode === 33 ? 'previous' : 'next' )
-					.draw( false );
+							that._focus( dt.cell( index < nodes.length ?
+								nodes[ index ] :
+								nodes[ nodes.length-1 ]
+							) , null, true, e);
+						} )
+						.page( e.keyCode === 33 ? 'previous' : 'next' )
+						.draw( false );
+				}
 				break;
 
 			case 35: // end (end of current page)
 			case 36: // home (start of current page)
-				e.preventDefault();
-				var indexes = dt.cells( {page: 'current'} ).indexes();
+				if ( navEnable ) {
+					e.preventDefault();
+					var indexes = dt.cells( {page: 'current'} ).indexes();
 
-				this._focus( dt.cell(
-					indexes[ e.keyCode === 35 ? indexes.length-1 : 0 ]
-				), null, true, e );
+					this._focus( dt.cell(
+						indexes[ e.keyCode === 35 ? indexes.length-1 : 0 ]
+					), null, true, e );
+				}
 				break;
 
 			case 37: // left arrow
-				this._shift( e, 'left' );
+				if ( navEnable ) {
+					this._shift( e, 'left' );
+				}
 				break;
 
 			case 38: // up arrow
-				this._shift( e, 'up' );
+				if ( navEnable ) {
+					this._shift( e, 'up' );
+				}
 				break;
 
 			case 39: // right arrow
-				this._shift( e, 'right' );
+				if ( navEnable ) {
+					this._shift( e, 'right' );
+				}
 				break;
 
 			case 40: // down arrow
-				this._shift( e, 'down' );
+				if ( navEnable ) {
+					this._shift( e, 'down' );
+				}
 				break;
 
 			default:
 				// Everything else - pass through only when fully enabled
-				if ( this.s.enable === true ) {
+				if ( enable === true ) {
 					this._emitEvent( 'key', [ dt, e.keyCode, this.s.lastFocus, e ] );
 				}
 				break;
@@ -800,6 +815,13 @@ KeyTable.defaults = {
 	 * @type {Editor}
 	 */
 	editor: null,
+
+	/**
+	 * Option that defines what KeyTable's behaviour will be when used with
+	 * Editor's inline editing. Can be `navigation-only` or `tab-only`.
+	 * @type {String}
+	 */
+	editorKeys: 'navigation-only',
 
 	/**
 	 * Select a cell to automatically select on start up. `null` for no
