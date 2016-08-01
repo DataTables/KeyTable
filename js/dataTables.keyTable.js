@@ -96,7 +96,7 @@ $.extend( KeyTable.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * API methods for DataTables API interface
 	 */
-	
+
 	/**
 	 * Blur the table's cell focus
 	 */
@@ -166,7 +166,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Click to focus
-		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function () {
+		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function (e) {
 			if ( that.s.enable === false ) {
 				return;
 			}
@@ -177,7 +177,7 @@ $.extend( KeyTable.prototype, {
 				return;
 			}
 
-			that._focus( cell, null, false );
+			that._focus( cell, null, false, e );
 		} );
 
 		// Key events
@@ -200,6 +200,11 @@ $.extend( KeyTable.prototype, {
 
 				// Don't blur in Editor form
 				if ( $(e.target).parents('div.DTE').length ) {
+					return;
+				}
+
+				//If the click was inside the fixed columns container, don't blur
+				if ( $(e.target).parents().filter('.DTFC_Cloned').length ) {
 					return;
 				}
 
@@ -292,6 +297,8 @@ $.extend( KeyTable.prototype, {
 
 		$( cell.node() ).removeClass( this.c.className );
 		this.s.lastFocus = null;
+
+		this._updateFixedColumns(cell.index().column);
 
 		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
 	},
@@ -393,12 +400,14 @@ $.extend( KeyTable.prototype, {
 	 * @param {boolean} [shift=true] Should the viewport be moved to show cell
 	 * @private
 	 */
-	_focus: function ( row, column, shift )
+	_focus: function ( row, column, shift, originalEvent )
 	{
 		var that = this;
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
 		var lastFocus = this.s.lastFocus;
+		if( ! originalEvent)
+			originalEvent = null;
 
 		if ( ! this.s.enable ) {
 			return;
@@ -463,6 +472,8 @@ $.extend( KeyTable.prototype, {
 		var node = $( cell.node() );
 		node.addClass( this.c.className );
 
+		this._updateFixedColumns(column);
+
 		// Shift viewpoint and page to make cell visible
 		if ( shift === undefined || shift === true ) {
 			this._scroll( $(window), $(document.body), node, 'offset' );
@@ -478,7 +489,7 @@ $.extend( KeyTable.prototype, {
 		// Event and finish
 		this.s.lastFocus = cell;
 
-		this._emitEvent( 'key-focus', [ this.s.dt, cell ] );
+		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent ] );
 		dt.state.save();
 	},
 
@@ -536,7 +547,7 @@ $.extend( KeyTable.prototype, {
 						that._focus( dt.cell( index < nodes.length ?
 							nodes[ index ] :
 							nodes[ nodes.length-1 ]
-						) );
+						) , null, true, e);
 					} )
 					.page( e.keyCode === 33 ? 'previous' : 'next' )
 					.draw( false );
@@ -549,7 +560,7 @@ $.extend( KeyTable.prototype, {
 
 				this._focus( dt.cell(
 					indexes[ e.keyCode === 35 ? indexes.length-1 : 0 ]
-				) );
+				), null, true, e );
 				break;
 
 			case 37: // left arrow
@@ -696,7 +707,7 @@ $.extend( KeyTable.prototype, {
 		) {
 			e.preventDefault();
 
-			this._focus( row, column );
+			this._focus( row, column, true, e );
 		}
 		else if ( ! keyBlurable || ! this.c.blurable ) {
 			// No new focus, but if the table isn't blurable, then don't loose
@@ -736,10 +747,28 @@ $.extend( KeyTable.prototype, {
 			} )
 			.insertBefore( dt.table().node() );
 
-		div.children().on( 'focus', function () {
-			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}) );
+		div.children().on( 'focus', function (e) {
+			// I am not sure about this one
+			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}), null, true, e );
 		} );
-	}
+	},
+	/**
+	 * Update fixed columns if they are enabled and if the cell we are focusing is inside a  fixed column
+	 * @param  {integer}  column           Index of the column being changed
+	 *
+	 * @private
+	 */
+	 _updateFixedColumns:function(column){
+	 	var dt = this.s.dt;
+	 	var settings = dt.settings()[0];
+
+	 	if(settings._oFixedColumns){
+	 		var leftCols = settings._oFixedColumns.s.iLeftColumns;
+	 		var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
+	 		if (column < leftCols || column > rightCols)
+	 			dt.fixedColumns().update();
+	 	}
+	 }
 } );
 
 
