@@ -350,10 +350,7 @@ $.extend( KeyTable.prototype, {
 		editor.inline( this.s.lastFocus.index() );
 
 		// Excel style - select all text
-		var input = $('div.DTE input, div.DTE textarea');
-		if ( input.length ) {
-			input[0].select();
-		}
+		$('div.DTE input, div.DTE textarea').select();
 
 		// Reduce the keys the Keys listens for
 		dt.keys.enable( 'navigation-only' );
