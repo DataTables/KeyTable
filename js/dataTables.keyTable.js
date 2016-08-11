@@ -1,11 +1,11 @@
-/*! KeyTable 2.1.3
+/*! KeyTable 2.1.4-dev
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.1.3
+ * @version     2.1.4-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -560,9 +560,10 @@ $.extend( KeyTable.prototype, {
 				if ( navEnable ) {
 					e.preventDefault();
 					var indexes = dt.cells( {page: 'current'} ).indexes();
+					var colIndexes = this._columns();
 
 					this._focus( dt.cell(
-						indexes[ e.keyCode === 35 ? indexes.length-1 : 0 ]
+						indexes[ e.keyCode === 35 ? indexes.length-1 : colIndexes[0] ]
 					), null, true, e );
 				}
 				break;
@@ -845,7 +846,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.1.3";
+KeyTable.version = "2.1.4-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
