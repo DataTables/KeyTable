@@ -339,6 +339,11 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var editor = this.c.editor;
 
+		// Don't activate inline editing when the shift key is pressed
+		if ( key === 16 ) {
+			return;
+		}
+
 		orig.stopPropagation();
 
 		// Return key should do nothing - for textareas's it would empty the
