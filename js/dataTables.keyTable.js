@@ -72,7 +72,12 @@ var KeyTable = function ( dt, opts ) {
 		enable: true,
 
 		/** @type {bool} Flag for if a draw is triggered by focus */
-		focusDraw: false
+		focusDraw: false,
+
+		/** @type {bool} Flag to indicate when waiting for a draw to happen.
+		  *   Will ignore key presses at this point
+		  */
+		waitingForDraw: false
 	};
 
 	// DOM items
@@ -436,10 +441,12 @@ $.extend( KeyTable.prototype, {
 		// page
 		if ( pageInfo.length !== -1 && (row < pageInfo.start || row >= pageInfo.start+pageInfo.length) ) {
 			this.s.focusDraw = true;
+			this.s.waitingForDraw = true;
 
 			dt
 				.one( 'draw', function () {
 					that.s.focusDraw = false;
+					that.s.waitingForDraw = false;
 					that._focus( row, column );
 				} )
 				.page( Math.floor( row / pageInfo.length ) )
@@ -504,6 +511,13 @@ $.extend( KeyTable.prototype, {
 	 */
 	_key: function ( e )
 	{
+		// If we are waiting for a draw to happen from another key event, then
+		// do nothing for this new key press.
+		if ( this.s.waitingForDraw ) {
+			e.preventDefault();
+			return;
+		}
+
 		var enable = this.s.enable;
 		var navEnable = enable === true || enable === 'navigation-only';
 		if ( ! enable ) {
@@ -545,6 +559,7 @@ $.extend( KeyTable.prototype, {
 				if ( navEnable ) {
 					e.preventDefault();
 					var index = dt.cells( {page: 'current'} ).nodes().indexOf( cell.node() );
+					this.s.waitingForDraw = true;
 
 					dt
 						.one( 'draw', function () {
@@ -554,6 +569,8 @@ $.extend( KeyTable.prototype, {
 								nodes[ index ] :
 								nodes[ nodes.length-1 ]
 							) , null, true, e);
+
+							that.s.waitingForDraw = false;
 						} )
 						.page( e.keyCode === 33 ? 'previous' : 'next' )
 						.draw( false );
