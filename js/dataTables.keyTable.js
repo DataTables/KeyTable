@@ -560,10 +560,16 @@ $.extend( KeyTable.prototype, {
 					e.preventDefault();
 					var index = dt.cells( {page: 'current'} ).nodes().indexOf( cell.node() );
 					this.s.waitingForDraw = true;
+					this.s.focusDraw = true;
 
 					dt
 						.one( 'draw', function () {
 							var nodes = dt.cells( {page: 'current'} ).nodes();
+
+							// Clear the last focus - changing page so it must
+							// be different, although if SSP the index would be
+							// the same.
+							that.s.lastFocus = null;
 
 							that._focus( dt.cell( index < nodes.length ?
 								nodes[ index ] :
@@ -571,6 +577,7 @@ $.extend( KeyTable.prototype, {
 							) , null, true, e);
 
 							that.s.waitingForDraw = false;
+							that.s.focusDraw = false;
 						} )
 						.page( e.keyCode === 33 ? 'previous' : 'next' )
 						.draw( false );
