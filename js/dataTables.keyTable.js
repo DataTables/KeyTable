@@ -1,11 +1,11 @@
-/*! KeyTable 2.1.4-dev
+/*! KeyTable 2.2.0-dev
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.1.4-dev
+ * @version     2.2.0-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -77,7 +77,10 @@ var KeyTable = function ( dt, opts ) {
 		/** @type {bool} Flag to indicate when waiting for a draw to happen.
 		  *   Will ignore key presses at this point
 		  */
-		waitingForDraw: false
+		waitingForDraw: false,
+
+		/** @type {object} Information about the last cell that was focused */
+		lastFocus: null
 	};
 
 	// DOM items
@@ -143,7 +146,7 @@ $.extend( KeyTable.prototype, {
 			return false;
 		}
 
-		var lastIdx = this.s.lastFocus.index();
+		var lastIdx = this.s.lastFocus.cell.index();
 		return cell.row === lastIdx.row && cell.column === lastIdx.column;
 	},
 
@@ -227,29 +230,30 @@ $.extend( KeyTable.prototype, {
 		if ( dt.settings()[0].oFeatures.bStateSave ) {
 			dt.on( 'stateSaveParams.keyTable', function (e, s, d) {
 				d.keyTable = that.s.lastFocus ?
-					that.s.lastFocus.index() :
+					that.s.lastFocus.cell.index() :
 					null;
 			} );
 		}
 
-		// Reload - re-focus on the currently selected item. In SSP mode this
-		// has the effect of keeping the focus in position when changing page as
-		// well (which is different from how client-side processing works).
-		dt.on( 'xhr.keyTable', function ( e ) {
+		// Redraw - retain focus on the current cell
+		dt.on( 'draw.keyTable', function (e) {
 			if ( that.s.focusDraw ) {
-				// Triggered by server-side processing, and thus `_focus` will
-				// do the refocus on the next draw event
 				return;
 			}
 
 			var lastFocus = that.s.lastFocus;
 
 			if ( lastFocus ) {
-				that.s.lastFocus = null;
+				var relative = that.s.lastFocus.relative;
+				var info = dt.page.info();
+				var row = relative.row + info.start;
 
-				dt.one( 'draw', function () {
-					that._focus( lastFocus );
-				} );
+				// Reverse if needed
+				if ( row >= info.recordsDisplay ) {
+					row = info.recordsDisplay - 1;
+				}
+
+				that._focus( row, relative.column, true, e );
 			}
 		} );
 
@@ -298,7 +302,7 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 
-		var cell = this.s.lastFocus;
+		var cell = this.s.lastFocus.cell;
 
 		$( cell.node() ).removeClass( this.c.className );
 		this.s.lastFocus = null;
@@ -357,7 +361,7 @@ $.extend( KeyTable.prototype, {
 			orig.preventDefault();
 		}
 
-		editor.inline( this.s.lastFocus.index() );
+		editor.inline( this.s.lastFocus.cell.index() );
 
 		// Excel style - select all text
 		$('div.DTE input, div.DTE textarea').select();
@@ -400,7 +404,7 @@ $.extend( KeyTable.prototype, {
 	 *
 	 * @param  {DataTables.Api|integer} row Can be given as an API instance that
 	 *   contains the cell to focus or as an integer. As the latter it is the
-	 *   visible row index - NOT the data index
+	 *   visible row index (from the whole data set) - NOT the data index
 	 * @param  {integer} [column] Not required if a cell is given as the first
 	 *   parameter. Otherwise this is the column data index for the cell to
 	 *   focus on
@@ -447,6 +451,7 @@ $.extend( KeyTable.prototype, {
 				.one( 'draw', function () {
 					that.s.focusDraw = false;
 					that.s.waitingForDraw = false;
+					console.log( 'running focus', row, column );
 					that._focus( row, column );
 				} )
 				.page( Math.floor( row / pageInfo.length ) )
@@ -470,7 +475,7 @@ $.extend( KeyTable.prototype, {
 
 		if ( lastFocus ) {
 			// Don't trigger a refocus on the same cell
-			if ( lastFocus.node() === cell.node() ) {
+			if ( lastFocus.node === cell.node() ) {
 				return;
 			}
 
@@ -496,7 +501,14 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Event and finish
-		this.s.lastFocus = cell;
+		this.s.lastFocus = {
+			cell: cell,
+			node: cell.node(),
+			relative: {
+				row: dt.rows( { page: 'current' } ).indexes().indexOf( cell.index().row ),
+				column: cell.index().column
+			}
+		};
 
 		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent || null ] );
 		dt.state.save();
@@ -529,8 +541,8 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// If not focused, then there is no key action to take
-		var cell = this.s.lastFocus;
-		if ( ! cell ) {
+		var lastFocus = this.s.lastFocus;
+		if ( ! lastFocus ) {
 			return;
 		}
 
@@ -558,27 +570,8 @@ $.extend( KeyTable.prototype, {
 			case 34: // page down (next page)
 				if ( navEnable ) {
 					e.preventDefault();
-					var index = dt.cells( {page: 'current'} ).nodes().indexOf( cell.node() );
-					this.s.waitingForDraw = true;
-					this.s.focusDraw = true;
 
 					dt
-						.one( 'draw', function () {
-							var nodes = dt.cells( {page: 'current'} ).nodes();
-
-							// Clear the last focus - changing page so it must
-							// be different, although if SSP the index would be
-							// the same.
-							that.s.lastFocus = null;
-
-							that._focus( dt.cell( index < nodes.length ?
-								nodes[ index ] :
-								nodes[ nodes.length-1 ]
-							) , null, true, e);
-
-							that.s.waitingForDraw = false;
-							that.s.focusDraw = false;
-						} )
 						.page( e.keyCode === 33 ? 'previous' : 'next' )
 						.draw( false );
 				}
@@ -624,7 +617,7 @@ $.extend( KeyTable.prototype, {
 			default:
 				// Everything else - pass through only when fully enabled
 				if ( enable === true ) {
-					this._emitEvent( 'key', [ dt, e.keyCode, this.s.lastFocus, e ] );
+					this._emitEvent( 'key', [ dt, e.keyCode, this.s.lastFocus.cell, e ] );
 				}
 				break;
 		}
@@ -692,7 +685,7 @@ $.extend( KeyTable.prototype, {
 		var dt           = this.s.dt;
 		var pageInfo     = dt.page.info();
 		var rows         = pageInfo.recordsDisplay;
-		var currentCell  = this.s.lastFocus;
+		var currentCell  = this.s.lastFocus.cell;
 		var columns      = this._columns();
 
 		if ( ! currentCell ) {
@@ -875,7 +868,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.1.4-dev";
+KeyTable.version = "2.2.0-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
