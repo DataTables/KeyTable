@@ -195,7 +195,7 @@ $.extend( KeyTable.prototype, {
 
 		// Click blur
 		if ( this.c.blurable ) {
-			$( document ).on( 'click.keyTable', function ( e ) {
+			$( document ).on( 'mousedown.keyTable', function ( e ) {
 				// Click on the search input will blur focus
 				if ( $(e.target).parents( '.dataTables_filter' ).length ) {
 					that._blur();
