@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="7">
+
+<css lib="datatables keytable" />
+<js lib="jquery datatables keytable">
+<![CDATA[
+$(document).ready(function() {
+	$('#example').DataTable( {
+		keys: {
+			blurable: false
+		}
+	} );
+} );
+]]>
+</js>
+
+<title lib="KeyTable">Keep focus (no blur)</title>
+
+<info><![CDATA[
+
+By default, KeyTable operates similar to an `-tag input` element, whereby its interaction is maintained only when focused, and when clicking outside of the element (in this case the table) the focus is blurred (lost). This behaviour can be controlled in KeyTable via the `-init keys.blurable` option which, when set to false, will result in the table not blurring focus when clicking else where in the document.
+
+]]></info>
+
+</dt-example>
