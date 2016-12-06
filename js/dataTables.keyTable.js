@@ -1,11 +1,11 @@
-/*! KeyTable 2.2.0-dev
+/*! KeyTable 2.2.0
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.2.0-dev
+ * @version     2.2.0
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -451,7 +451,6 @@ $.extend( KeyTable.prototype, {
 				.one( 'draw', function () {
 					that.s.focusDraw = false;
 					that.s.waitingForDraw = false;
-					console.log( 'running focus', row, column );
 					that._focus( row, column );
 				} )
 				.page( Math.floor( row / pageInfo.length ) )
@@ -868,7 +867,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.2.0-dev";
+KeyTable.version = "2.2.0";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
