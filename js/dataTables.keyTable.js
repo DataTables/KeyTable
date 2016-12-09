@@ -1,11 +1,11 @@
-/*! KeyTable 2.2.0
+/*! KeyTable 2.2.1-dev
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.2.0
+ * @version     2.2.1-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -782,7 +782,9 @@ $.extend( KeyTable.prototype, {
 			.insertBefore( dt.table().node() );
 
 		div.children().on( 'focus', function (e) {
-			that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}), null, true, e );
+			if ( dt.cell(':eq(0)', {page: 'current'}).any() ) {
+				that._focus( dt.cell(':eq(0)', '0:visible', {page: 'current'}), null, true, e );
+			}
 		} );
 	},
 	/**
@@ -791,17 +793,17 @@ $.extend( KeyTable.prototype, {
 	 *
 	 * @private
 	 */
-	 _updateFixedColumns:function(column){
-	 	var dt = this.s.dt;
-	 	var settings = dt.settings()[0];
+	_updateFixedColumns:function(column){
+		var dt = this.s.dt;
+		var settings = dt.settings()[0];
 
-	 	if(settings._oFixedColumns){
-	 		var leftCols = settings._oFixedColumns.s.iLeftColumns;
-	 		var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
-	 		if (column < leftCols || column > rightCols)
-	 			dt.fixedColumns().update();
-	 	}
-	 }
+		if(settings._oFixedColumns){
+			var leftCols = settings._oFixedColumns.s.iLeftColumns;
+			var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
+			if (column < leftCols || column > rightCols)
+				dt.fixedColumns().update();
+		}
+	}
 } );
 
 
@@ -867,7 +869,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.2.0";
+KeyTable.version = "2.2.1-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
