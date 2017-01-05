@@ -417,8 +417,10 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
 		var lastFocus = this.s.lastFocus;
-		if( ! originalEvent)
+
+		if ( ! originalEvent) {
 			originalEvent = null;
+		}
 
 		if ( ! this.s.enable ) {
 			return;
@@ -451,7 +453,7 @@ $.extend( KeyTable.prototype, {
 				.one( 'draw', function () {
 					that.s.focusDraw = false;
 					that.s.waitingForDraw = false;
-					that._focus( row, column );
+					that._focus( row, column, undefined, originalEvent );
 				} )
 				.page( Math.floor( row / pageInfo.length ) )
 				.draw( false );
