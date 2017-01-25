@@ -211,6 +211,11 @@ $.extend( KeyTable.prototype, {
 					return;
 				}
 
+				// Or an Editor date input
+				if ( $(e.target).parents('div.editor-datetime').length ) {
+					return;
+				}
+
 				//If the click was inside the fixed columns container, don't blur
 				if ( $(e.target).parents().filter('.DTFC_Cloned').length ) {
 					return;
