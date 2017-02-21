@@ -248,7 +248,7 @@ $.extend( KeyTable.prototype, {
 
 			var lastFocus = that.s.lastFocus;
 
-			if ( lastFocus ) {
+			if ( lastFocus && lastFocus.node.getRootNode() === document ) {
 				var relative = that.s.lastFocus.relative;
 				var info = dt.page.info();
 				var row = relative.row + info.start;
