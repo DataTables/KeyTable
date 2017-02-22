@@ -377,7 +377,7 @@ $.extend( KeyTable.prototype, {
 				editor.off( 'cancelOpen.keyTable' );
 
 				// Excel style - select all text
-				$('div.DTE input, div.DTE textarea').select();
+				$('div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea').select();
 
 				// Reduce the keys the Keys listens for
 				dt.keys.enable( that.c.editorKeys );
