@@ -248,10 +248,14 @@ $.extend( KeyTable.prototype, {
 
 			var lastFocus = that.s.lastFocus;
 
-			if ( lastFocus && lastFocus.node.getRootNode() === document ) {
+			if ( lastFocus && lastFocus.node && $(lastFocus.node).closest('body') === document.body ) {
 				var relative = that.s.lastFocus.relative;
 				var info = dt.page.info();
 				var row = relative.row + info.start;
+
+				if ( info.recordsDisplay === 0 ) {
+					return;
+				}
 
 				// Reverse if needed
 				if ( row >= info.recordsDisplay ) {
