@@ -249,7 +249,10 @@ $.extend( KeyTable.prototype, {
 			var lastFocus = that.s.lastFocus;
 
 			if ( lastFocus && lastFocus.node && $(lastFocus.node).closest('body') === document.body ) {
-				var relative = that.s.lastFocus.relative;
+				var relative = {
+					row: dt.rows( { page: 'current' } ).indexes().indexOf( lastFocus.cell.index().row ),
+					column: lastFocus.cell.index().column
+				}
 				var info = dt.page.info();
 				var row = relative.row + info.start;
 
@@ -524,11 +527,7 @@ $.extend( KeyTable.prototype, {
 		// Event and finish
 		this.s.lastFocus = {
 			cell: cell,
-			node: cell.node(),
-			relative: {
-				row: dt.rows( { page: 'current' } ).indexes().indexOf( cell.index().row ),
-				column: cell.index().column
-			}
+			node: cell.node()
 		};
 
 		this._emitEvent( 'key-focus', [ this.s.dt, cell, originalEvent || null ] );
