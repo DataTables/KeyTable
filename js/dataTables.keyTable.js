@@ -350,6 +350,7 @@ $.extend( KeyTable.prototype, {
 	 */
 	_editor: function ( key, orig )
 	{
+		var that = this;
 		var dt = this.s.dt;
 		var editor = this.c.editor;
 
@@ -366,26 +367,36 @@ $.extend( KeyTable.prototype, {
 			orig.preventDefault();
 		}
 
-		editor.inline( this.s.lastFocus.cell.index() );
+		editor
+			.one( 'open.keyTable', function () {
+				// Remove cancel open
+				editor.off( 'cancelOpen.keyTable' );
 
-		// Excel style - select all text
-		$('div.DTE input, div.DTE textarea').select();
+				// Excel style - select all text
+				$('div.DTE input, div.DTE textarea').select();
 
-		// Reduce the keys the Keys listens for
-		dt.keys.enable( this.c.editorKeys );
+				// Reduce the keys the Keys listens for
+				dt.keys.enable( that.c.editorKeys );
 
-		// On blur of the navigation submit
-		dt.one( 'key-blur.editor', function () {
-			if ( editor.displayed() ) {
-				editor.submit();
-			}
-		} );
+				// On blur of the navigation submit
+				dt.one( 'key-blur.editor', function () {
+					if ( editor.displayed() ) {
+						editor.submit();
+					}
+				} );
 
-		// Restore full key navigation on close
-		editor.one( 'close', function () {
-			dt.keys.enable( true );
-			dt.off( 'key-blur.editor' );
-		} );
+				// Restore full key navigation on close
+				editor.one( 'close', function () {
+					dt.keys.enable( true );
+					dt.off( 'key-blur.editor' );
+				} );
+			} )
+			.one( 'cancelOpen.keyTable', function () {
+				// `preOpen` can cancel the display of the form, so it
+				// might be that the open event handler isn't needed
+				editor.off( 'open.keyTable' );
+			} )
+			.inline( this.s.lastFocus.cell.index() );
 	},
 
 
