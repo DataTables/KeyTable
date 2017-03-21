@@ -821,7 +821,7 @@ $.extend( KeyTable.prototype, {
 
 		if(settings._oFixedColumns){
 			var leftCols = settings._oFixedColumns.s.iLeftColumns;
-			var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
+			var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns - 1;
 			if (column < leftCols || column > rightCols)
 				dt.fixedColumns().update();
 		}
