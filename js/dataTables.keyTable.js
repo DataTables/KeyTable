@@ -816,7 +816,7 @@ $.extend( KeyTable.prototype, {
 	 * @param  {integer} column Index of the column being changed
 	 * @private
 	 */
-	_updateFixedColumns:function(column)
+	_updateFixedColumns: function( column )
 	{
 		var dt = this.s.dt;
 		var settings = dt.settings()[0];
@@ -825,7 +825,7 @@ $.extend( KeyTable.prototype, {
 			var leftCols = settings._oFixedColumns.s.iLeftColumns;
 			var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
 
-			if (column < leftCols || column > rightCols) {
+			if (column < leftCols || column >= rightCols) {
 				dt.fixedColumns().update();
 			}
 		}
