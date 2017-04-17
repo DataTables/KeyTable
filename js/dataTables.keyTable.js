@@ -1,11 +1,11 @@
-/*! KeyTable 2.2.1-dev
+/*! KeyTable 2.2.1
  * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.2.1-dev
+ * @version     2.2.1
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -895,7 +895,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.2.1-dev";
+KeyTable.version = "2.2.1";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
