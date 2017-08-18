@@ -340,6 +340,46 @@ $.extend( KeyTable.prototype, {
 		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
 	},
 
+	/**
+	 * Copy text from the focused cell to clipboard
+	 *
+	 * @private
+	 */
+	_clipboardCopy: function ()
+	{
+		var dt = this.s.dt;
+
+		// If there is a cell focused, and there is no other text selected
+		// allow the focused cell's text to be copied to clipboard
+		if ( this.s.lastFocus && window.getSelection && !window.getSelection().toString() ) {
+			var cell = this.s.lastFocus.cell;
+			var text = cell.render('display');
+			var hiddenDiv = $('<div/>')
+				.css( {
+					height: 1,
+					width: 1,
+					overflow: 'hidden',
+					position: 'fixed',
+					top: 0,
+					left: 0
+				} );
+			var textarea = $('<textarea readonly/>')
+				.val( text )
+				.appendTo( hiddenDiv );
+
+			try {
+				hiddenDiv.appendTo( dt.table().container() );
+				textarea[0].focus();
+				textarea[0].select();
+
+				document.execCommand( 'copy' );
+			}
+			catch (e) {}
+
+			hiddenDiv.remove();
+		}
+	},
+
 
 	/**
 	 * Get an array of the column indexes that KeyTable can operate on. This
@@ -581,6 +621,11 @@ $.extend( KeyTable.prototype, {
 		var enable = this.s.enable;
 		var navEnable = enable === true || enable === 'navigation-only';
 		if ( ! enable ) {
+			return;
+		}
+
+		if ( e.ctrlKey && e.keyCode === 67 ) { // c
+			this._clipboardCopy();
 			return;
 		}
 
