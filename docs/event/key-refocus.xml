@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-event library="KeyTable">
-	<name>key-focus</name>
-	<summary>KeyTable has focused a cell</summary>
-	<since>2.0.0</since>
+	<name>key-refocus</name>
+	<summary>KeyTable has refocused a cell</summary>
+	<since>2.3.0</since>
 
 	<type type="function">
 		<signature>function( e, datatable, cell, originalEvent )</signature>
@@ -26,28 +26,19 @@
 	</type>
 
 	<description>
-		The `kt-event key-focus` event is triggered whenever KeyTable focuses on a cell. This can be the result of:
+        The `-event key-focus` event can be used to determine when a cell has been focused on, but it will not be triggered again if a cell is click upon when it already has focus. While this is done to present unnecessary processing, there may be occasions where this information is useful.
 
-		* Initialisation with a default focus (`kt-init keys.focus`)
-		* User interaction with the mouse (clicking on a cell)
-		* User interaction with the keyboard (moving focus)
-		* API focus (`kt-api cell().focus()`).
-
-		It can be useful to know when a cell has focus so actions can be taken - for example you might wish to show additional information about the cell, adjust the cell's styling or enable additional interaction options for the end user.
-
-		This event will occur after the `kt-event key-focus` event (if there is a cell to be blurred - i.e. two cells can never have focus at the same time).
-
-		Additionally, this event is not triggered on an already focused cell - i.e. a focused cell cannot gain focus again before losing it. See `-event key-refocus` for a suitable event if you need to know when focus is triggered on an already focused cell.
+        To that end, this event behaves exactly like `-event key-focus`, but will only be triggered when a cell which already has focus is focused on again (either by a click event, or API action).
 	</description>
 
-	<example title="Show information about a cell when focus is changed"><![CDATA[
+	<example title="Show information about a cell when focus is activated, including reclicking on an already focused cell"><![CDATA[
 
 var table = $('#example').DataTable( {
 	keys: true
 } );
 
 table
-	.on( 'key-focus', function ( e, datatable, cell, originalEvent ) {
+	.on( 'key-focus key-refocus', function ( e, datatable, cell, originalEvent ) {
 		var rowData = datatable.row( cell.index().row ).data();
 
 		$('#details').html( 'Cell in '+rowData[0]+' focused' );
@@ -60,6 +51,6 @@ table
 
 	<related>kt-init keys.focus</related>
 	<related>kt-api cell().focus()</related>
+	<related>kt-event key-focus</related>
 	<related>kt-event key-blur</related>
-	<related>kt-event key-refocus</related>
 </dt-event>

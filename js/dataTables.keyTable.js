@@ -1,15 +1,15 @@
-/*! KeyTable 2.2.1
- * ©2009-2016 SpryMedia Ltd - datatables.net/license
+/*! KeyTable 2.3.0
+ * ©2009-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.2.1
+ * @version     2.3.0
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2009-2016 SpryMedia Ltd.
+ * @copyright   Copyright 2009-2017 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -226,6 +226,25 @@ $.extend( KeyTable.prototype, {
 		}
 
 		if ( this.c.editor ) {
+			// Need to disable KeyTable when the main editor is shown
+			editor.on( 'open.keyTableMain', function (e, mode, action) {
+				if ( mode !== 'inline' && that.s.enable ) {
+					that.enable( false );
+
+					editor.one( 'close.keyTable', function () {
+						that.enable( true );
+					} );
+				}
+			} );
+
+			if ( this.c.editOnFocus ) {
+				dt.on( 'key-focus.keyTable key-refocus.keyTable', function ( e, dt, cell, orig ) {
+					that._editor( null, orig );
+				} );
+			}
+
+			// Activate Editor when a key is pressed (will be ignored, if
+			// already active).
 			dt.on( 'key.keyTable', function ( e, dt, key, cell, orig ) {
 				that._editor( key, orig );
 			} );
@@ -321,6 +340,46 @@ $.extend( KeyTable.prototype, {
 		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
 	},
 
+	/**
+	 * Copy text from the focused cell to clipboard
+	 *
+	 * @private
+	 */
+	_clipboardCopy: function ()
+	{
+		var dt = this.s.dt;
+
+		// If there is a cell focused, and there is no other text selected
+		// allow the focused cell's text to be copied to clipboard
+		if ( this.s.lastFocus && window.getSelection && !window.getSelection().toString() ) {
+			var cell = this.s.lastFocus.cell;
+			var text = cell.render('display');
+			var hiddenDiv = $('<div/>')
+				.css( {
+					height: 1,
+					width: 1,
+					overflow: 'hidden',
+					position: 'fixed',
+					top: 0,
+					left: 0
+				} );
+			var textarea = $('<textarea readonly/>')
+				.val( text )
+				.appendTo( hiddenDiv );
+
+			try {
+				hiddenDiv.appendTo( dt.table().container() );
+				textarea[0].focus();
+				textarea[0].select();
+
+				document.execCommand( 'copy' );
+			}
+			catch (e) {}
+
+			hiddenDiv.remove();
+		}
+	},
+
 
 	/**
 	 * Get an array of the column indexes that KeyTable can operate on. This
@@ -358,6 +417,11 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var editor = this.c.editor;
 
+		// Do nothing if there is already an inline edit in this cell
+		if ( $('div.DTE', this.s.lastFocus.cell.node()).length ) {
+			return;
+		}
+
 		// Don't activate inline editing when the shift key is pressed
 		if ( key === 16 ) {
 			return;
@@ -365,7 +429,7 @@ $.extend( KeyTable.prototype, {
 
 		orig.stopPropagation();
 
-		// Return key should do nothing - for textareas's it would empty the
+		// Return key should do nothing - for textareas it would empty the
 		// contents
 		if ( key === 13 ) {
 			orig.preventDefault();
@@ -377,7 +441,9 @@ $.extend( KeyTable.prototype, {
 				editor.off( 'cancelOpen.keyTable' );
 
 				// Excel style - select all text
-				$('div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea').select();
+				if ( that.c.editAutoSelect ) {
+					$('div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea').select();
+				}
 
 				// Reduce the keys the Keys listens for
 				dt.keys.enable( that.c.editorKeys );
@@ -497,6 +563,7 @@ $.extend( KeyTable.prototype, {
 		if ( lastFocus ) {
 			// Don't trigger a refocus on the same cell
 			if ( lastFocus.node === cell.node() ) {
+				this._emitEvent( 'key-refocus', [ this.s.dt, cell, originalEvent || null ] );
 				return;
 			}
 
@@ -554,6 +621,11 @@ $.extend( KeyTable.prototype, {
 		var enable = this.s.enable;
 		var navEnable = enable === true || enable === 'navigation-only';
 		if ( ! enable ) {
+			return;
+		}
+
+		if ( e.ctrlKey && e.keyCode === 67 ) { // c
+			this._clipboardCopy();
 			return;
 		}
 
@@ -874,6 +946,18 @@ KeyTable.defaults = {
 	editorKeys: 'navigation-only',
 
 	/**
+	 * Set if Editor should automatically select the text in the input
+	 * @type {Boolean}
+	 */
+	editAutoSelect: true,
+
+	/**
+	 * Control if editing should be activated immediately upon focus
+	 * @type {Boolean}
+	 */
+	editOnFocus: false,
+
+	/**
 	 * Select a cell to automatically select on start up. `null` for no
 	 * automatic selection
 	 * @type {cell-selector}
@@ -895,7 +979,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.2.1";
+KeyTable.version = "2.3.0";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
