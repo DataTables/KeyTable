@@ -226,6 +226,8 @@ $.extend( KeyTable.prototype, {
 		}
 
 		if ( this.c.editor ) {
+			var editor = this.c.editor;
+
 			// Need to disable KeyTable when the main editor is shown
 			editor.on( 'open.keyTableMain', function (e, mode, action) {
 				if ( mode !== 'inline' && that.s.enable ) {
