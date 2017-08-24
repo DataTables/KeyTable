@@ -444,7 +444,7 @@ $.extend( KeyTable.prototype, {
 
 				// Excel style - select all text
 				if ( that.c.editAutoSelect ) {
-					$('div.DTE input, div.DTE textarea').select();
+					$('div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea').select();
 				}
 
 				// Reduce the keys the Keys listens for
