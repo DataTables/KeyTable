@@ -560,7 +560,10 @@ $.extend( KeyTable.prototype, {
 			row -= pageInfo.start;
 		}
 
-		var cell = dt.cell( ':eq('+row+')', column, {search: 'applied'} );
+		// Get the cell from the current position - ignoring any cells which might
+		// not have been rendered (therefore can't use `:eq()` selector).
+		var cells = dt.cells( null, column, {search: 'applied', order: 'applied'} ).flatten();
+		var cell = dt.cell( cells[ row ] );
 
 		if ( lastFocus ) {
 			// Don't trigger a refocus on the same cell
