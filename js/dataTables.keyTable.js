@@ -1,11 +1,11 @@
-/*! KeyTable 2.3.1
+/*! KeyTable 2.3.2-dev
  * ©2009-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.3.1
+ * @version     2.3.2-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -646,6 +646,7 @@ $.extend( KeyTable.prototype, {
 
 		var that = this;
 		var dt = this.s.dt;
+		var scrolling = this.s.dt.oScroll.sY ? true : false;
 
 		// If we are not listening for this key, do nothing
 		if ( this.c.keys && $.inArray( e.keyCode, this.c.keys ) === -1 ) {
@@ -666,7 +667,7 @@ $.extend( KeyTable.prototype, {
 
 			case 33: // page up (previous page)
 			case 34: // page down (next page)
-				if ( navEnable ) {
+				if ( navEnable && !scrolling ) {
 					e.preventDefault();
 
 					dt
@@ -990,7 +991,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.3.1";
+KeyTable.version = "2.3.2-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
