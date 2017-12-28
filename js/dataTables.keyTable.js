@@ -290,7 +290,7 @@ $.extend( KeyTable.prototype, {
 		dt.on( 'destroy.keyTable', function () {
 			dt.off( '.keyTable' );
 			$( dt.table().body() ).off( 'click.keyTable', 'th, td' );
-			$( document.body )
+			$( document )
 				.off( 'keydown.keyTable' )
 				.off( 'click.keyTable' );
 		} );
@@ -629,7 +629,7 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 
-		if ( e.ctrlKey && e.keyCode === 67 ) { // c
+		if ( e.ctrlKey && !e.altKey && e.keyCode === 67 ) { // c
 			this._clipboardCopy();
 			return;
 		}
