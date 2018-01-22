@@ -634,7 +634,7 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 
-		if ( e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey ) {
+		if ( (e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey) && !(e.ctrlKey && e.altKey) ) {
 			return;
 		}
 
@@ -646,7 +646,7 @@ $.extend( KeyTable.prototype, {
 
 		var that = this;
 		var dt = this.s.dt;
-		var scrolling = this.s.dt.oScroll.sY ? true : false;
+		var scrolling = this.s.dt.settings()[0].oScroll.sY ? true : false;
 
 		// If we are not listening for this key, do nothing
 		if ( this.c.keys && $.inArray( e.keyCode, this.c.keys ) === -1 ) {
