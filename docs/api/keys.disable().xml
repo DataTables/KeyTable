@@ -14,7 +14,7 @@
 	</type>
 
 	<description>
-		KeyTable is typically used as an enabler for other interaction options with a DataTable, such as editing a cell's content or triggering action that will display additional information about a cell or row. In such circumstances it is important that we have the ability to disable KeyTable's own listeners so keystrokes are not acted upon. This method provides exactly that ability.
+		KeyTable is typically used as an enabler for other interaction options with a DataTable, such as editing a cell's content or triggering an action that will display additional information about a cell or row. In such circumstances it is important that we have the ability to disable KeyTable's own listeners so keystrokes are not acted upon. This method provides exactly that ability.
 
 		As an example, consider the use of KeyTable with [Editor](//editor.datatables.net) where you wish to activate inline editing with a keystroke, but then disable KeyTable from taking other actions while the editing is in progress. This is what the `kt-init keys.editor` option provides built into KeyTable.
 	</description>

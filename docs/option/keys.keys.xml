@@ -15,7 +15,7 @@
 	</default>
 
 	<description>
-		This option can be used to gain fine control over which keys that KeyTable will listen for. The `kt-api keys.enable()` and `kt-api keys.disable()` methods can be used to enable and disable KeyTable completely, but this option provides the ability to specify the character codes that KeyTable will take action on when enabled.
+		This option can be used to gain fine control over which keys KeyTable will listen for. The `kt-api keys.enable()` and `kt-api keys.disable()` methods can be used to enable and disable KeyTable completely, but this option provides the ability to specify the character codes that KeyTable will take action on when enabled.
 
 		This can be used, for example, to listen only for arrow and return keys (effectively disabling the tab key), or only the tab key.
 

@@ -15,7 +15,7 @@
 	</default>
 
 	<description>
-		Allowing the end user to visually identify which cell has focus is obviously fundamentally important to KeyTable's abilities, and this is done by added a class to the focused cell. This class can then be styled using CSS to visually highlight the cell. The [CSS `outline` property](https://developer.mozilla.org/en-US/docs/Web/CSS/outline) is useful for this, and is the styling option used by the KeyTable default stylesheet.
+		Allowing the end user to visually identify which cell has focus is obviously fundamentally important to KeyTable's abilities, and this is done by adding a class to the focused cell. This class can then be styled using CSS to visually highlight the cell. The [CSS `outline` property](https://developer.mozilla.org/en-US/docs/Web/CSS/outline) is useful for this, and is the styling option used by the KeyTable default stylesheet.
 
 		This property can be used to alter the class name used to show cell focus.
 	</description>

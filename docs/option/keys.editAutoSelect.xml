@@ -17,7 +17,7 @@
 	<description>
 		When KeyTable is used to navigate a table and activate inline editing, it will, by default, automatically select the text in the input element. This provides an editing interface which acts very much like Excel - start typing and it will replace the existing values with the new text.
 
-        At times, however, you might wish to append to the existing text. This option provides the ability to disable the default action of selecting all text.
+		At times, however, you might wish to append to the existing text. This option provides the ability to disable the default action of selecting all text.
 	</description>
 
 	<example title="Disable auto selection of text"><![CDATA[
