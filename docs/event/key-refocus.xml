@@ -26,7 +26,7 @@
 	</type>
 
 	<description>
-        The `-event key-focus` event can be used to determine when a cell has been focused on, but it will not be triggered again if a cell is click upon when it already has focus. While this is done to present unnecessary processing, there may be occasions where this information is useful.
+        The `-event key-focus` event can be used to determine when a cell has been focused on, but will not be triggered again if a cell is clicked upon when it already has focus. While this is done to present unnecessary processing, there may be occasions where this information is useful.
 
         To that end, this event behaves exactly like `-event key-focus`, but will only be triggered when a cell which already has focus is focused on again (either by a click event, or API action).
 	</description>

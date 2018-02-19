@@ -21,9 +21,9 @@
 	</type>
 
 	<description>
-		KeyTable is typically used as an enabler for other interaction options with a DataTable, such as editing a cell's content or triggering action that will display additional information about a cell or row. In such circumstances it is important that we have the ability to control KeyTable's own listeners so which keystrokes it acts upon can be finely controls as required by your situation. This method provides that ability.
+		KeyTable is typically used as an enabler for other interaction options with a DataTable, such as editing a cell's content or triggering an action that will display additional information about a cell or row. In such circumstances it is important that we have the ability to control KeyTable's own listeners so which keystrokes it acts upon can be finely controls as required by your situation. This method provides that ability.
 
-		When fully enabled KeyTable, when a cell has focus, will listen for all non-special character key pressed (i.e. shift, cmd / ctrl and alt are ignored) and trigger the `kt-event key` event. However, you may wish to stop KeyTable from listening for certain events, such as letters while editing a field. To provide this ability them method accepts an optional parameter that will inform KeyTable what level of listeners you would like it to listen for an act upon.
+		When fully enabled KeyTable, when a cell has focus, will listen for all non-special character key presses (i.e. shift, cmd / ctrl and alt are ignored) and trigger the `kt-event key` event. However, you may wish to stop KeyTable from listening for certain events, such as letters while editing a field. To provide this ability the method accepts an optional parameter that will inform KeyTable what level of listeners you would like it to listen for and act upon.
 
 		Please note that KeyTable's key listener is triggered on the `keydown` event and if KeyTable performs an action on the key (move focus for example) it will automatically call the `stopPropagation()` method of the event.
 	</description>

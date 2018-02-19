@@ -33,9 +33,9 @@
 		* User interaction with the keyboard (moving focus)
 		* API focus (`kt-api cell().focus()`).
 
-		It can be useful to know when a cell has focus so actions can be taken - for example you might wish to show additional information about the cell, adjust the cell's styling or enable additional interaction options for the end user.
+		It can be useful to know when a cell has focus so actions can be taken. For example, you may wish to show additional information about the cell, adjust the cell's styling or enable additional interaction options for the end user.
 
-		This event will occur after the `kt-event key-focus` event (if there is a cell to be blurred - i.e. two cells can never have focus at the same time).
+		This event will occur after the `kt-event key-blur` event (if there is a cell to be blurred - i.e. two cells can never have focus at the same time).
 
 		Additionally, this event is not triggered on an already focused cell - i.e. a focused cell cannot gain focus again before losing it. See `-event key-refocus` for a suitable event if you need to know when focus is triggered on an already focused cell.
 	</description>
