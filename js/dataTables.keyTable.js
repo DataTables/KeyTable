@@ -1,11 +1,11 @@
-/*! KeyTable 2.3.2-dev
+/*! KeyTable 2.4.0-dev
  * ©2009-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.3.2-dev
+ * @version     2.4.0-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -287,12 +287,19 @@ $.extend( KeyTable.prototype, {
 			}
 		} );
 
+		// Clipboard support
+		if ( this.c.clipboard ) {
+			this._clipboard();
+		}
+
 		dt.on( 'destroy.keyTable', function () {
 			dt.off( '.keyTable' );
 			$( dt.table().body() ).off( 'click.keyTable', 'th, td' );
 			$( document )
 				.off( 'keydown.keyTable' )
-				.off( 'click.keyTable' );
+				.off( 'click.keyTable' )
+				.off( 'copy.keyTable' )
+				.off( 'paste.keyTable' );
 		} );
 
 		// Initial focus comes from state or options
@@ -313,8 +320,6 @@ $.extend( KeyTable.prototype, {
 			dt.cell( this.c.focus ).focus();
 		}
 	},
-
-
 
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -342,44 +347,71 @@ $.extend( KeyTable.prototype, {
 		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
 	},
 
+
 	/**
-	 * Copy text from the focused cell to clipboard
+	 * Clipboard interaction handlers
 	 *
 	 * @private
 	 */
-	_clipboardCopy: function ()
-	{
+	_clipboard: function () {
 		var dt = this.s.dt;
+		var that = this;
 
-		// If there is a cell focused, and there is no other text selected
-		// allow the focused cell's text to be copied to clipboard
-		if ( this.s.lastFocus && window.getSelection && !window.getSelection().toString() ) {
-			var cell = this.s.lastFocus.cell;
-			var text = cell.render('display');
-			var hiddenDiv = $('<div/>')
-				.css( {
-					height: 1,
-					width: 1,
-					overflow: 'hidden',
-					position: 'fixed',
-					top: 0,
-					left: 0
-				} );
-			var textarea = $('<textarea readonly/>')
-				.val( text )
-				.appendTo( hiddenDiv );
-
-			try {
-				hiddenDiv.appendTo( dt.table().container() );
-				textarea[0].focus();
-				textarea[0].select();
-
-				document.execCommand( 'copy' );
-			}
-			catch (e) {}
-
-			hiddenDiv.remove();
+		// IE8 doesn't support getting selected text
+		if ( ! window.getSelection ) {
+			return;
 		}
+
+		$(document).on( 'copy.keyTable', function (ejq) {
+			var e = ejq.originalEvent;
+			var selection = window.getSelection().toString();
+			var focused = that.s.lastFocus;
+
+			// Only copy cell text to clipboard if there is no other selection
+			// and there is a focused cell
+			if ( ! selection && focused ) {
+				e.clipboardData.setData(
+					'text/plain',
+					focused.cell.render( that.c.clipboardOrthogonal )
+				);
+				e.preventDefault();
+			}
+		} );
+
+		$(document).on( 'paste.keyTable', function (ejq) {
+			var e = ejq.originalEvent;
+			var focused = that.s.lastFocus;
+			var activeEl = document.activeElement;
+			var editor = that.c.editor;
+			var pastedText;
+
+			if ( focused && (! activeEl || activeEl.nodeName.toLowerCase() === 'body') ) {
+				e.preventDefault();
+
+				if ( window.clipboardData && window.clipboardData.getData ) {
+					// IE
+					pastedText = window.clipboardData.getData('Text');
+				}
+				else if ( e.clipboardData && e.clipboardData.getData ) {
+					// Everything else
+					pastedText = e.clipboardData.getData('text/plain');
+				}
+
+				if ( editor ) {
+					// Got Editor - need to activate inline editing,
+					// set the value and submit
+					editor
+						.inline( focused.cell.index() )
+						.set( editor.displayed()[0], pastedText )
+						.submit();
+				}
+				else {
+					// No editor, so just dump the data in
+					focused.cell.data( pastedText );
+					dt.draw(false);
+				}
+			}
+		} );
 	},
 
 
@@ -640,11 +672,6 @@ $.extend( KeyTable.prototype, {
 		var enable = this.s.enable;
 		var navEnable = enable === true || enable === 'navigation-only';
 		if ( ! enable ) {
-			return;
-		}
-
-		if ( e.ctrlKey && !e.altKey && e.keyCode === 67 ) { // c
-			this._clipboardCopy();
 			return;
 		}
 
@@ -952,6 +979,18 @@ KeyTable.defaults = {
 	className: 'focus',
 
 	/**
+	 * Enable or disable clipboard support
+	 * @type {Boolean}
+	 */
+	clipboard: true,
+
+	/**
+	 * Orthogonal data that should be copied to clipboard
+	 * @type {string}
+	 */
+	clipboardOrthogonal: 'display',
+
+	/**
 	 * Columns that can be focused. This is automatically merged with the
 	 * visible columns as only visible columns can gain focus.
 	 * @type {String}
@@ -1005,7 +1044,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.3.2-dev";
+KeyTable.version = "2.4.0-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;

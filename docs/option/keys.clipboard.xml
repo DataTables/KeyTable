@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-option library="KeyTable">
+	<name>keys.clipboard</name>
+	<summary>Enable / disable clipboard interaction with KeyTable</summary>
+	<since>KeyTable 2.4.0</since>
+
+	<type type="boolean">
+		<description>
+			A boolean flag that can optionally be used to disable KeyTables' clipboard interaction.
+		</description>
+	</type>
+
+	<default value="true">
+		The end user can copy and paste values from and to the KeyTable focused cell.
+	</default>
+
+	<description>
+		KeyTables provides spreadsheet like navigation for a DataTable and it typically used for editing data. Interaction with the copy and paste system commands is a natural extension of this navigation ability, and as of v2.4 KeyTable supports the copy and paste commands.
+
+		The copy command will copy the text inside the focused cell if no other text on the page is selected, and of course only if there is a focused cell. Otherwise the browser's default behaviour will apply. The text copied, by default is the displayed rendered text. The `-init keys.clipboardOrthogonal` parameter can be used to control this.
+
+		The paste command will place the text that is currently in the clipboard into the cell. If Editor is active on the table (`-init keys.editor`) Editor will be activated for the cell, the value written to and then submitted. If Editor is not active on the table, the value will be written to the cell using `-api cell().data()`. Only if a cell has KeyTable focus and there is no active element on the page (i.e. an `-tag input` which has focus) will the paste command be enacted.
+	</description>
+
+	<example title="Disable clipboard interaction"><![CDATA[
+
+$('#myTable').DataTable( {
+	keys: {
+		clipboard: false
+	}
+} );
+
+]]></example>
+
+	<related>-init keys.clipboardOrthogonal</related>
+</dt-option>

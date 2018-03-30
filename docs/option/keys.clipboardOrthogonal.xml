@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-option library="KeyTable">
+	<name>keys.clipboardOrthogonal</name>
+	<summary>Set the orthogonal data to copy to clipboard</summary>
+	<since>KeyTable 2.4.0</since>
+
+	<type type="string">
+		<description>
+			Set the orthogonal data point for the data to copy to clipboard.
+		</description>
+	</type>
+
+	<default value="display">
+		The text that is shown inside the cell will be copied.
+	</default>
+
+	<description>
+		[DataTables' support for orthogonal data](https://www.datatables.net/manual/data/orthogonal-data) allows a single cell to report different data for the different uses that DataTables has for the data. This option provides the ability to control the orthogonal data point that is used for the copy to clipboard action of KeyTables.
+
+		Note that this effects the copy clipboard action only. The paste command will write to the raw data for the cell.
+	</description>
+
+	<example title="Set the orthogonal data for clipboard copy"><![CDATA[
+
+$('#myTable').DataTable( {
+	keys: {
+		clipboardOrthogonal: 'export'
+	}
+} );
+
+]]></example>
+
+	<related>-init keys.clipboard</related>
+</dt-option>
