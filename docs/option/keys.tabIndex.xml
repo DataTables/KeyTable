@@ -38,6 +38,5 @@ $('#myTable').DataTable( {
 
 ]]></example>
 
-	<related>dt-init keys.tabIndex</related>
 	<related>kt-init keys.blurable</related>
 </dt-option>
