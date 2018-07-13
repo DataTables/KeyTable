@@ -457,14 +457,14 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Don't activate Editor on control key presses
-		if (
+		if ( key !== null && (
 			(key >= 0x00 && key <= 0x09) ||
 			key === 0x0b ||
 			key === 0x0c ||
 			(key >= 0x0e && key <= 0x1f) ||
 			(key >= 0x70 && key <= 0x7b) ||
 			(key >= 0x7f && key <= 0x9f)
-		) {
+		) ) {
 			return;
 		}
 
