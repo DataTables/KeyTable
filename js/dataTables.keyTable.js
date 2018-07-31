@@ -508,7 +508,7 @@ $.extend( KeyTable.prototype, {
 					dt.keys.enable( hardEdit ? 'tab-only' : 'navigation-only' );
 
 					// On blur of the navigation submit
-					dt.one( 'key-blur.editor', function () {
+					dt.on( 'key-blur.editor', function () {
 						if ( editor.displayed() ) {
 							editor.submit();
 						}
@@ -519,17 +519,22 @@ $.extend( KeyTable.prototype, {
 						$( dt.table().container() ).addClass('dtk-focus-alt');
 					}
 
+					editor.on( 'submitUnsuccessful.keyTable', function () {
+						that._focus( editCell, null, false );
+					} );
+
 					// Restore full key navigation on close
 					editor.one( 'close', function () {
 						dt.keys.enable( true );
 						dt.off( 'key-blur.editor' );
+						editor.off( '.keyTable' );
 						$( dt.table().container() ).removeClass('dtk-focus-alt');
 					} );
 				} )
 				.one( 'cancelOpen.keyTable', function () {
 					// `preOpen` can cancel the display of the form, so it
 					// might be that the open event handler isn't needed
-					editor.off( 'open.keyTable' );
+					editor.off( '.keyTable' );
 				} )
 				.inline( editCell.index() );
 		};
