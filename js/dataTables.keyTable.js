@@ -239,6 +239,12 @@ $.extend( KeyTable.prototype, {
 				}
 			} );
 
+			if ( this.c.editOnFocus ) {
+				dt.on( 'key-focus.keyTable key-refocus.keyTable', function ( e, dt, cell, orig ) {
+					that._editor( null, orig, true );
+				} );
+			}
+
 			// Activate Editor when a key is pressed (will be ignored, if
 			// already active).
 			dt.on( 'key.keyTable', function ( e, dt, key, cell, orig ) {
@@ -1033,6 +1039,12 @@ KeyTable.defaults = {
 	 * @type {Editor}
 	 */
 	editor: null,
+
+	/**
+	 * Trigger editing immediately on focus
+	 * @type {boolean}
+	 */
+	editOnFocus: false,
 
 	/**
 	 * Select a cell to automatically select on start up. `null` for no
