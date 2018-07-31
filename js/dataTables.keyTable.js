@@ -516,14 +516,14 @@ $.extend( KeyTable.prototype, {
 
 					// Highlight the cell a different colour on full edit
 					if ( hardEdit ) {
-						$( editCell.node() ).addClass('focus-alt');
+						$( dt.table().container() ).addClass('dtk-focus-alt');
 					}
 
 					// Restore full key navigation on close
 					editor.one( 'close', function () {
 						dt.keys.enable( true );
 						dt.off( 'key-blur.editor' );
-						$( editCell.node() ).removeClass('focus-alt');
+						$( dt.table().container() ).removeClass('dtk-focus-alt');
 					} );
 				} )
 				.one( 'cancelOpen.keyTable', function () {
