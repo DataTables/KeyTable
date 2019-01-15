@@ -49,6 +49,7 @@
 }(function( $, window, document, undefined ) {
 'use strict';
 var DataTable = $.fn.dataTable;
+var namespaceCounter = 0;
 
 
 var KeyTable = function ( dt, opts ) {
@@ -80,7 +81,10 @@ var KeyTable = function ( dt, opts ) {
 		waitingForDraw: false,
 
 		/** @type {object} Information about the last cell that was focused */
-		lastFocus: null
+		lastFocus: null,
+
+		/** @type {string} Unique namespace per instance */
+		namespace: '.keyTable-'+(namespaceCounter++)
 	};
 
 	// DOM items
@@ -167,6 +171,7 @@ $.extend( KeyTable.prototype, {
 		var that = this;
 		var dt = this.s.dt;
 		var table = $( dt.table().node() );
+		var namespace = this.s.namespace;
 
 		// Need to be able to calculate the cell positions relative to the table
 		if ( table.css('position') === 'static' ) {
@@ -174,7 +179,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Click to focus
-		$( dt.table().body() ).on( 'click.keyTable', 'th, td', function (e) {
+		$( dt.table().body() ).on( 'click'+namespace, 'th, td', function (e) {
 			if ( that.s.enable === false ) {
 				return;
 			}
@@ -189,13 +194,13 @@ $.extend( KeyTable.prototype, {
 		} );
 
 		// Key events
-		$( document ).on( 'keydown.keyTable', function (e) {
+		$( document ).on( 'keydown'+namespace, function (e) {
 			that._key( e );
 		} );
 
 		// Click blur
 		if ( this.c.blurable ) {
-			$( document ).on( 'mousedown.keyTable', function ( e ) {
+			$( document ).on( 'mousedown'+namespace, function ( e ) {
 				// Click on the search input will blur focus
 				if ( $(e.target).parents( '.dataTables_filter' ).length ) {
 					that._blur();
@@ -233,27 +238,27 @@ $.extend( KeyTable.prototype, {
 				if ( mode !== 'inline' && that.s.enable ) {
 					that.enable( false );
 
-					editor.one( 'close.keyTable', function () {
+					editor.one( 'close'+namespace, function () {
 						that.enable( true );
 					} );
 				}
 			} );
 
 			if ( this.c.editOnFocus ) {
-				dt.on( 'key-focus.keyTable key-refocus.keyTable', function ( e, dt, cell, orig ) {
+				dt.on( 'key-focus'+namespace+' key-refocus'+namespace, function ( e, dt, cell, orig ) {
 					that._editor( null, orig, true );
 				} );
 			}
 
 			// Activate Editor when a key is pressed (will be ignored, if
 			// already active).
-			dt.on( 'key.keyTable', function ( e, dt, key, cell, orig ) {
+			dt.on( 'key'+namespace, function ( e, dt, key, cell, orig ) {
 				that._editor( key, orig, false );
 			} );
 
 			// Active editing on double click - it will already have focus from
 			// the click event handler above
-			$( dt.table().body() ).on( 'dblclick.keyTable', 'th, td', function (e) {
+			$( dt.table().body() ).on( 'dblclick'+namespace, 'th, td', function (e) {
 				if ( that.s.enable === false ) {
 					return;
 				}
@@ -270,7 +275,7 @@ $.extend( KeyTable.prototype, {
 
 		// Stave saving
 		if ( dt.settings()[0].oFeatures.bStateSave ) {
-			dt.on( 'stateSaveParams.keyTable', function (e, s, d) {
+			dt.on( 'stateSaveParams'+namespace, function (e, s, d) {
 				d.keyTable = that.s.lastFocus ?
 					that.s.lastFocus.cell.index() :
 					null;
@@ -278,7 +283,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Redraw - retain focus on the current cell
-		dt.on( 'draw.keyTable', function (e) {
+		dt.on( 'draw'+namespace, function (e) {
 			if ( that.s.focusDraw ) {
 				return;
 			}
@@ -308,14 +313,14 @@ $.extend( KeyTable.prototype, {
 			this._clipboard();
 		}
 
-		dt.on( 'destroy.keyTable', function () {
-			dt.off( '.keyTable' );
-			$( dt.table().body() ).off( 'click.keyTable', 'th, td' );
+		dt.on( 'destroy'+namespace, function () {
+			dt.off( namespace );
+			$( dt.table().body() ).off( 'click'+namespace, 'th, td' );
 			$( document )
-				.off( 'keydown.keyTable' )
-				.off( 'click.keyTable' )
-				.off( 'copy.keyTable' )
-				.off( 'paste.keyTable' );
+				.off( 'keydown'+namespace )
+				.off( 'click'+namespace )
+				.off( 'copy'+namespace )
+				.off( 'paste'+namespace );
 		} );
 
 		// Initial focus comes from state or options
@@ -372,13 +377,14 @@ $.extend( KeyTable.prototype, {
 	_clipboard: function () {
 		var dt = this.s.dt;
 		var that = this;
+		var namespace = this.s.namespace;
 
 		// IE8 doesn't support getting selected text
 		if ( ! window.getSelection ) {
 			return;
 		}
 
-		$(document).on( 'copy.keyTable', function (ejq) {
+		$(document).on( 'copy'+namespace, function (ejq) {
 			var e = ejq.originalEvent;
 			var selection = window.getSelection().toString();
 			var focused = that.s.lastFocus;
@@ -394,7 +400,7 @@ $.extend( KeyTable.prototype, {
 			}
 		} );
 
-		$(document).on( 'paste.keyTable', function (ejq) {
+		$(document).on( 'paste'+namespace, function (ejq) {
 			var e = ejq.originalEvent;
 			var focused = that.s.lastFocus;
 			var activeEl = document.activeElement;
@@ -467,6 +473,7 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var editor = this.c.editor;
 		var editCell = this.s.lastFocus.cell;
+		var namespace = this.s.namespace;
 
 		// Do nothing if there is already an inline edit in this cell
 		if ( $('div.DTE', editCell.node()).length ) {
@@ -495,9 +502,9 @@ $.extend( KeyTable.prototype, {
 
 		var editInline = function () {
 			editor
-				.one( 'open.keyTable', function () {
+				.one( 'open'+namespace, function () {
 					// Remove cancel open
-					editor.off( 'cancelOpen.keyTable' );
+					editor.off( 'cancelOpen'+namespace );
 
 					// Excel style - select all text
 					if ( ! hardEdit ) {
@@ -519,7 +526,7 @@ $.extend( KeyTable.prototype, {
 						$( dt.table().container() ).addClass('dtk-focus-alt');
 					}
 
-					editor.on( 'submitUnsuccessful.keyTable', function () {
+					editor.on( 'submitUnsuccessful'+namespace, function () {
 						that._focus( editCell, null, false );
 					} );
 
@@ -527,14 +534,14 @@ $.extend( KeyTable.prototype, {
 					editor.one( 'close', function () {
 						dt.keys.enable( true );
 						dt.off( 'key-blur.editor' );
-						editor.off( '.keyTable' );
+						editor.off( namespace );
 						$( dt.table().container() ).removeClass('dtk-focus-alt');
 					} );
 				} )
-				.one( 'cancelOpen.keyTable', function () {
+				.one( 'cancelOpen'+namespace, function () {
 					// `preOpen` can cancel the display of the form, so it
 					// might be that the open event handler isn't needed
-					editor.off( '.keyTable' );
+					editor.off( namespace );
 				} )
 				.inline( editCell.index() );
 		};
