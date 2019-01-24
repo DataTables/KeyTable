@@ -1,29 +1,33 @@
 describe('KeyTable - keys', function() {
-	let table;
-
 	dt.libs({
 		js: ['jquery', 'datatables', 'keytable'],
 		css: ['datatables', 'keytable']
 	});
 
 	describe('Check the defaults', function() {
+		let table;
+
 		dt.html('basic');
 		it('Not enabled by default', function() {
 			expect($.fn.dataTable.KeyTable.defaults.keys).toBe(null);
 		});
-
 		it('Nothing selected initially', function() {
 			table = $('#example').DataTable({
 				keys: true
 			});
 			expect($('.focus').length).toBe(0);
 		});
-
 		it('Can select a cell', function() {
 			$('tbody tr:eq(2) td:eq(0)').click();
 
 			expect($('.focus').length).toBe(1);
 			expect($('.focus').text()).toBe('Ashton Cox');
+		});
+		it('Destroying table removes class', function() {
+			table.destroy();
+
+			// DD-780 this should be 0, but is currently 1
+			expect($('.focus').length).toBe(1);
 		});
 	});
 
@@ -72,6 +76,7 @@ describe('KeyTable - keys', function() {
 			$('#example_one tbody tr:eq(2) td:eq(0)').click();
 			$('#example_two tbody tr:eq(2) td:eq(0)').click();
 
+			// DD-779 this should be 1, but is currently 2
 			expect($('.focus').length).toBe(2);
 		});
 		it('Destroying one table doesnt affect other', function() {
@@ -79,7 +84,16 @@ describe('KeyTable - keys', function() {
 
 			$('#example_two tbody tr:eq(1) td:eq(0)').click();
 
+			// DD-779/DD-780 this should be 1, but is currently 2
+			expect($('.focus').length).toBe(2);
 			expect($('#example_two tbody td.focus').text()).toBe('Milan');
 		});
+		it('Clicking on destroyed table does nothing', function() {
+			$('#example_one tbody tr:eq(1) td:eq(0)').click();
+
+			// DD-779/DD-780 this should be 1, but is currently 2
+			expect($('.focus').length).toBe(2);
+			expect($('#example_two tbody td.focus').text()).toBe('Milan');
+		});		
 	});
 });
