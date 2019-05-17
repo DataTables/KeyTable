@@ -938,16 +938,19 @@ $.extend( KeyTable.prototype, {
 			row++;
 		}
 
-		if ( row >= 0 && row < rows && $.inArray( column, columns ) !== -1
-		) {
-			e.preventDefault();
+		if ( row >= 0 && row < rows && $.inArray( column, columns ) !== -1 ) {
+			if (e) {
+				e.preventDefault();
+			}
 
 			this._focus( row, column, true, e );
 		}
 		else if ( ! keyBlurable || ! this.c.blurable ) {
 			// No new focus, but if the table isn't blurable, then don't loose
 			// focus
-			e.preventDefault();
+			if (e) {
+				e.preventDefault();
+			}
 		}
 		else {
 			this._blur();
@@ -1122,6 +1125,14 @@ DataTable.Api.register( 'keys.enable()', function ( opts ) {
 	return this.iterator( 'table', function (ctx) {
 		if ( ctx.keytable ) {
 			ctx.keytable.enable( opts === undefined ? true : opts );
+		}
+	} );
+} );
+
+DataTable.Api.register( 'keys.move()', function ( dir ) {
+	return this.iterator( 'table', function (ctx) {
+		if ( ctx.keytable ) {
+			ctx.keytable._shift( null, dir, false );
 		}
 	} );
 } );

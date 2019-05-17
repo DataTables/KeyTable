@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-api library="KeyTable">
+	<name>keys.move()</name>
+	<summary>Move the focus to an adjacent cell</summary>
+	<since>2.6.0</since>
+
+	<type type="function">
+	<name>keys.move()</name>
+		<signature>keys.move( direction )</signature>
+		<description>
+			Move the focus from the current cell to one adjacent to it.
+		</description>
+		<parameter name="direction" type="string">
+			This option can be given as the following values:
+
+			* `-string up` - Move up
+			* `-string down` - Move down
+			* `-string left` - Move left
+			* `-string right` - You guessed it, move right
+		</parameter>
+		<returns type="DataTables.Api">DataTables API instance</returns>
+	</type>
+
+	<description>
+		This method can be used to access KeyTable's internal logic to move the focus of a cell to an adjacent cell, taking into account paging, filtering, ordering, server-side processing, etc.
+
+		Note that if you know the cell (by node or index) you want to move the focus to use `-api cell().focus()`.
+	</description>
+
+	<related>-api cell().focus()</related>
+</dt-api>
