@@ -46,7 +46,7 @@ table.on( 'key', function ( e, datatable, key, cell, originalEvent ) {
 			.one( 'close', function () {
 				table.keys.enable();
 			} )
-			.inline( cell );
+			.inline( cell.node() );
 
 		table.keys.disable();
 	}
