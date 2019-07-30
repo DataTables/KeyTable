@@ -515,8 +515,8 @@ $.extend( KeyTable.prototype, {
 					dt.keys.enable( hardEdit ? 'tab-only' : 'navigation-only' );
 
 					// On blur of the navigation submit
-					dt.on( 'key-blur.editor', function () {
-						if ( editor.displayed() ) {
+					dt.on( 'key-blur.editor', function (e, dt, cell) {
+						if ( editor.displayed() && cell.node() === editCell.node() ) {
 							editor.submit();
 						}
 					} );
@@ -525,6 +525,13 @@ $.extend( KeyTable.prototype, {
 					if ( hardEdit ) {
 						$( dt.table().container() ).addClass('dtk-focus-alt');
 					}
+
+					// If the dev cancels the submit, we need to return focus
+					editor.on( 'preSubmitCancelled'+namespace, function () {
+						setTimeout( function () {
+							that._focus( editCell, null, false );
+						}, 50 );
+					} );
 
 					editor.on( 'submitUnsuccessful'+namespace, function () {
 						that._focus( editCell, null, false );
