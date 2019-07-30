@@ -759,6 +759,12 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 
+		// And the last focus still exists!
+		if ( ! this.s.dt.cell(lastFocus.node).any() ) {
+			this.s.lastFocus = null;
+			return;
+		}
+
 		var that = this;
 		var dt = this.s.dt;
 		var scrolling = this.s.dt.settings()[0].oScroll.sY ? true : false;
