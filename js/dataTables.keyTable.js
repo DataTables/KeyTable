@@ -371,7 +371,7 @@ $.extend( KeyTable.prototype, {
 		$( cell.node() ).removeClass( this.c.className );
 		this.s.lastFocus = null;
 
-		if ( noEvents === true ) {
+		if ( ! noEvents ) {
 			this._updateFixedColumns(cell.index().column);
 
 			this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
