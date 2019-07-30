@@ -693,6 +693,9 @@ $.extend( KeyTable.prototype, {
 			this._blur();
 		}
 
+		// Clear focus from other tables
+		this._removeOtherFocus();
+
 		var node = $( cell.node() );
 		node.addClass( this.c.className );
 
@@ -834,6 +837,19 @@ $.extend( KeyTable.prototype, {
 		}
 	},
 
+	/**
+	 * Remove focus from all tables other than this one
+	 */
+	_removeOtherFocus: function ()
+	{
+		var thisTable = this.s.dt.table().node();
+
+		$.fn.dataTable.tables({api:true}).iterator('table', function (settings) {
+			if (this.table().node() !== thisTable) {
+				this.cell.blur();
+			}
+		});
+	},
 
 	/**
 	 * Scroll a container to make a cell visible in it. This can be used for
