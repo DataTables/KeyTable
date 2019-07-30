@@ -315,10 +315,13 @@ $.extend( KeyTable.prototype, {
 
 		dt.on( 'destroy'+namespace, function () {
 			dt.off( namespace );
-			$( dt.table().body() ).off( 'click'+namespace, 'th, td' );
+			$( dt.table().body() )
+				.off( 'click'+namespace, 'th, td' )
+				.off( 'dblclick'+namespace, 'th, td' );
+
 			$( document )
+				.off( 'mousedown'+namespace )
 				.off( 'keydown'+namespace )
-				.off( 'click'+namespace )
 				.off( 'copy'+namespace )
 				.off( 'paste'+namespace );
 		} );
