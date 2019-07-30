@@ -314,7 +314,11 @@ $.extend( KeyTable.prototype, {
 		}
 
 		dt.on( 'destroy'+namespace, function () {
+			that._blur( true );
+
+			// Event tidy up
 			dt.off( namespace );
+
 			$( dt.table().body() )
 				.off( 'click'+namespace, 'th, td' )
 				.off( 'dblclick'+namespace, 'th, td' );
@@ -353,9 +357,10 @@ $.extend( KeyTable.prototype, {
 	/**
 	 * Blur the control
 	 *
+	 * @param {boolean} [noEvents=false] Don't trigger updates / events (for destroying)
 	 * @private
 	 */
-	_blur: function ()
+	_blur: function (noEvents)
 	{
 		if ( ! this.s.enable || ! this.s.lastFocus ) {
 			return;
@@ -366,9 +371,11 @@ $.extend( KeyTable.prototype, {
 		$( cell.node() ).removeClass( this.c.className );
 		this.s.lastFocus = null;
 
-		this._updateFixedColumns(cell.index().column);
+		if ( noEvents === true ) {
+			this._updateFixedColumns(cell.index().column);
 
-		this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
+			this._emitEvent( 'key-blur', [ this.s.dt, cell ] );
+		}
 	},
 
 
