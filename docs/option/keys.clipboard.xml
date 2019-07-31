@@ -15,11 +15,17 @@
 	</default>
 
 	<description>
+		<![CDATA[
 		KeyTables provides spreadsheet like navigation for a DataTable and it typically used for editing data. Interaction with the copy and paste system commands is a natural extension of this navigation ability, and as of v2.4 KeyTable supports the copy and paste commands.
+
+		< ### Internet Explorer compatibility
+		< 
+		< Please note that the copy command does not work in IE. It does work as expected in Edge and all other evergreen browsers. IE does not trigger a `copy` event if no text is selected.
 
 		The copy command will copy the text inside the focused cell if no other text on the page is selected, and of course only if there is a focused cell. Otherwise the browser's default behaviour will apply. The text copied, by default is the displayed rendered text. The `-init keys.clipboardOrthogonal` parameter can be used to control this.
 
 		The paste command will place the text that is currently in the clipboard into the cell. If Editor is active on the table (`-init keys.editor`) Editor will be activated for the cell, the value written to and then submitted. If Editor is not active on the table, the value will be written to the cell using `-api cell().data()`. Only if a cell has KeyTable focus and there is no active element on the page (i.e. an `-tag input` which has focus) will the paste command be enacted.
+		]]>
 	</description>
 
 	<example title="Disable clipboard interaction"><![CDATA[
