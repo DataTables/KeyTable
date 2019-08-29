@@ -26,8 +26,7 @@ describe('KeyTable - keys', function() {
 		it('Destroying table removes class', function() {
 			table.destroy();
 
-			// DD-780 this should be 0, but is currently 1
-			expect($('.focus').length).toBe(1);
+			expect($('.focus').length).toBe(0);
 		});
 	});
 
@@ -76,23 +75,20 @@ describe('KeyTable - keys', function() {
 			$('#example_one tbody tr:eq(2) td:eq(0)').click();
 			$('#example_two tbody tr:eq(2) td:eq(0)').click();
 
-			// DD-779 this should be 1, but is currently 2
-			expect($('.focus').length).toBe(2);
+			expect($('.focus').length).toBe(1);
 		});
 		it('Destroying one table doesnt affect other', function() {
 			table1.destroy();
 
 			$('#example_two tbody tr:eq(1) td:eq(0)').click();
 
-			// DD-779/DD-780 this should be 1, but is currently 2
-			expect($('.focus').length).toBe(2);
+			expect($('.focus').length).toBe(1);
 			expect($('#example_two tbody td.focus').text()).toBe('Milan');
 		});
 		it('Clicking on destroyed table does nothing', function() {
 			$('#example_one tbody tr:eq(1) td:eq(0)').click();
 
-			// DD-779/DD-780 this should be 1, but is currently 2
-			expect($('.focus').length).toBe(2);
+			expect($('.focus').length).toBe(1);
 			expect($('#example_two tbody td.focus').text()).toBe('Milan');
 		});		
 	});

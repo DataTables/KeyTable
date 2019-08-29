@@ -42,11 +42,14 @@ var table = $('#example').DataTable( {
 
 table.on( 'key', function ( e, datatable, key, cell, originalEvent ) {
 	if ( key === 13 ) { // return
-		editor
-			.one( 'close', function () {
-				table.keys.enable();
-			} )
-			.inline( cell );
+		// timeout needed to let inline initialise
+		setTimeout( function() {
+			editor
+				.one( 'close', function () {
+					table.keys.enable();
+				} )
+				.inline( cell.node() );
+		}, 100 );
 
 		table.keys.disable();
 	}
