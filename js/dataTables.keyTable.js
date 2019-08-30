@@ -172,6 +172,7 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var table = $( dt.table().node() );
 		var namespace = this.s.namespace;
+		var editorBlock = false;
 
 		// Need to be able to calculate the cell positions relative to the table
 		if ( table.css('position') === 'static' ) {
@@ -195,7 +196,9 @@ $.extend( KeyTable.prototype, {
 
 		// Key events
 		$( document ).on( 'keydown'+namespace, function (e) {
-			that._key( e );
+			if ( ! editorBlock ) {
+				that._key( e );
+			}
 		} );
 
 		// Click blur
@@ -271,6 +274,18 @@ $.extend( KeyTable.prototype, {
 
 				that._editor( null, e, true );
 			} );
+
+			// While Editor is busy processing, we don't want to process any key events
+			editor
+				.on('preSubmit', function () {
+					editorBlock = true;
+				} )
+				.on('preSubmitCancelled', function () {
+					editorBlock = false;
+				} )
+				.on('submitComplete', function () {
+					editorBlock = false;
+				} );
 		}
 
 		// Stave saving
