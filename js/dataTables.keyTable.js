@@ -849,6 +849,12 @@ $.extend( KeyTable.prototype, {
 				}
 				break;
 
+			case 113: // F2 - Excel like hard edit
+				if ( this.c.editor ) {
+					this._editor(null, e, true);
+					break;
+				}
+
 			default:
 				// Everything else - pass through only when fully enabled
 				if ( enable === true ) {
