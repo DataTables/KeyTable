@@ -854,6 +854,7 @@ $.extend( KeyTable.prototype, {
 					this._editor(null, e, true);
 					break;
 				}
+				// else fallthrough
 
 			default:
 				// Everything else - pass through only when fully enabled
