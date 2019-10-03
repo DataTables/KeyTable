@@ -17,24 +17,40 @@ describe('KeyTable - keys.focus', function() {
 		});
 
 		dt.html('basic');
-		it('Can select a cell by default', function() {
-			// This is a bit rubbish - you can specify a row, only a column
-			// of the first row, and that first row is the order of the original
-			// table. A bit wrong, Allan suggested it be changed to also include
-			// a focusModifier, so that {order:'current'} could be included.
-			// such a low priority bug that only worth fixing if seen by a
-			// customer
+		it('Can select a cell - first cell', function() {
 			table = $('#example').DataTable({
 				keys: {
 					focus: ':eq(0)'
+				},
+				// DD-1181 - remove displayStart once fixed
+				displayStart: 5
+			});
+
+			expect($('.focus').text()).toBe('Airi Satou');
+		});
+
+		dt.html('basic');
+		it('Can select a cell - node', function() {
+			table = $('#example').DataTable({
+				keys: {
+					focus: $('tbody tr:eq(2) td:eq(3)')
 				}
 			});
-			expect($('.focus').length).toBe(0);
 
-			table.page(5).draw(false);
+			expect($('.focus').text()).toBe('66');
+		});
 
-			expect($('.focus').length).toBe(1);
-			expect($('.focus').text()).toBe('Tiger Nixon');
+		dt.html('basic');
+		it('Can select a cell - function', function() {
+			table = $('#example').DataTable({
+				keys: {
+					focus: function(idx, data, node) {
+						return data === '$86,000' ? true : false;
+					}
+				}
+			});
+
+			expect($('.focus').text()).toBe('$86,000');
 		});
 	});
 });

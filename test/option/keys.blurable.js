@@ -19,47 +19,44 @@ describe('KeyTable - keys.blurable', function() {
 			$('tbody tr:eq(2) td:eq(0)').click();
 			expect($('.focus').length).toBe(1);
 		});
-		// NOTE: this should be 0 but isn't due to DD-779.
-		// TK COLIN Will complete this test once that Jira is completed.
 		it('Select a search input element', function() {
-			$('div.dataTables_filter input').click().focus();
-			expect($('.focus').length).toBe(1);
-		});		
+			$('div.dataTables_filter input').mousedown();
+			expect($('.focus').length).toBe(0);
+		});
 	});
 
-	// describe('Test with two tables', function() {
-	// 	let table1;
-	// 	let table2;
+	describe('Test with two tables', function() {
+		let table1;
+		let table2;
 
-	// 	dt.html('two_tables');
-	// 	it('Can have it on one table but not other', function() {
-	// 		table1 = $('#example_one').DataTable({
-	// 			keys: {
-	// 				className: 'unit_test'
-	// 			}
-	// 		});
+		dt.html('two_tables');
+		it('Can have it on one table but not other', function() {
+			table1 = $('#example_one').DataTable({
+				keys: {
+					className: 'unit_test'
+				}
+			});
 
-	// 		table2 = $('#example_two').DataTable({
-	// 			keys: true
-	// 		});
+			table2 = $('#example_two').DataTable({
+				keys: true
+			});
 
-	// 		$('#example_one tbody tr:eq(2) td:eq(0)').click();
+			$('#example_one tbody tr:eq(2) td:eq(1)').click();
 
-	// 		expect($('.focus').length).toBe(0);
-	// 		expect($('.unit_test').length).toBe(1);
-	// 	});
-	// 	it('Deselect', function() {
-	// 		// This is clumsy but the clicks on other elements don't deselect as expected (possibly related to DD-779)
-	// 		table1.search('3').draw();
+			expect($('.focus').length).toBe(0);
+			expect($('.unit_test').text()).toBe('Junior Technical Author');
+		});
+		it('Deselect', function() {
+			$('#example_one_filter input').mousedown();
 
-	// 		expect($('.focus').length).toBe(0);
-	// 		expect($('.unit_test').length).toBe(0);
-	// 	});
-	// 	it('Clicking other table uses default', function() {
-	// 		$('#example_two tbody tr:eq(2) td:eq(0)').click();
+			expect($('.focus').length).toBe(0);
+			expect($('.unit_test').length).toBe(0);
+		});
+		it('Clicking other table uses default', function() {
+			$('#example_two tbody tr:eq(2) td:eq(0)').click();
 
-	// 		expect($('.focus').length).toBe(1);
-	// 		expect($('.unit_test').length).toBe(0);
-	// 	});
-	// });
+			expect($('.focus').text()).toBe('Sydney');
+			expect($('.unit_test').length).toBe(0);
+		});
+	});
 });
