@@ -4,8 +4,9 @@ describe('KeyTable - keys.disable()', function() {
 		css: ['datatables', 'keytable']
 	});
 
+	let table;
+
 	describe('Check the defaults', function() {
-		let table;
 		it('Exists and is a function', function() {
 			table = $('#example').DataTable();
 			expect(typeof table.keys.enable).toBe('function');
@@ -16,8 +17,6 @@ describe('KeyTable - keys.disable()', function() {
 	});
 
 	describe('Functional tests', function() {
-		let table;
-
 		dt.html('basic');
 		it('Can use it to disable keys', function() {
 			table = $('#example').DataTable({
