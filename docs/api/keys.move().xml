@@ -2,7 +2,7 @@
 <dt-api library="KeyTable">
 	<name>keys.move()</name>
 	<summary>Move the focus to an adjacent cell</summary>
-	<since>2.6.0</since>
+	<since>2.5.1</since>
 
 	<type type="function">
 	<name>keys.move()</name>
