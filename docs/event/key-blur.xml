@@ -19,7 +19,7 @@
 	</type>
 
 	<description>
-		While it is often useful to know when a cell gains focus (`kt-event key-focus`) it is equally useful to know when that cell looses focus. This event provides that ability and is triggered whenever a cell's focus is blurred. This can be the result of:
+		While it is often useful to know when a cell gains focus (`kt-event key-focus`) it is equally useful to know when that cell loses focus. This event provides that ability and is triggered whenever a cell's focus is blurred. This can be the result of:
 
 		* Focus moving to a different cell
 		* Focus leaving the table (`kt-init keys.blurable`).
