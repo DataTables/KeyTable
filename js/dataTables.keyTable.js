@@ -503,6 +503,11 @@ $.extend( KeyTable.prototype, {
 	 */
 	_editor: function ( key, orig, hardEdit )
 	{
+		// If nothing focused, we can't take any action
+		if (! this.s.lastFocus) {
+			return;	
+		}
+
 		var that = this;
 		var dt = this.s.dt;
 		var editor = this.c.editor;
