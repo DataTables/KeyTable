@@ -84,7 +84,10 @@ var KeyTable = function ( dt, opts ) {
 		lastFocus: null,
 
 		/** @type {string} Unique namespace per instance */
-		namespace: '.keyTable-'+(namespaceCounter++)
+		namespace: '.keyTable-'+(namespaceCounter++),
+
+		/** @type {Node} Input element for tabbing into the table */
+		tabInput: null
 	};
 
 	// DOM items
@@ -297,8 +300,14 @@ $.extend( KeyTable.prototype, {
 			} );
 		}
 
+		dt.on( 'column-visibility'+namespace, function (e) {
+			that._tabInput();
+		} );
+
 		// Redraw - retain focus on the current cell
 		dt.on( 'draw'+namespace, function (e) {
+			that._tabInput();
+
 			if ( that.s.focusDraw ) {
 				return;
 			}
@@ -1020,8 +1029,8 @@ $.extend( KeyTable.prototype, {
 
 
 	/**
-	 * Create a hidden input element that can receive focus on behalf of the
-	 * table
+	 * Create and insert a hidden input element that can receive focus on behalf
+	 * of the table
 	 *
 	 * @private
 	 */
@@ -1037,22 +1046,32 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 
-		var div = $('<div><input type="text" tabindex="'+tabIndex+'"/></div>')
-			.css( {
-				position: 'absolute',
-				height: 1,
-				width: 0,
-				overflow: 'hidden'
-			} )
-			.insertBefore( dt.table().node() );
+		// Only create the input element once on first class
+		if (! this.s.tabInput) {
+			var div = $('<div><input type="text" tabindex="'+tabIndex+'"/></div>')
+				.css( {
+					position: 'absolute',
+					height: 1,
+					width: 0,
+					overflow: 'hidden'
+				} );
 
-		div.children().on( 'focus', function (e) {
-			var cell = dt.cell(':eq(0)', that._columns(), {page: 'current'});
+			div.children().on( 'focus', function (e) {
+				var cell = dt.cell(':eq(0)', that._columns(), {page: 'current'});
+	
+				if ( cell.any() ) {
+					that._focus( cell, null, true, e );
+				}
+			} );
 
-			if ( cell.any() ) {
-				that._focus( cell, null, true, e );
-			}
-		} );
+			this.s.tabInput = div;
+		}
+
+		// Insert the input element into the first cell in the table's body
+		var cell = this.s.dt.cell(':eq(0)', '0:visible', {page: 'current', order: 'current'}).node();
+		if (cell) {
+			$(cell).prepend(this.s.tabInput);
+		}
 	},
 
 	/**
