@@ -46,14 +46,7 @@ describe('KeyTable - keys.className', function() {
 			expect($('.focus').length).toBe(0);
 			expect($('.unit_test').length).toBe(1);
 		});
-		it('Deselect', function() {
-			// This is clumsy but the clicks on other elements don't deselect as expected (possibly related to DD-779)
-			table1.search('3').draw();
-
-			expect($('.focus').length).toBe(0);
-			expect($('.unit_test').length).toBe(0);
-		});
-		it('Clicking other table uses default', function() {
+		it('Clicking other table deselects first table and uses default', function() {
 			$('#example_two tbody tr:eq(2) td:eq(0)').click();
 
 			expect($('.focus').length).toBe(1);
