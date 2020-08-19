@@ -50,6 +50,7 @@
 'use strict';
 var DataTable = $.fn.dataTable;
 var namespaceCounter = 0;
+var editorNamespaceCounter = 0;
 
 
 var KeyTable = function ( dt, opts ) {
@@ -516,7 +517,7 @@ $.extend( KeyTable.prototype, {
 		var dt = this.s.dt;
 		var editor = this.c.editor;
 		var editCell = this.s.lastFocus.cell;
-		var namespace = this.s.namespace;
+		var namespace = this.s.namespace + 'e' + editorNamespaceCounter++;
 
 		// Do nothing if there is already an inline edit in this cell
 		if ( $('div.DTE', editCell.node()).length ) {
@@ -581,7 +582,7 @@ $.extend( KeyTable.prototype, {
 					} );
 
 					// Restore full key navigation on close
-					editor.one( 'close', function () {
+					editor.one( 'close'+namespace, function () {
 						dt.keys.enable( true );
 						dt.off( 'key-blur.editor' );
 						editor.off( namespace );
