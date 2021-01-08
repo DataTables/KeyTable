@@ -1,7 +1,7 @@
 describe('KeyTable - keys.tabIndex', function() {
 	dt.libs({
-		js: ['jquery', 'datatables', 'keytable', 'select', 'editor'],
-		css: ['datatables', 'keytable', 'select', 'editor']
+		js: ['jquery', 'datatables', 'keytable', 'select', 'editor', 'datetime'],
+		css: ['datatables', 'keytable', 'select', 'editor', 'datetime']
 	});
 
 	describe('Functional tests', function() {
