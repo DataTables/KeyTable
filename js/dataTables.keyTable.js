@@ -224,7 +224,10 @@ $.extend( KeyTable.prototype, {
 				}
 
 				// Or an Editor date input
-				if ( $(e.target).parents('div.editor-datetime').length ) {
+				if (
+					$(e.target).parents('div.editor-datetime').length ||
+					$(e.target).parents('div.dt-datetime').length 
+				) {
 					return;
 				}
 
