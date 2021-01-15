@@ -516,6 +516,11 @@ $.extend( KeyTable.prototype, {
 			return;	
 		}
 
+		// DataTables draw event
+		if (orig.type === 'draw') {
+			return;
+		}
+
 		var that = this;
 		var dt = this.s.dt;
 		var editor = this.c.editor;
