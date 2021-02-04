@@ -1,15 +1,15 @@
-/*! KeyTable 2.5.3
- * ©2009-2020 SpryMedia Ltd - datatables.net/license
+/*! KeyTable 2.6.0-dev
+ * ©2009-2021 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.5.3
+ * @version     2.6.0-dev
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2009-2020 SpryMedia Ltd.
+ * @copyright   Copyright 2009-2021 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -595,6 +595,10 @@ $.extend( KeyTable.prototype, {
 						dt.off( 'key-blur.editor' );
 						editor.off( namespace );
 						$( dt.table().container() ).removeClass('dtk-focus-alt');
+
+						if (that.s.returnSubmit) {
+							that._emitEvent( 'key-return-submit', [dt, editCell] );
+						}
 					} );
 				} )
 				.one( 'cancelOpen'+namespace, function () {
@@ -786,6 +790,10 @@ $.extend( KeyTable.prototype, {
 		}
 
 		var enable = this.s.enable;
+		this.s.returnSubmit = (enable === 'navigation-only' || enable === 'tab-only') && e.keyCode === 13
+			? true
+			: false;
+
 		var navEnable = enable === true || enable === 'navigation-only';
 		if ( ! enable ) {
 			return;
@@ -1188,7 +1196,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.5.3";
+KeyTable.version = "2.6.0-dev";
 
 
 $.fn.dataTable.KeyTable = KeyTable;

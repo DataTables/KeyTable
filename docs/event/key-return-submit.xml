@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-event library="KeyTable">
+	<name>key-return-submit</name>
+	<summary>Return key was used to submit an Editor inline edit</summary>
+	<since>2.6.0</since>
+
+	<type type="function">
+		<signature>function( e, datatable, cell )</signature>
+		<parameter type="object" name="e">
+			jQuery event object
+		</parameter>
+		<parameter type="DataTables.Api" name="datatable">
+			DataTable API instance for the table in question
+		</parameter>
+		<parameter type="DataTables.Api" name="cell">
+			A DataTables API instance that contains the cell that was focused (`dt-api cell()`)
+		</parameter>
+		<scope>HTML table element</scope>
+	</type>
+
+	<description>
+		The `-event key-return-submit` event is triggered if KeyTable is controlling [inline editing for Editor](//editor.datatables.net) and the end user submits the form by pressing the enter key. It is not activated when the form is initially placed into edit mode if done so by using the enter key.
+		
+		This can be used to perform an action on the table after the submission is complete, such as moving the KeyTable focus to act more like Excel.
+	</description>
+
+	<example title="Move focus to the right after a return key submit"><![CDATA[
+
+var table = $('#example').DataTable( {
+	keys: true
+} );
+
+table
+	.on( 'key-return-submit', function ( e, datatable, cell ) {
+		table.keys.move('right');
+	} );
+
+]]></example>
+
+	<related>kt-init keys.editor</related>
+</dt-event>
