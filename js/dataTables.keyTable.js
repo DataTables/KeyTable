@@ -977,13 +977,17 @@ $.extend( KeyTable.prototype, {
 	 */
 	_shift: function ( e, direction, keyBlurable )
 	{
-		var that         = this;
-		var dt           = this.s.dt;
-		var pageInfo     = dt.page.info();
-		var rows         = pageInfo.recordsDisplay;
-		var currentCell  = this.s.lastFocus.cell;
-		var columns      = this._columns();
-
+		var that      = this;
+		var dt        = this.s.dt;
+		var pageInfo  = dt.page.info();
+		var rows      = pageInfo.recordsDisplay;
+		var columns   = this._columns();
+		var last      = this.s.lastFocus;
+		if ( ! last ) {
+			return;
+		}
+	
+		var currentCell  = last.cell;
 		if ( ! currentCell ) {
 			return;
 		}
