@@ -1247,7 +1247,7 @@ DataTable.Api.register( 'keys.enable()', function ( opts ) {
 } );
 
 DataTable.Api.register( 'keys.enabled()', function ( opts ) {
-	let ctx = this.context;
+	var ctx = this.context;
 
 	if (ctx.length) {
 		return ctx[0].keytable
