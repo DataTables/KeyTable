@@ -132,6 +132,13 @@ $.extend( KeyTable.prototype, {
 	},
 
 	/**
+	 * Get enable status
+	 */
+	enabled: function () {
+		return this.s.enable;
+	},
+
+	/**
 	 * Focus on a cell
 	 * @param  {integer} row    Row index
 	 * @param  {integer} column Column index
@@ -1237,6 +1244,18 @@ DataTable.Api.register( 'keys.enable()', function ( opts ) {
 			ctx.keytable.enable( opts === undefined ? true : opts );
 		}
 	} );
+} );
+
+DataTable.Api.register( 'keys.enabled()', function ( opts ) {
+	let ctx = this.context;
+
+	if (ctx.length) {
+		return ctx[0].keytable
+			? ctx[0].keytable.enabled()
+			: false;
+	}
+
+	return false;
 } );
 
 DataTable.Api.register( 'keys.move()', function ( dir ) {
