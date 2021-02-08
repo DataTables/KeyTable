@@ -8,13 +8,13 @@
 	<name>keys.enabled()</name>
 		<signature>keys.enabled()</signature>
 		<description>
-			Query the API to determine the KeyTables state for the table.
+			Query the API to determine the KeyTable's state for the table.
 		</description>
 		<returns type="boolean|string">Enabled state</returns>
 	</type>
 
 	<description>
-		This method can be used to determine the state of KeyTable on a DataTable, as controlled by `-api keys.enabled()` and `-api keys.disable()`. The values that the method can return match what can be set with `-api keys.enable()`:
+		This method can be used to determine the state of KeyTable on a DataTable, as controlled by `-api keys.enable()` and `-api keys.disable()`. The values that the method can return match what can be set with `-api keys.enable()`:
 
 		* `true` - Fully enable KeyTable
 		* `false` - Fully disable KeyTable (`kt-api keys.disable()`)
