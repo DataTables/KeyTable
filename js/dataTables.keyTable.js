@@ -606,6 +606,7 @@ $.extend( KeyTable.prototype, {
 						$( dt.table().container() ).removeClass('dtk-focus-alt');
 
 						if (that.s.returnSubmit) {
+							that.s.returnSubmit = false;
 							that._emitEvent( 'key-return-submit', [dt, editCell] );
 						}
 					} );
