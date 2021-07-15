@@ -471,8 +471,10 @@ $.extend( KeyTable.prototype, {
 				if ( editor ) {
 					// Got Editor - need to activate inline editing,
 					// set the value and submit
+					var options = that._inlineOptions(focused.cell.index());
+
 					editor
-						.inline( focused.cell.index() )
+						.inline(options.cell, options.field, options.options)
 						.set( editor.displayed()[0], pastedText )
 						.submit();
 				}
@@ -562,6 +564,8 @@ $.extend( KeyTable.prototype, {
 		}
 
 		var editInline = function () {
+			var options = that._inlineOptions(editCell.index());
+
 			editor
 				.one( 'open'+namespace, function () {
 					// Remove cancel open
@@ -616,7 +620,7 @@ $.extend( KeyTable.prototype, {
 					// might be that the open event handler isn't needed
 					editor.off( namespace );
 				} )
-				.inline( editCell.index() );
+				.inline(options.cell, options.field, options.options);
 		};
 
 		// Editor 1.7 listens for `return` on keyup, so if return is the trigger
@@ -632,6 +636,20 @@ $.extend( KeyTable.prototype, {
 		else {
 			editInline();
 		}
+	},
+
+
+	_inlineOptions: function (cellIdx)
+	{
+		if (this.c.editorOptions) {
+			return this.c.editorOptions(cellIdx);
+		}
+
+		return {
+			cell: cellIdx,
+			field: undefined,
+			options: undefined
+		};
 	},
 
 
@@ -1187,6 +1205,12 @@ KeyTable.defaults = {
 	 * @type {boolean}
 	 */
 	editOnFocus: false,
+
+	/**
+	 * Options to pass to Editor's inline method
+	 * @type {function}
+	 */
+	editorOptions: null,
 
 	/**
 	 * Select a cell to automatically select on start up. `null` for no
