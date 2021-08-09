@@ -1042,12 +1042,13 @@ $.extend( KeyTable.prototype, {
 			column = columns[ currCol ]; // row is the display, column is an index
 
 		// If the direction is rtl then the logic needs to be inverted from this point forwards
-		if ($(dt.table().node()).css('direction') === 'rtl'){
-			direction = direction === 'right' ?
-				'left' :
-				direction === 'left' ?
-					'right':
-					direction;
+		if($(dt.table().node()).css('direction') === 'rtl') {
+			if(direction === 'right') {
+				direction = 'left';
+			}
+			else if(direction === 'left'){
+				direction = 'right';
+			}
 		}
 
 		if ( direction === 'right' ) {
