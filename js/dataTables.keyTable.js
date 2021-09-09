@@ -307,13 +307,13 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Stave saving
-		if ( dt.settings()[0].oFeatures.bStateSave ) {
+		// if ( dt.settings()[0].oFeatures.bStateSave ) {
 			dt.on( 'stateSaveParams'+namespace, function (e, s, d) {
 				d.keyTable = that.s.lastFocus ?
 					that.s.lastFocus.cell.index() :
 					null;
 			} );
-		}
+		// }
 
 		dt.on( 'column-visibility'+namespace, function (e) {
 			that._tabInput();
