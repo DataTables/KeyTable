@@ -319,6 +319,17 @@ $.extend( KeyTable.prototype, {
 			that._tabInput();
 		} );
 
+		dt.on( 'column-reorder'+namespace, function (e, s, d) {
+			// Need to update the last focus cell's index
+			var lastFocus = that.s.lastFocus;
+
+			if (lastFocus && lastFocus.cell) {
+				// Manipulate the API instance to correct the column index
+				lastFocus.cell[0][0].column = d.mapping.indexOf(d.from);
+				lastFocus.relative.column = d.mapping.indexOf(d.from);
+			}
+		} );
+
 		// Redraw - retain focus on the current cell
 		dt.on( 'draw'+namespace, function (e) {
 			that._tabInput();
@@ -1015,7 +1026,7 @@ $.extend( KeyTable.prototype, {
 			return;
 		}
 	
-		var currentCell  = last.cell;
+		var currentCell = last.cell;
 		if ( ! currentCell ) {
 			return;
 		}
