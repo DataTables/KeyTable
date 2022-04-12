@@ -5,7 +5,8 @@ $keytable-focus-alt: #ff8b33 !default;
 table.dataTable tbody {
 	th.focus,
 	td.focus {
-		box-shadow: inset 0 0 1px 2px $keytable-focus;
+		outline: 2px solid $keytable-focus;
+		outline-offset: -2px;
 	}
 }
 
@@ -13,7 +14,8 @@ div.dtk-focus-alt {
 	table.dataTable tbody {
 		th.focus,
 		td.focus {
-			box-shadow: inset 0 0 1px 2px $keytable-focus-alt;
+			outline: 2px solid $keytable-focus-alt;
+			outline-offset: -2px;
 		}
 	}
 }
