@@ -324,9 +324,11 @@ $.extend( KeyTable.prototype, {
 			var lastFocus = that.s.lastFocus;
 
 			if (lastFocus && lastFocus.cell) {
+				var curr = lastFocus.relative.column;
+				
 				// Manipulate the API instance to correct the column index
-				lastFocus.cell[0][0].column = d.mapping.indexOf(d.from);
-				lastFocus.relative.column = d.mapping.indexOf(d.from);
+				lastFocus.cell[0][0].column = d.mapping.indexOf(curr);
+				lastFocus.relative.column = d.mapping.indexOf(curr);
 			}
 		} );
 
