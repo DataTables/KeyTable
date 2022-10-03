@@ -566,6 +566,11 @@ $.extend( KeyTable.prototype, {
 
 					// On blur of the navigation submit
 					dt.on( 'key-blur.editor', function (e, dt, cell) {
+						// When Editor has its own blur enabled - do nothing here
+						if (editor.s.editOpts.onBlur === 'submit') {
+							return;
+						}
+
 						if ( editor.displayed() && cell.node() === editCell.node() ) {
 							editor.submit();
 						}
