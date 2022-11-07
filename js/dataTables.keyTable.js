@@ -1,5 +1,5 @@
 /*! KeyTable 2.8.0
- * ©2009-2021 SpryMedia Ltd - datatables.net/license
+ * ©2009-2022 SpryMedia Ltd - datatables.net/license
  */
 
 /**
@@ -7,9 +7,9 @@
  * @description Spreadsheet like keyboard navigation for DataTables
  * @version     2.8.0
  * @file        dataTables.keyTable.js
- * @author      SpryMedia Ltd (www.sprymedia.co.uk)
- * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2009-2021 SpryMedia Ltd.
+ * @author      SpryMedia Ltd
+ * @contact     datatables.net
+ * @copyright   Copyright 2009-2022 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
