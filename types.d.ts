@@ -66,6 +66,14 @@ declare module 'datatables.net' {
 			defaults: ConfigKeyTable;
 		}
 	}
+
+	interface ApiSelectorModifier {
+		/**
+		 * Pick cells which have focus. Note that this is for `cell()` and
+		 * `cells()` method only
+		 */
+		focused?: boolean | undefined;
+	}
 }
 
 
