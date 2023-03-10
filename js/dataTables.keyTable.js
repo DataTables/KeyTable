@@ -1,11 +1,11 @@
-/*! KeyTable 2.8.1
+/*! KeyTable 2.8.2
  * © SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.8.1
+ * @version     2.8.2
  * @file        dataTables.keyTable.js
  * @author      SpryMedia Ltd
  * @contact     datatables.net
@@ -1267,7 +1267,7 @@ KeyTable.defaults = {
 
 
 
-KeyTable.version = "2.8.1";
+KeyTable.version = "2.8.2";
 
 
 $.fn.dataTable.KeyTable = KeyTable;
