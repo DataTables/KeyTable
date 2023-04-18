@@ -994,7 +994,7 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Top correction (partially in view)
-		if ( offset.top < scrollTop && offset.top + height > scrollTop ) {
+		if ( offset.top < scrollTop && offset.top + height > scrollTop - 5 ) {
 			scroller.scrollTop( offset.top );
 		}
 
@@ -1003,10 +1003,11 @@ $.extend( KeyTable.prototype, {
 			scroller.scrollLeft( offset.left );
 		}
 
-		// Bottom correction
+		// Bottom correction plus in view correction. Note that the magic 5 is to allow
+		// for the edge just passing the bottom of the view
 		if (
 			offset.top + height > scrollTop + containerHeight &&
-			offset.top < scrollTop + containerHeight && // partly visible
+			offset.top < scrollTop + containerHeight + 5 &&
 			height < containerHeight
 		) {
 			scroller.scrollTop( offset.top + height - containerHeight );
