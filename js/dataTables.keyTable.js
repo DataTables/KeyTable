@@ -993,8 +993,8 @@ $.extend( KeyTable.prototype, {
 			offset.top += parseInt( cell.closest('table').css('top'), 10 );
 		}
 
-		// Top correction
-		if ( offset.top < scrollTop ) {
+		// Top correction (partially in view)
+		if ( offset.top < scrollTop && offset.top + height > scrollTop ) {
 			scroller.scrollTop( offset.top );
 		}
 
@@ -1004,7 +1004,11 @@ $.extend( KeyTable.prototype, {
 		}
 
 		// Bottom correction
-		if ( offset.top + height > scrollTop + containerHeight && height < containerHeight ) {
+		if (
+			offset.top + height > scrollTop + containerHeight &&
+			offset.top < scrollTop + containerHeight && // partly visible
+			height < containerHeight
+		) {
 			scroller.scrollTop( offset.top + height - containerHeight );
 		}
 
