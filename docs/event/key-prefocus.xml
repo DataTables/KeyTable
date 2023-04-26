@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-event library="KeyTable">
+	<name>key-prefocus</name>
+	<summary></summary>
+	<since>2.9.0</since>
+
+	<type type="function">
+		<signature>function( e, datatable, cell, originalEvent )</signature>
+		<parameter type="object" name="e">
+			jQuery event object
+		</parameter>
+		<parameter type="DataTables.Api" name="datatable">
+			DataTable API instance for the table in question
+		</parameter>
+		<parameter type="DataTables.Api" name="cell">
+			A DataTables API instance that contains the cell that is to be focused (`dt-api cell()`)
+		</parameter>
+		<parameter type="object|null" name="originalEvent">
+			The original event that triggered this focus. It may be:
+
+			* A DOM `click` event - e.g. click to focus on a cell
+			* A DOM `focus` event - e.g. using tab to navigate around the page and tabbing into the table.
+			* `null`: no original event - e.g. when using `-api cell().focus()`. 
+		</parameter>
+		<scope>HTML table element</scope>
+	</type>
+
+	<description>
+		This event is triggered just prior to KeyTable blurring focus from the current cell (if there is one focused) and then focusing on a new cell. It is provided to give a way of cancelled a focus, before KeyTable performs any interaction changes with the table.
+
+		To cancel the focus action, return `false` from your `-event key-prefocus` event handler. Since it is a Javascript function you can perform checks to determine what value should be returned (note no return statement, i.e. `undefined` will not result in the focus being cancelled), including checking values in the row for the cell that was clicked upon.
+
+		As noted, this event happens before KeyTable would blur a cell which currently has focus, so if you want to cancel the focus _and_ blur from the currently focused cell, you must call `-api cell.blur()`.
+	</description>
+
+	<example title="Disallow focus on any cell that doesn't meet a condition."><![CDATA[
+
+var table = $('#example').DataTable( {
+	keys: true
+} );
+
+table.on('key-prefocus', function (e, dt, cell, currentCell, org) {
+	let row = dt.row(cell.index().row).data();
+
+	return row.fruit === 'Apple' ? false : true;
+});
+
+]]></example>
+
+	<example title="As above, but blur focus when disallowed."><![CDATA[
+
+var table = $('#example').DataTable( {
+	keys: true
+} );
+
+table.on('key-prefocus', function (e, dt, cell, org) {
+	let row = dt.row(cell.index().row).data();
+
+	if (row.fruit === 'Apple') {
+		// Blur current focus
+		dt.cell.blur();
+		return false;
+	}
+});
+
+]]></example>
+
+	<related>kt-init keys.focus</related>
+	<related>kt-api cell().focus()</related>
+	<related>kt-event key-blur</related>
+	<related>kt-event key-refocus</related>
+</dt-event>
