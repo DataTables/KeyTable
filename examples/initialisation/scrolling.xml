@@ -4,15 +4,25 @@
 <css lib="datatables keytable" />
 <js lib="jquery datatables keytable">
 <![CDATA[
-$(document).ready(function() {
-	var table = $('#example').DataTable( {
-		scrollY: 300,
-		paging:  false,
-		keys:    true
-	} );
-} );
+$('#example').DataTable({
+	keys: true,
+	paging: false,
+	scrollY: 300
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	keys: true,
+	paging: false,
+	scrollY: 300
+});
+
+]]>
+</js-vanilla>
 
 <title lib="KeyTable">Scrolling table</title>
 

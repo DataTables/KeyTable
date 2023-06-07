@@ -4,15 +4,25 @@
 <css lib="datatables keytable" />
 <js lib="jquery datatables keytable">
 <![CDATA[
-$(document).ready(function() {
-	$('#example').DataTable( {
-		serverSide: true,
-		ajax: "../../../../examples/server_side/scripts/server_processing.php",
-		keys: true
-	} );
-} );
+$('#example').DataTable({
+	ajax: "../../../../examples/server_side/scripts/server_processing.php",
+	keys: true,
+	serverSide: true
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	ajax: "../../../../examples/server_side/scripts/server_processing.php",
+	keys: true,
+	serverSide: true
+});
+
+]]>
+</js-vanilla>
 
 <title lib="KeyTable">Server-side processing</title>
 

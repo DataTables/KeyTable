@@ -14,25 +14,52 @@
 </css>
 <js lib="jquery datatables keytable">
 <![CDATA[
-$(document).ready(function() {
-	var events = $('#events');
-	var table = $('#example').DataTable( {
-		keys: true
-	} );
+var events = $('#events');
+var table = $('#example').DataTable({
+	keys: true
+});
 
-	table
-		.on( 'key', function ( e, datatable, key, cell, originalEvent ) {
-			events.prepend( '<div>Key press: '+key+' for cell <i>'+cell.data()+'</i></div>' );
-		} )
-		.on( 'key-focus', function ( e, datatable, cell ) {
-			events.prepend( '<div>Cell focus: <i>'+cell.data()+'</i></div>' );
-		} )
-		.on( 'key-blur', function ( e, datatable, cell ) {
-			events.prepend( '<div>Cell blur: <i>'+cell.data()+'</i></div>' );
-		} )
-} );
+table
+	.on('key', function (e, datatable, key, cell, originalEvent) {
+		events.prepend('<div>Key press: ' + key + ' for cell <i>' + cell.data() + '</i></div>');
+	})
+	.on('key-focus', function (e, datatable, cell) {
+		events.prepend('<div>Cell focus: <i>' + cell.data() + '</i></div>');
+	})
+	.on('key-blur', function (e, datatable, cell) {
+		events.prepend('<div>Cell blur: <i>' + cell.data() + '</i></div>');
+	});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+function message(str) {
+	let events = document.querySelector('#events');
+	let div = document.createElement('div');
+
+	div.innerHTML = str;
+	events.prepend(div);
+}
+
+let table = new DataTable('#example', {
+	keys: true
+});
+
+table
+	.on('key', function (e, datatable, key, cell, originalEvent) {
+		message('Key press: ' + key + ' for cell <i>' + cell.data() + '</i>');
+	})
+	.on('key-focus', function (e, datatable, cell) {
+		message('Cell focus: <i>' + cell.data() + '</i>');
+	})
+	.on('key-blur', function (e, datatable, cell) {
+		message('Cell blur: <i>' + cell.data() + '</i>');
+	});
+
+]]>
+</js-vanilla>
 
 <title lib="KeyTable">Events</title>
 

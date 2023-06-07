@@ -4,17 +4,29 @@
 <css lib="datatables scroller keytable" />
 <js lib="jquery datatables scroller keytable">
 <![CDATA[
-$(document).ready(function() {
-	var table = $('#example').DataTable( {
-		deferRender:    true,
-		scrollY:        200,
-		scrollCollapse: true,
-		scroller:       true,
-		keys:           true
-	} );
-} );
+$('#example').DataTable({
+	deferRender: true,
+	keys: true,
+	scrollCollapse: true,
+	scroller: true,
+	scrollY: 200
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	deferRender: true,
+	keys: true,
+	scrollCollapse: true,
+	scroller: true,
+	scrollY: 200
+});
+
+]]>
+</js-vanilla>
 
 <title lib="KeyTable">Scroller integration</title>
 

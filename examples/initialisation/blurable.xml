@@ -4,15 +4,25 @@
 <css lib="datatables keytable" />
 <js lib="jquery datatables keytable">
 <![CDATA[
-$(document).ready(function() {
-	$('#example').DataTable( {
-		keys: {
-			blurable: false
-		}
-	} );
-} );
+$('#example').DataTable({
+	keys: {
+		blurable: true
+	}
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	keys: {
+		blurable: true
+	}
+});
+
+]]>
+</js-vanilla>
 
 <title lib="KeyTable">Keep focus (no blur)</title>
 
