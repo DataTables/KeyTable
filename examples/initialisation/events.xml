@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example table-type="html" order="2">
 
-<css lib="datatables keytable">
-	#events {
-		margin-bottom: 1em;
-		padding: 1em;
-		background-color: #f6f6f6;
-		border: 1px solid #999;
-		border-radius: 3px;
-		height: 100px;
-		overflow: auto;
-	}
-</css>
+<css lib="datatables keytable" />
 <js lib="jquery datatables keytable">
 <![CDATA[
 var events = $('#events');
@@ -76,7 +66,7 @@ This trivial example shows information about each event as it occurs in an outpu
 ]]></info>
 
 <demo-html>
-	<div id="events">Event summary - new events added at the top</div>
+	<div id="events" class="box">Event summary - new events added at the top</div>
 </demo-html>
 
 </dt-example>

@@ -6,7 +6,7 @@
 <![CDATA[
 $('#example').DataTable({
 	keys: {
-		blurable: true
+		blurable: false
 	}
 });
 
@@ -17,7 +17,7 @@ $('#example').DataTable({
 <![CDATA[
 new DataTable('#example', {
 	keys: {
-		blurable: true
+		blurable: false
 	}
 });
 
