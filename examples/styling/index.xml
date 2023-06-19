@@ -3,6 +3,7 @@
 
 <title lib="KeyTable">Styling</title>
 
+<js lib="jquery" />
 <info><![CDATA[
 
 The KeyTable extension, like all DataTables extensions provides extensive styling options and the ability to be styled by the styling frameworks supported by DataTables core. This section shows KeyTable being styled using external CSS frameworks.
