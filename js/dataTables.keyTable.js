@@ -788,6 +788,12 @@ $.extend(KeyTable.prototype, {
 			return;
 		}
 
+		// Ignore key presses in an Editor inline create row - it is not navigatable
+		// by KeyTable
+		if ($(e.target).closest('.dte-inlineAdd').length) {
+			return;
+		}
+
 		var enable = this.s.enable;
 		this.s.returnSubmit =
 			(enable === 'navigation-only' || enable === 'tab-only') && e.keyCode === 13
