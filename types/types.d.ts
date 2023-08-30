@@ -45,7 +45,7 @@ declare module 'datatables.net' {
 		focus(): Api<T>;
 	}
 
-	interface ApiStatic {
+	interface DataTablesStatic {
 		/**
 		 * KeyTable class
 		 */
