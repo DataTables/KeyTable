@@ -22,9 +22,7 @@
 	</description>
 
 	<example title="Blur focus"><![CDATA[
-
 table.cell.blur();
-
 ]]></example>
 
 	<related>kt-init keys.focus</related>

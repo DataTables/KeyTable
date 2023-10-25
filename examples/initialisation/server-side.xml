@@ -5,7 +5,7 @@
 <js lib="jquery datatables keytable">
 <![CDATA[
 $('#example').DataTable({
-	ajax: "../../../../examples/server_side/scripts/server_processing.php",
+	ajax: '../../../../examples/server_side/scripts/server_processing.php',
 	keys: true,
 	serverSide: true
 });
@@ -16,7 +16,7 @@ $('#example').DataTable({
 <js-vanilla>
 <![CDATA[
 new DataTable('#example', {
-	ajax: "../../../../examples/server_side/scripts/server_processing.php",
+	ajax: '../../../../examples/server_side/scripts/server_processing.php',
 	keys: true,
 	serverSide: true
 });

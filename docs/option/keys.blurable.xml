@@ -21,13 +21,11 @@
 	</description>
 
 	<example title="Disallow the table form loosing focus"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		blurable: false
 	}
-} );
-
+});
 ]]></example>
 
 	<related>kt-init tabIndex</related>

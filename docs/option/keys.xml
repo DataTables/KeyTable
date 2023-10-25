@@ -31,21 +31,17 @@
 	</description>
 
 	<example title="Enable KeyTable for a table"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: true
-} );
-
+});
 ]]></example>
 
 	<example title="Enable KeyTable with configuration options"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		columns: ':not(:first-child)'
 	}
-} );
-
+});
 ]]></example>
 
 </dt-option>

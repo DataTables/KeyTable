@@ -29,13 +29,11 @@
 	</description>
 
 	<example title="Disable clipboard interaction"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		clipboard: false
 	}
-} );
-
+});
 ]]></example>
 
 	<related>-init keys.clipboardOrthogonal</related>

@@ -19,23 +19,19 @@
 	</description>
 
 	<example title="Take the table out of the normal tab flow in the browser"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		tabIndex: 2
 	}
-} );
-
+});
 ]]></example>
 
 	<example title="Disable tab focus"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		tabIndex: -1
 	}
-} );
-
+});
 ]]></example>
 
 	<related>kt-init keys.blurable</related>

@@ -21,22 +21,18 @@
 	</description>
 
 	<example title="Don't allow focus on the last column in the table"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		columns: ':not(:last-child)'
 	}
-} );
-
+});
 ]]></example>
 
 	<example title="Allow focus only on column indexes 1, 2, 3, 4"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
-		columns: [ 1, 2, 3, 4 ]
+		columns: [1, 2, 3, 4]
 	}
-} );
-
+});
 ]]></example>
 </dt-option>

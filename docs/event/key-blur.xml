@@ -28,21 +28,19 @@
 	</description>
 
 	<example title="Show information about a cell when focus is changed"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
 table
-	.on( 'key-focus', function ( e, datatable, cell ) {
-		var rowData = datatable.row( cell.index().row ).data();
+	.on('key-focus', function (e, datatable, cell) {
+		var rowData = datatable.row(cell.index().row).data();
 
-		$('#details').html( 'Cell in '+rowData[0]+' focused' );
-	} )
-	.on( 'key-blur', function ( e, datatable, cell ) {
-		$('#details').html( 'No cell selected' );
-	} );
-
+		$('#details').html('Cell in ' + rowData[0] + ' focused');
+	})
+	.on('key-blur', function (e, datatable, cell) {
+		$('#details').html('No cell selected');
+	});
 ]]></example>
 
 	<related>kt-api cell.blur()</related>

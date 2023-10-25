@@ -19,14 +19,12 @@
 	</description>
 
 	<example title="Immediately trigger inline editing, when the cell is focused."><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		editor: editor,
-        editOnFocus: true
+		editOnFocus: true
 	}
-} );
-
+});
 ]]></example>
 
 	<related>-init keys.editor</related>

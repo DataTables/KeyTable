@@ -35,27 +35,25 @@
 	</description>
 
 	<example title="Trigger inline editing with Editor when the enter key is pressed. Note that the `kt-init keys.editor` option can be used to provide a similar interface."><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
-table.on( 'key', function ( e, datatable, key, cell, originalEvent ) {
-	if ( key === 13 ) { // return
+table.on('key', function (e, datatable, key, cell, originalEvent) {
+	if (key === 13) {
+		// return
 		// timeout needed to let inline initialise
-		setTimeout( function() {
+		setTimeout(function () {
 			editor
-				.one( 'close', function () {
+				.one('close', function () {
 					table.keys.enable();
-				} )
-				.inline( cell.node() );
-		}, 100 );
+				})
+				.inline(cell.node());
+		}, 100);
 
 		table.keys.disable();
 	}
-} );
-
-
+});
 ]]></example>
 
 	<related>kt-api keys.enable()</related>

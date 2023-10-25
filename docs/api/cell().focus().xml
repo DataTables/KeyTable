@@ -24,9 +24,7 @@
 	</description>
 
 	<example title="Focus on the first cell in the table"><![CDATA[
-
-table.cell( ':eq(0)' ).focus();
-
+table.cell(':eq(0)').focus();
 ]]></example>
 
 	<related>kt-init keys.focus</related>

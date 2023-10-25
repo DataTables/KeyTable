@@ -21,12 +21,10 @@
 	</description>
 
 	<example title="Set the class name of the focused cells"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		className: 'highlight'
 	}
-} );
-
+});
 ]]></example>
 </dt-option>

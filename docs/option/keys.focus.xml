@@ -21,13 +21,11 @@
 	</description>
 
 	<example title="Automatically focus on the first cell in the table"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		focus: ':eq(0)'
 	}
-} );
-
+});
 ]]></example>
 
 	<related>kt-init keys.blurable</related>

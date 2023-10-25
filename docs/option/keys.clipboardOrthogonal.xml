@@ -21,13 +21,11 @@
 	</description>
 
 	<example title="Set the orthogonal data for clipboard copy"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		clipboardOrthogonal: 'export'
 	}
-} );
-
+});
 ]]></example>
 
 	<related>-init keys.clipboard</related>

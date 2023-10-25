@@ -20,13 +20,11 @@
 	</description>
 
 	<example title="Disable KeyTable immediately on initialisation"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
 table.keys.disable();
-
 ]]></example>
 
 	<related>kt-api keys.enable()</related>

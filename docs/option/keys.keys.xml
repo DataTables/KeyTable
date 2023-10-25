@@ -23,12 +23,10 @@
 	</description>
 
 	<example title="Listen for the `tab` key only"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
-		keys: [ "\t".charCodeAt(0) ]
+		keys: ['\t'.charCodeAt(0)]
 	}
-} );
-
+});
 ]]></example>
 </dt-option>

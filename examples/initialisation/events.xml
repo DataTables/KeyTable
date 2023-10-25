@@ -11,7 +11,9 @@ var table = $('#example').DataTable({
 
 table
 	.on('key', function (e, datatable, key, cell, originalEvent) {
-		events.prepend('<div>Key press: ' + key + ' for cell <i>' + cell.data() + '</i></div>');
+		events.prepend(
+			'<div>Key press: ' + key + ' for cell <i>' + cell.data() + '</i></div>'
+		);
 	})
 	.on('key-focus', function (e, datatable, cell) {
 		events.prepend('<div>Cell focus: <i>' + cell.data() + '</i></div>');

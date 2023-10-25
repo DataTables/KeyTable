@@ -34,24 +34,21 @@
 	</description>
 
 	<example title="Disallow focus on any cell that doesn't meet a condition."><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
 table.on('key-prefocus', function (e, dt, cell, currentCell, org) {
 	let row = dt.row(cell.index().row).data();
 
 	return row.fruit === 'Apple' ? false : true;
 });
-
 ]]></example>
 
 	<example title="As above, but blur focus when disallowed."><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
 table.on('key-prefocus', function (e, dt, cell, org) {
 	let row = dt.row(cell.index().row).data();
@@ -62,7 +59,6 @@ table.on('key-prefocus', function (e, dt, cell, org) {
 		return false;
 	}
 });
-
 ]]></example>
 
 	<related>kt-init keys.focus</related>

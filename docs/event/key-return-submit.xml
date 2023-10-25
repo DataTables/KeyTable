@@ -25,16 +25,13 @@
 	</description>
 
 	<example title="Move focus to the right after a return key submit"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
-table
-	.on( 'key-return-submit', function ( e, datatable, cell ) {
-		table.keys.move('right');
-	} );
-
+table.on('key-return-submit', function (e, datatable, cell) {
+	table.keys.move('right');
+});
 ]]></example>
 
 	<related>kt-init keys.editor</related>

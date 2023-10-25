@@ -23,13 +23,11 @@
 	</description>
 
 	<example title="Attach an Editor instance (`editor`) to a table to provide Excel like editing"><![CDATA[
-
-$('#myTable').DataTable( {
+new DataTable('#myTable', {
 	keys: {
 		editor: editor
 	}
-} );
-
+});
 ]]></example>
 
 	<related>kt-event key</related>

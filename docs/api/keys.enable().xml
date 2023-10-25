@@ -29,13 +29,11 @@
 	</description>
 
 	<example title="Only allow navigation (i.e. letter keys perform no action and trigger no events)"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	keys: true
-} );
+});
 
-table.keys.enable( 'navigation-only' );
-
+table.keys.enable('navigation-only');
 ]]></example>
 
 	<related>kt-api keys.disable()</related>
