@@ -23,7 +23,7 @@ describe('KeyTable - keys.tabIndex', function() {
 				}
 			});
 
-			expect($('div.dataTables_wrapper input:eq(1)').attr('tabindex')).toBe('0');
+			expect($('#example_wrapper input:eq(1)').attr('tabindex')).toBe('0');
 		});
 
 		dt.html('basic_id');
@@ -43,7 +43,7 @@ describe('KeyTable - keys.tabIndex', function() {
 				}
 			});
 
-			expect($('div.dataTables_wrapper input:eq(1)').attr('tabindex')).toBe('50');
+			expect($('#example_wrapper input:eq(1)').attr('tabindex')).toBe('50');
 		});
 	});
 });

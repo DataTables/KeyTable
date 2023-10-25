@@ -20,7 +20,7 @@ describe('KeyTable - keys.blurable', function() {
 			expect($('.focus').length).toBe(1);
 		});
 		it('Select a search input element', function() {
-			$('div.dataTables_filter input').mousedown();
+			$('#example_wrapper input').mousedown();
 			expect($('.focus').length).toBe(0);
 		});
 	});
@@ -47,7 +47,7 @@ describe('KeyTable - keys.blurable', function() {
 			expect($('.unit_test').text()).toBe('Junior Technical Author');
 		});
 		it('Deselect', function() {
-			$('#example_one_filter input').mousedown();
+			$('#example_one_wrapper input').mousedown();
 
 			expect($('.focus').length).toBe(0);
 			expect($('.unit_test').length).toBe(0);
