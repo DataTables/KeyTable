@@ -864,6 +864,12 @@ $.extend(KeyTable.prototype, {
 				break;
 
 			case 27: // esc
+				// If there is an inline edit in the cell, let it blur first,
+				// a second escape will then blur keytable
+				if ($(lastFocus.node).find('div.DTE').length) {
+					return;
+				}
+
 				if (this.c.blurable && enable === true) {
 					this._blur();
 				}
