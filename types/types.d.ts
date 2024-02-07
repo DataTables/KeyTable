@@ -100,9 +100,12 @@ interface ConfigKeyTable {
 	/**
 	 * Enable / disable clipboard interaction with KeyTable
 	 *
-	 * A boolean flag that can optionally be used to disable KeyTables' clipboard interaction.
+	 * A boolean flag that can optionally be used to disable KeyTables' clipboard interaction, or an object for independent control of copy and paste actions.
 	 */
-	clipboard?: boolean;
+	clipboard?: boolean | {
+		copy: boolean;
+		paste: boolean;
+	};
 
 	/**
 	 * Set the orthogonal data point for the data to copy to clipboard.

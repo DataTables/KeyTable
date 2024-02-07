@@ -417,64 +417,69 @@ $.extend(KeyTable.prototype, {
 		var dt = this.s.dt;
 		var that = this;
 		var namespace = this.s.namespace;
+		var opts = this.c.clipboard;
 
 		// IE8 doesn't support getting selected text
 		if (!window.getSelection) {
 			return;
 		}
 
-		$(document).on('copy' + namespace, function (ejq) {
-			var e = ejq.originalEvent;
-			var selection = window.getSelection().toString();
-			var focused = that.s.lastFocus;
+		if (opts === true || opts.copy) {
+			$(document).on('copy' + namespace, function (ejq) {
+				var e = ejq.originalEvent;
+				var selection = window.getSelection().toString();
+				var focused = that.s.lastFocus;
 
-			// Only copy cell text to clipboard if there is no other selection
-			// and there is a focused cell
-			if (!selection && focused) {
-				e.clipboardData.setData(
-					'text/plain',
-					focused.cell.render(that.c.clipboardOrthogonal)
-				);
-				e.preventDefault();
-			}
-		});
-
-		$(document).on('paste' + namespace, function (ejq) {
-			var e = ejq.originalEvent;
-			var focused = that.s.lastFocus;
-			var activeEl = document.activeElement;
-			var editor = that.c.editor;
-			var pastedText;
-
-			if (focused && (!activeEl || activeEl.nodeName.toLowerCase() === 'body')) {
-				e.preventDefault();
-
-				if (window.clipboardData && window.clipboardData.getData) {
-					// IE
-					pastedText = window.clipboardData.getData('Text');
+				// Only copy cell text to clipboard if there is no other selection
+				// and there is a focused cell
+				if (!selection && focused) {
+					e.clipboardData.setData(
+						'text/plain',
+						focused.cell.render(that.c.clipboardOrthogonal)
+					);
+					e.preventDefault();
 				}
-				else if (e.clipboardData && e.clipboardData.getData) {
-					// Everything else
-					pastedText = e.clipboardData.getData('text/plain');
-				}
+			});
+		}
 
-				if (editor) {
-					// Got Editor - need to activate inline editing,
-					// set the value and submit
-					var options = that._inlineOptions(focused.cell.index());
+		if (opts === true || opts.paste) {
+			$(document).on('paste' + namespace, function (ejq) {
+				var e = ejq.originalEvent;
+				var focused = that.s.lastFocus;
+				var activeEl = document.activeElement;
+				var editor = that.c.editor;
+				var pastedText;
 
-					editor
-						.inline(options.cell, options.field, options.options)
-						.set(editor.displayed()[0], pastedText)
-						.submit();
+				if (focused && (!activeEl || activeEl.nodeName.toLowerCase() === 'body')) {
+					e.preventDefault();
+
+					if (window.clipboardData && window.clipboardData.getData) {
+						// IE
+						pastedText = window.clipboardData.getData('Text');
+					}
+					else if (e.clipboardData && e.clipboardData.getData) {
+						// Everything else
+						pastedText = e.clipboardData.getData('text/plain');
+					}
+
+					if (editor) {
+						// Got Editor - need to activate inline editing,
+						// set the value and submit
+						var options = that._inlineOptions(focused.cell.index());
+
+						editor
+							.inline(options.cell, options.field, options.options)
+							.set(editor.displayed()[0], pastedText)
+							.submit();
+					}
+					else {
+						// No editor, so just dump the data in
+						focused.cell.data(pastedText);
+						dt.draw(false);
+					}
 				}
-				else {
-					// No editor, so just dump the data in
-					focused.cell.data(pastedText);
-					dt.draw(false);
-				}
-			}
-		});
+			});
+		}
 	},
 
 	/**
