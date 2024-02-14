@@ -53,7 +53,7 @@ declare module 'datatables.net' {
 			/**
 			 * Create a new KeyTable instance for the target DataTable
 			 */
-			new (dt: Api<any>, settings: boolean | ConfigKeyTable): void;
+			new (dt: Api<any>, settings: boolean | ConfigKeyTable): DataTablesStatic['KeyTable'];
 
 			/**
 			 * KeyTable version
