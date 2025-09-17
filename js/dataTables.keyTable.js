@@ -1155,14 +1155,16 @@ $.extend(KeyTable.prototype, {
 
 		// Only create the input element once on first class
 		if (!this.s.tabInput) {
-			var div = $('<div><input type="text" tabindex="' + tabIndex + '"/></div>').css({
+			var inputId = 'keytable-focus-capture-' + this.s.namespace.split('-')[1];
+			var input = '<input id="' + inputId + '" type="text" tabindex="' + tabIndex + '"/>'
+			var div = $('<div><label for="' + inputId + '">' + input + '</label></div>').css({
 				position: 'absolute',
 				height: 1,
 				width: 0,
 				overflow: 'hidden'
 			});
 
-			div.children().on('focus', function (e) {
+			div.find('input').on('focus', function (e) {
 				var cell = dt.cell(':eq(0)', that._columns(), { page: 'current' });
 
 				if (cell.any()) {
