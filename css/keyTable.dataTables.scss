@@ -1,3 +1,4 @@
+@use "sass:color";
 
 $keytable-focus: #3366ff !default;
 $keytable-focus-alt: #ff8b33 !default;
@@ -12,7 +13,7 @@ table.dataTable tbody {
 	tr.selected {
 		th.focus,
 		td.focus {
-			outline-color: darken($keytable-focus, 20);
+			outline-color: color.adjust($keytable-focus, $lightness: -20);
 		}
 	}
 }
@@ -37,7 +38,7 @@ html.dark {
 		tr.selected {
 			th.focus,
 			td.focus {
-				outline-color: darken(rgb(13, 110, 253), 20);
+				outline-color: color.adjust(rgb(13, 110, 253), $lightness: -20);
 			}
 		}
 	}

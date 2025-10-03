@@ -1,4 +1,4 @@
 
 $keytable-focus: #888 !default;
 
-@import 'keyTable.dataTables.scss';
+@use 'keyTable.dataTables.scss' with ($keytable-focus: $keytable-focus);
