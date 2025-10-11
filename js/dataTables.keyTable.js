@@ -836,6 +836,10 @@ $.extend(KeyTable.prototype, {
 		if ((e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey) && !(e.ctrlKey && e.altKey)) {
 			return;
 		}
+		
+		if(document.activeElement && document.activeElement.tagName.toLowerCase() !== 'body') {
+			return;
+		}
 
 		// If not focused, then there is no key action to take
 		var lastFocus = this.s.lastFocus;
