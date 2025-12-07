@@ -202,6 +202,11 @@ $.extend(KeyTable.prototype, {
 					return;
 				}
 
+				// Or an Editor dropdown
+				if ($(e.target).parents('div.dte-dropdown').length) {
+					return;
+				}
+
 				//If the click was inside the fixed columns container, don't blur
 				if ($(e.target).parents().filter('.DTFC_Cloned').length) {
 					return;
