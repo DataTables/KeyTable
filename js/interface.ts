@@ -1,13 +1,6 @@
-// Type definitions for DataTables KeyTable
-//
-// Project: https://datatables.net/extensions/keytable/, https://datatables.net
-// Definitions by:
-//   SpryMedia
-//   Konstantin Kuznetsov <https://github.com/Arik-neKrol>
 
-/// <reference types="jquery" />
-
-import DataTables, {Api} from 'datatables.net';
+import DataTables, { Api, ApiCellMethods, CellIdx, Dom } from 'datatables.net';
+import KeyTable from './KeyTable';
 
 export default DataTables;
 
@@ -19,7 +12,14 @@ declare module 'datatables.net' {
 		/**
 		 * KeyTable extension options
 		 */
-		keys?: boolean | ConfigKeyTable;
+		keys?: boolean | Config;
+	}
+
+	interface Defaults {
+		/**
+		 * KeyTable defaults
+		 */
+		keys?: Defaults;
 	}
 
 	interface Api<T> {
@@ -49,22 +49,7 @@ declare module 'datatables.net' {
 		/**
 		 * KeyTable class
 		 */
-		KeyTable: {
-			/**
-			 * Create a new KeyTable instance for the target DataTable
-			 */
-			new (dt: Api<any>, settings: boolean | ConfigKeyTable): DataTablesStatic['KeyTable'];
-
-			/**
-			 * KeyTable version
-			 */
-			version: string;
-
-			/**
-			 * Default configuration values
-			 */
-			defaults: ConfigKeyTable;
-		}
+		KeyTable: typeof KeyTable
 	}
 
 	interface ApiSelectorModifier {
@@ -74,6 +59,14 @@ declare module 'datatables.net' {
 		 */
 		focused?: boolean | undefined;
 	}
+
+	interface Context {
+		keytable: KeyTable;
+	}
+
+	interface StateLoad {
+		keyTable: CellIdx;
+	}
 }
 
 
@@ -81,28 +74,28 @@ declare module 'datatables.net' {
  * Options
  */
 
-interface ConfigKeyTable {
+export interface Defaults {
 	/**
 	 * Allow KeyTable's focus to be blurred (removed) from a table
 	 *
 	 * When set to true this option allows the table to lose focus (i.e. to be blurred),
 	 * while false will not allow the table to lose focus.
 	 */
-	blurable?: boolean;
+	blurable: boolean;
 
 	/**
 	 * Set the class name used for the focused cell
 	 *
 	 * The class name to be added and removed from cells as they gain and loose focus.
 	 */
-	className?: string;
+	className: string;
 
 	/**
 	 * Enable / disable clipboard interaction with KeyTable
 	 *
 	 * A boolean flag that can optionally be used to disable KeyTables' clipboard interaction, or an object for independent control of copy and paste actions.
 	 */
-	clipboard?: boolean | {
+	clipboard: boolean | {
 		copy: boolean;
 		paste: boolean;
 	};
@@ -110,7 +103,7 @@ interface ConfigKeyTable {
 	/**
 	 * Set the orthogonal data point for the data to copy to clipboard.
 	 */
-	clipboardOrthogonal?: string;
+	clipboardOrthogonal: string;
 
 	/**
 	 * Select the columns that can gain focus
@@ -118,21 +111,26 @@ interface ConfigKeyTable {
 	 * The columns that can gain focus. This accepts all of the options of column-selector
 	 * such as class name selector, jQuery pseudo selects and column index selectors.
 	 */
-	columns?: any;
+	columns: any;
 
 	/**
 	 * Control if editing should be activated immediately upon focus
 	 *
 	 * true to enable editing on focus, false to disable.
 	 */
-	editOnFocus?: boolean;
+	editOnFocus: boolean;
 
 	/**
 	 * Attach an Editor instance for Excel like editing
 	 *
 	 * The Editor instance to use for editing of the table
 	 */
-	editor?: any;
+	editor: any;
+
+	/**
+	 * Editor form options that is given to the `inline()` method.
+	 */
+	editorOptions: ((idx: CellIdx) => any) | null;
 
 	/**
 	 * Cell to receive initial focus in the table
@@ -141,7 +139,7 @@ interface ConfigKeyTable {
 	 * the options of cell-selector such as class name selector, jQuery pseudo selects and
 	 * cell index selectors.
 	 */
-	focus?: any;
+	focus: any;
 
 	/**
 	 * Limit the keys that KeyTable will listen for and take action on
@@ -150,7 +148,7 @@ interface ConfigKeyTable {
 	 * an array you can limit the keys that KeyTable will take action on to just the key
 	 * codes given in the array.
 	 */
-	keys?: number[] | null;
+	keys: number[] | null;
 
 	/**
 	 * Set the table's tab index for when it will receive focus
@@ -158,8 +156,10 @@ interface ConfigKeyTable {
 	 * The tab index for the table. Like all other tab indexes, this can be -1 to disallow
 	 * tabbing into the table.
 	 */
-	tabIndex?: number;
+	tabIndex: number | null;
 }
+
+export interface Config extends Partial<Defaults> {}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -196,4 +196,47 @@ interface ApiKeyTableMethods<T> extends Api<T> {
 	 * @returns DataTables API instance.
 	 */
 	move(direction: string): Api<T>;
+}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Internal
+ */
+export interface Settings {
+	/** DataTables' API instance */
+	dt: Api;
+
+	/** Indicate when the DataTable is redrawing - take no action on key presses */
+	dtDrawing: boolean;
+
+	enable: boolean | 'navigation-only' | 'tab-only';
+
+	/** Flag for if a draw is triggered by focus */
+	focusDraw: boolean;
+
+	/**
+	 * Flag to indicate when waiting for a draw to happen. Will ignore key
+	 * presses at this point
+	 */
+	waitingForDraw: boolean;
+
+	/** Information about the last cell that was focused */
+	lastFocus: null | {
+		cell: ApiCellMethods<any>;
+		node: HTMLElement;
+		relative: {
+			row: number;
+			column: number;
+		}
+	};
+
+	/** Unique namespace per instance */
+	namespace: string;
+
+	/** Submit on return */
+	returnSubmit: boolean;
+
+	/** Input element for tabbing into the table */
+	tabInput: Dom | null;
 }

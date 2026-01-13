@@ -1,15 +1,9 @@
-/*! KeyTable 2.12.2
- * © SpryMedia Ltd - datatables.net/license
- */
 
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
- * @version     2.12.2
- * @file        dataTables.keyTable.js
+ * @version     3.0.0-dev
  * @author      SpryMedia Ltd
- * @contact     datatables.net
- * @copyright   Copyright SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -21,128 +15,174 @@
  * For details please refer to: http://www.datatables.net
  */
 
+
+import DataTable, { Api, ApiCellMethods, CellIdx, Context, Dom } from 'datatables.net';
+import { Config, Defaults, Settings } from './interface';
+
 var namespaceCounter = 0;
 var editorNamespaceCounter = 0;
 
-var KeyTable = function (dt, opts) {
-	// Sanity check that we are using DataTables 1.10 or newer
-	if (!DataTable.versionCheck || !DataTable.versionCheck('1.10.8')) {
-		throw 'KeyTable requires DataTables 1.10.8 or newer';
-	}
+const dom = DataTable.dom;
+const util = DataTable.util;
 
-	// User and defaults configuration object
-	this.c = $.extend(true, {}, DataTable.defaults.keyTable, KeyTable.defaults, opts);
-
-	// Internal settings
-	this.s = {
-		/** @type {DataTable.Api} DataTables' API instance */
-		dt: new DataTable.Api(dt),
-
-		/** Indicate when the DataTable is redrawing - take no action on key presses */
-		dtDrawing: false,
-
-		enable: true,
-
-		/** @type {bool} Flag for if a draw is triggered by focus */
-		focusDraw: false,
-
-		/** @type {bool} Flag to indicate when waiting for a draw to happen.
-		 *   Will ignore key presses at this point
+export default class KeyTable {
+	public static defaults: Defaults = {
+		/**
+		 * Can focus be removed from the table
 		 */
-		waitingForDraw: false,
+		blurable: true,
 
-		/** @type {object} Information about the last cell that was focused */
-		lastFocus: null,
+		/**
+		 * Class to give to the focused cell
+		 */
+		className: 'focus',
 
-		/** @type {string} Unique namespace per instance */
-		namespace: '.keyTable-' + namespaceCounter++,
+		/**
+		 * Enable or disable clipboard support
+		 */
+		clipboard: true,
 
-		/** @type {Node} Input element for tabbing into the table */
-		tabInput: null
+		/**
+		 * Orthogonal data that should be copied to clipboard
+		 */
+		clipboardOrthogonal: 'display',
+
+		/**
+		 * Columns that can be focused. This is automatically merged with the
+		 * visible columns as only visible columns can gain focus.
+		 */
+		columns: '', // all
+
+		/**
+		 * Editor instance to automatically perform Excel like navigation
+		 */
+		editor: null,
+
+		/**
+		 * Trigger editing immediately on focus
+		 */
+		editOnFocus: false,
+
+		/**
+		 * Options to pass to Editor's inline method
+		 */
+		editorOptions: null,
+
+		/**
+		 * Select a cell to automatically select on start up. `null` for no
+		 * automatic selection
+		 */
+		focus: null,
+
+		/**
+		 * Array of keys to listen for
+		 */
+		keys: null,
+
+		/**
+		 * Tab index for where the table should sit in the document's tab flow
+		 */
+		tabIndex: null
 	};
 
-	// DOM items
-	this.dom = {};
+	public static version: '3.0.0-dev';
 
-	// Check if row reorder has already been initialised on this table
-	var settings = this.s.dt.settings()[0];
-	var exisiting = settings.keytable;
-	if (exisiting) {
-		return exisiting;
+	private c: Defaults;
+
+	private s: Settings;
+
+	constructor(dt: Context | Api, opts: Config) {
+
+		// User and defaults configuration object
+		this.c = util.object.assignDeep({}, DataTable.defaults.keys, KeyTable.defaults, opts);
+
+		// Internal settings
+		this.s = {
+			dt: new DataTable.Api(dt),
+			dtDrawing: false,
+			enable: true,
+			focusDraw: false,
+			waitingForDraw: false,
+			lastFocus: null,
+			namespace: '.keyTable-' + namespaceCounter++,
+			returnSubmit: false,
+			tabInput: null
+		};
+
+		// Check if row reorder has already been initialised on this table
+		var settings = this.s.dt.settings()[0];
+		var existing = settings.keytable;
+
+		if (existing) {
+			return existing;
+		}
+
+		settings.keytable = this;
+		this._init();
 	}
-
-	settings.keytable = this;
-	this._constructor();
-};
-
-$.extend(KeyTable.prototype, {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * API methods for DataTables API interface
-	 */
 
 	/**
 	 * Blur the table's cell focus
 	 */
-	blur: function () {
+	public blur () {
 		this._blur();
-	},
+	}
 
 	/**
 	 * Enable cell focus for the table
 	 *
-	 * @param  {string} state Can be `true`, `false` or `-string navigation-only`
+	 * @param state Can be `true`, `false` or `-string navigation-only`
 	 */
-	enable: function (state) {
+	public enable (state: boolean | 'navigation-only' | 'tab-only') {
 		this.s.enable = state;
-	},
+	}
 
 	/**
 	 * Get enable status
 	 */
-	enabled: function () {
+	public enabled () {
 		return this.s.enable;
-	},
+	}
 
 	/**
 	 * Focus on a cell
-	 * @param  {integer} row    Row index
-	 * @param  {integer} column Column index
+	 *
+	 * @param row    Row index
+	 * @param column Column index
 	 */
-	focus: function (row, column) {
-		this._focus(this.s.dt.cell(row, column));
-	},
+	public focus (row: number, column: number) {
+		this._focus(this.s.dt.cell(row, column), null);
+	}
 
 	/**
 	 * Is the cell focused
-	 * @param  {object} cell Cell index to check
-	 * @returns {boolean} true if focused, false otherwise
+	 * @param  cell Cell index to check
+	 * @returns true if focused, false otherwise
 	 */
-	focused: function (cell) {
+	public focused (cell: CellIdx) {
 		var lastFocus = this.s.lastFocus;
 
 		if (!lastFocus) {
 			return false;
 		}
 
-		var lastIdx = this.s.lastFocus.cell.index();
+		var lastIdx = lastFocus.cell.index();
 		return cell.row === lastIdx.row && cell.column === lastIdx.column;
-	},
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * Constructor
+	 * Private methods
 	 */
 
 	/**
 	 * Initialise the KeyTable instance
-	 *
-	 * @private
 	 */
-	_constructor: function () {
+	private _init () {
 		this._tabInput();
 
 		var that = this;
 		var dt = this.s.dt;
-		var table = $(dt.table().node());
+		var table = dom.s(dt.table().node());
 		var namespace = this.s.namespace;
 		var editorBlock = false;
 
@@ -152,7 +192,7 @@ $.extend(KeyTable.prototype, {
 		}
 
 		// Click to focus
-		$(dt.table().body()).on('click' + namespace, 'th, td', function (e) {
+		dom.s(dt.table().body()).on('click' + namespace, 'th, td', function (e) {
 			if (that.s.enable === false) {
 				return;
 			}
@@ -167,7 +207,7 @@ $.extend(KeyTable.prototype, {
 		});
 
 		// Key events
-		$(document).on('keydown' + namespace, function (e) {
+		dom.s(document).on('keydown' + namespace, function (e) {
 			if (!editorBlock && !that.s.dtDrawing) {
 				that._key(e);
 			}
@@ -178,37 +218,39 @@ $.extend(KeyTable.prototype, {
 
 		// Click blur
 		if (this.c.blurable) {
-			$(document).on('mousedown' + namespace, function (e) {
+			dom.s(document).on('mousedown' + namespace, function (e) {
+				let target = dom.s(e.target);
+
 				// Click on the search input will blur focus
-				if ($(e.target).parents('.dataTables_filter, .dt-search').length) {
+				if (target.closest('.dt-search').count()) {
 					that._blur();
 				}
 
 				// If the click was inside the DataTables container, don't blur
-				if ($(e.target).parents().filter(dt.table().container()).length) {
+				if (target.closest(dt.table().container()).count()) {
 					return;
 				}
 
 				// Don't blur in Editor form
-				if ($(e.target).parents('div.DTE').length) {
+				if (target.closest('div.DTE').count()) {
 					return;
 				}
 
 				// Or an Editor date input
 				if (
-					$(e.target).parents('div.editor-datetime').length ||
-					$(e.target).parents('div.dt-datetime').length
+					target.closest('div.editor-datetime').count() ||
+					target.closest('div.dt-datetime').count()
 				) {
 					return;
 				}
 
 				// Or an Editor dropdown
-				if ($(e.target).parents('div.dte-dropdown').length) {
+				if (target.closest('div.dte-dropdown').count()) {
 					return;
 				}
 
 				//If the click was inside the fixed columns container, don't blur
-				if ($(e.target).parents().filter('.DTFC_Cloned').length) {
+				if (target.closest('.DTFC_Cloned').count()) {
 					return;
 				}
 
@@ -220,7 +262,7 @@ $.extend(KeyTable.prototype, {
 			var editor = this.c.editor;
 
 			// Need to disable KeyTable when the main editor is shown
-			editor.on('open.keyTableMain', function (e, mode, action) {
+			editor.on('open.keyTableMain', function (e: Event, mode: string) {
 				if (mode !== 'inline' && that.s.enable) {
 					that.enable(false);
 
@@ -247,7 +289,7 @@ $.extend(KeyTable.prototype, {
 
 			// Active editing on double click - it will already have focus from
 			// the click event handler above
-			$(dt.table().body()).on('dblclick' + namespace, 'th, td', function (e) {
+			dom.s(dt.table().body()).on('dblclick' + namespace, 'th, td', function (e) {
 				if (that.s.enable === false) {
 					return;
 				}
@@ -279,11 +321,9 @@ $.extend(KeyTable.prototype, {
 		}
 
 		// Stave saving
-		// if ( dt.settings()[0].oFeatures.bStateSave ) {
 		dt.on('stateSaveParams' + namespace, function (e, s, d) {
 			d.keyTable = that.s.lastFocus ? that.s.lastFocus.cell.index() : null;
 		});
-		// }
 
 		dt.on('column-visibility' + namespace, function (e) {
 			that._tabInput();
@@ -322,7 +362,7 @@ $.extend(KeyTable.prototype, {
 			var lastFocus = that.s.lastFocus;
 
 			if (lastFocus) {
-				var relative = that.s.lastFocus.relative;
+				var relative = lastFocus.relative;
 				var info = dt.page.info();
 				var row = relative.row;
 
@@ -356,11 +396,11 @@ $.extend(KeyTable.prototype, {
 			// Event tidy up
 			dt.off(namespace);
 
-			$(dt.table().body())
+			dom.s(dt.table().body())
 				.off('click' + namespace, 'th, td')
 				.off('dblclick' + namespace, 'th, td');
 
-			$(document)
+			dom.s(document)
 				.off('mousedown' + namespace)
 				.off('keydown' + namespace)
 				.off('copy' + namespace)
@@ -370,40 +410,35 @@ $.extend(KeyTable.prototype, {
 		// Initial focus comes from state or options
 		var state = dt.state.loaded();
 
-		if (state && state.keyTable) {
-			// Wait until init is done
-			dt.one('init', function () {
-				var cell = dt.cell(state.keyTable);
+		// Wait until init is done
+		dt.one('init', () => {
+			if (state && state.keyTable) {
+					var cell = dt.cell(state.keyTable);
 
-				// Ensure that the saved cell still exists
-				if (cell.any()) {
-					cell.focus();
-				}
-			});
-		}
-		else if (this.c.focus) {
-			dt.cell(this.c.focus).focus();
-		}
-	},
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * Private methods
-	 */
+					// Ensure that the saved cell still exists
+					if (cell.any()) {
+						cell.focus();
+					}
+			}
+			else if (this.c.focus) {
+				dt.cell(this.c.focus).focus();
+			}
+		});
+	}
 
 	/**
 	 * Blur the control
 	 *
-	 * @param {boolean} [noEvents=false] Don't trigger updates / events (for destroying)
-	 * @private
+	 * @param noEvents Don't trigger updates / events (for destroying)
 	 */
-	_blur: function (noEvents) {
+	private _blur (noEvents: boolean = false) {
 		if (!this.s.enable || !this.s.lastFocus) {
 			return;
 		}
 
 		var cell = this.s.lastFocus.cell;
 
-		$(cell.node()).removeClass(this.c.className);
+		dom.s(cell.node()).classAdd(this.c.className);
 		this.s.lastFocus = null;
 
 		if (!noEvents) {
@@ -411,14 +446,12 @@ $.extend(KeyTable.prototype, {
 
 			this._emitEvent('key-blur', [this.s.dt, cell]);
 		}
-	},
+	}
 
 	/**
 	 * Clipboard interaction handlers
-	 *
-	 * @private
 	 */
-	_clipboard: function () {
+	private _clipboard () {
 		var dt = this.s.dt;
 		var that = this;
 		var namespace = this.s.namespace;
@@ -429,10 +462,10 @@ $.extend(KeyTable.prototype, {
 			return;
 		}
 
-		if (opts === true || opts.copy) {
-			$(document).on('copy' + namespace, function (ejq) {
+		if (opts === true || (opts && opts.copy)) {
+			dom.s(document).on('copy' + namespace, function (ejq) {
 				var e = ejq.originalEvent;
-				var selection = window.getSelection().toString();
+				var selection = window.getSelection()?.toString();
 				var focused = that.s.lastFocus;
 
 				// Only copy cell text to clipboard if there is no other selection
@@ -447,8 +480,8 @@ $.extend(KeyTable.prototype, {
 			});
 		}
 
-		if (opts === true || opts.paste) {
-			$(document).on('paste' + namespace, function (ejq) {
+		if (opts === true || (opts && opts.paste)) {
+			dom.s(document).on('paste' + namespace, function (ejq) {
 				var e = ejq.originalEvent;
 				var focused = that.s.lastFocus;
 				var activeEl = document.activeElement;
@@ -458,12 +491,7 @@ $.extend(KeyTable.prototype, {
 				if (focused && (!activeEl || activeEl.nodeName.toLowerCase() === 'body')) {
 					e.preventDefault();
 
-					if (window.clipboardData && window.clipboardData.getData) {
-						// IE
-						pastedText = window.clipboardData.getData('Text');
-					}
-					else if (e.clipboardData && e.clipboardData.getData) {
-						// Everything else
+					if (e.clipboardData && e.clipboardData.getData) {
 						pastedText = e.clipboardData.getData('text/plain');
 					}
 
@@ -485,18 +513,16 @@ $.extend(KeyTable.prototype, {
 				}
 			});
 		}
-	},
+	}
 
 	/**
 	 * Get an array of the column indexes that KeyTable can operate on. This
 	 * is a merge of the user supplied columns and the visible columns.
-	 *
-	 * @private
 	 */
-	_columns: function () {
+	private _columns () {
 		var dt = this.s.dt;
 		var user = dt.columns(this.c.columns).indexes();
-		var out = [];
+		var out: number[] = [];
 
 		dt.columns(':visible').every(function (i) {
 			if (user.indexOf(i) !== -1) {
@@ -505,17 +531,16 @@ $.extend(KeyTable.prototype, {
 		});
 
 		return out;
-	},
+	}
 
 	/**
 	 * Perform excel like navigation for Editor by triggering an edit on key
 	 * press
 	 *
-	 * @param  {integer} key Key code for the pressed key
-	 * @param  {object} orig Original event
-	 * @private
+	 * @param key Key code for the pressed key
+	 * @param orig Original event
 	 */
-	_editor: function (key, orig, hardEdit) {
+	private _editor (key: number | null, orig: Event, hardEdit: boolean) {
 		// If nothing focused, we can't take any action
 		if (!this.s.lastFocus) {
 			return;
@@ -533,7 +558,7 @@ $.extend(KeyTable.prototype, {
 		var namespace = this.s.namespace + 'e' + editorNamespaceCounter++;
 
 		// Do nothing if there is already an inline edit in this cell
-		if ($('div.DTE', editCell.node()).length) {
+		if (dom.s(editCell.node()).find('div.DTE').count()) {
 			return;
 		}
 
@@ -570,9 +595,9 @@ $.extend(KeyTable.prototype, {
 
 					// Excel style - select all text
 					if (!hardEdit) {
-						$(
+						dom.s<HTMLInputElement>(
 							'div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea'
-						).select();
+						).get(0).select();
 					}
 
 					// Reduce the keys the Keys listens for
@@ -592,7 +617,7 @@ $.extend(KeyTable.prototype, {
 
 					// Highlight the cell a different colour on full edit
 					if (hardEdit) {
-						$(dt.table().container()).addClass('dtk-focus-alt');
+						dom.s(dt.table().container()).classAdd('dtk-focus-alt');
 					}
 
 					// If the dev cancels the submit, we need to return focus
@@ -611,7 +636,7 @@ $.extend(KeyTable.prototype, {
 						dt.keys.enable(true);
 						dt.off('key-blur.editor');
 						editor.off(namespace);
-						$(dt.table().container()).removeClass('dtk-focus-alt');
+						dom.s(dt.table().container()).classRemove('dtk-focus-alt');
 
 						if (that.s.returnSubmit) {
 							that.s.returnSubmit = false;
@@ -633,7 +658,7 @@ $.extend(KeyTable.prototype, {
 		if (key === 13) {
 			hardEdit = true;
 
-			$(document).one('keyup', function () {
+			dom.s(document).one('keyup', function () {
 				// immediately removed
 				editInline();
 			});
@@ -641,9 +666,9 @@ $.extend(KeyTable.prototype, {
 		else {
 			editInline();
 		}
-	},
+	}
 
-	_inlineOptions: function (cellIdx) {
+	private _inlineOptions (cellIdx: CellIdx) {
 		if (this.c.editorOptions) {
 			return this.c.editorOptions(cellIdx);
 		}
@@ -653,34 +678,31 @@ $.extend(KeyTable.prototype, {
 			field: undefined,
 			options: undefined
 		};
-	},
+	}
 
 	/**
 	 * Emit an event on the DataTable for listeners
 	 *
-	 * @param  {string} name Event name
-	 * @param  {array} args Event arguments
-	 * @private
+	 * @param name Event name
+	 * @param args Event arguments
 	 */
-	_emitEvent: function (name, args) {
-		return this.s.dt.iterator('table', function (ctx, i) {
-			return $(ctx.nTable).triggerHandler(name, args);
-		});
-	},
+	private _emitEvent (name: string, args: any[]) {
+		return this.s.dt.trigger(name, args);
+	}
 
 	/**
 	 * Focus on a particular cell, shifting the table's paging if required
 	 *
-	 * @param  {DataTables.Api|integer} row Can be given as an API instance that
+	 * @param row Can be given as an API instance that
 	 *   contains the cell to focus or as an integer. As the latter it is the
 	 *   visible row index (from the whole data set) - NOT the data index
-	 * @param  {integer} [column] Not required if a cell is given as the first
+	 * @param column Not required if a cell is given as the first
 	 *   parameter. Otherwise this is the column data index for the cell to
 	 *   focus on
-	 * @param {boolean} [shift=true] Should the viewport be moved to show cell
-	 * @private
+	 * @param shiftKey Should the viewport be moved to show cell
+	 * @param originalEvent Triggering event
 	 */
-	_focus: function (row, column, shift, originalEvent) {
+	private _focus (row: number | ApiCellMethods<any>, column: number | null, shift?: boolean, originalEvent?: Event | null) {
 		var that = this;
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
@@ -739,7 +761,7 @@ $.extend(KeyTable.prototype, {
 		}
 
 		// In the available columns?
-		if ($.inArray(column, this._columns()) === -1) {
+		if (column !== null && ! this._columns().includes(column)) {
 			return;
 		}
 
@@ -774,18 +796,20 @@ $.extend(KeyTable.prototype, {
 		// Clear focus from other tables
 		this._removeOtherFocus();
 
-		var node = $(cell.node());
-		node.addClass(this.c.className);
+		var node = dom.s(cell.node());
+		node.classAdd(this.c.className);
 
-		this._updateFixedColumns(column);
+		if (column !== null) {
+			this._updateFixedColumns(column);
+		}
 
 		// Shift viewpoint and page to make cell visible
 		if (shift === undefined || shift === true) {
-			this._scroll($(window), $(document.body), node, 'offset');
+			this._scroll(window, document.body, node, 'offset');
 
 			var bodyParent = dt.table().body().parentNode;
 			if (bodyParent !== dt.table().header().parentNode) {
-				var parent = $(bodyParent.parentNode);
+				var parent = bodyParent!.parentNode as HTMLElement;
 
 				this._scroll(parent, parent, node, 'position');
 			}
@@ -805,15 +829,14 @@ $.extend(KeyTable.prototype, {
 
 		this._emitEvent('key-focus', [this.s.dt, cell, originalEvent || null]);
 		dt.state.save();
-	},
+	}
 
 	/**
 	 * Handle key press
 	 *
-	 * @param  {object} e Event
-	 * @private
+	 * @param e Event
 	 */
-	_key: function (e) {
+	private _key (e: KeyboardEvent) {
 		// If we are waiting for a draw to happen from another key event, then
 		// do nothing for this new key press.
 		if (this.s.waitingForDraw) {
@@ -821,9 +844,9 @@ $.extend(KeyTable.prototype, {
 			return;
 		}
 
-		// Ignore key presses in an Editor inline create row - it is not navigatable
-		// by KeyTable
-		if ($(e.target).closest('.dte-inlineAdd').length) {
+		// Ignore key presses in an Editor inline create row - it is not
+		// navigatable by KeyTable
+		if (dom.s(e.target as HTMLElement).closest('.dte-inlineAdd').count()) {
 			return;
 		}
 
@@ -856,10 +879,10 @@ $.extend(KeyTable.prototype, {
 
 		var that = this;
 		var dt = this.s.dt;
-		var scrolling = this.s.dt.settings()[0].oScroll.sY ? true : false;
+		var scrolling = this.s.dt.settings()[0].scroll.y ? true : false;
 
 		// If we are not listening for this key, do nothing
-		if (this.c.keys && $.inArray(e.keyCode, this.c.keys) === -1) {
+		if (this.c.keys && this.c.keys.includes(e.keyCode)) {
 			return;
 		}
 
@@ -876,7 +899,7 @@ $.extend(KeyTable.prototype, {
 			case 27: // esc
 				// If there is an inline edit in the cell, let it blur first,
 				// a second escape will then blur keytable
-				if ($(lastFocus.node).find('div.DTE').length) {
+				if (dom.s(lastFocus.node).find('div.DTE').count()) {
 					return;
 				}
 
@@ -957,19 +980,20 @@ $.extend(KeyTable.prototype, {
 			default:
 				// Everything else - pass through only when fully enabled
 				if (enable === true) {
-					this._emitEvent('key', [dt, e.keyCode, this.s.lastFocus.cell, e]);
+					this._emitEvent('key', [dt, e.keyCode, this.s.lastFocus?.cell, e]);
 				}
 				break;
 		}
-	},
+	}
 
 	/**
-	 * Whether we perform a key shift action immediately or not depends
-	 * upon if Editor is being used. If it is, then we wait until it
-	 * completes its action
-	 * @param {*} action Function to trigger when ready
+	 * Whether we perform a key shift action immediately or not depends upon if
+	 * Editor is being used. If it is, then we wait until it completes its
+	 * action
+	 *
+	 * @param action Function to trigger when ready
 	 */
-	_keyAction: function (action) {
+	private _keyAction (action: Function) {
 		var editor = this.c.editor;
 
 		if (editor && editor.mode() && editor.display()) {
@@ -978,36 +1002,39 @@ $.extend(KeyTable.prototype, {
 		else {
 			action();
 		}
-	},
+	}
 
 	/**
 	 * Remove focus from all tables other than this one
 	 */
-	_removeOtherFocus: function () {
+	private _removeOtherFocus () {
 		var thisTable = this.s.dt.table().node();
 
-		$.fn.dataTable.tables({ api: true }).iterator('table', function (settings) {
+		DataTable.tables({ api: true }).iterator('table', function (settings) {
 			if (this.table().node() !== thisTable) {
 				this.cell.blur();
 			}
 		});
-	},
+	}
 
 	/**
 	 * Scroll a container to make a cell visible in it. This can be used for
 	 * both DataTables scrolling and native window scrolling.
 	 *
-	 * @param  {jQuery} container Scrolling container
-	 * @param  {jQuery} scroller  Item being scrolled
-	 * @param  {jQuery} cell      Cell in the scroller
-	 * @param  {string} posOff    `position` or `offset` - which to use for the
+	 * @param container Scrolling container
+	 * @param scroller  Item being scrolled
+	 * @param cell      Cell in the scroller
+	 * @param posOff    `position` or `offset` - which to use for the
 	 *   calculation. `offset` for the document, otherwise `position`
-	 * @private
 	 */
-	_scroll: function (container, scroller, cell, posOff) {
+	private _scroll (containerIn: Window | HTMLElement, scrollerIn: HTMLElement, cell: Dom, posOff: 'position' | 'offset') {
 		var offset = cell[posOff]();
-		var height = cell.outerHeight();
-		var width = cell.outerWidth();
+		var height = cell.height('outer');
+		var width = cell.width('outer');
+		var scroller = dom.s(scrollerIn);
+		var container = containerIn === window
+			? dom.w
+			: dom.s(containerIn as HTMLElement);
 
 		var scrollTop = scroller.scrollTop();
 		var scrollLeft = scroller.scrollLeft();
@@ -1044,20 +1071,18 @@ $.extend(KeyTable.prototype, {
 		if (offset.left + width > scrollLeft + containerWidth && width < containerWidth) {
 			scroller.scrollLeft(offset.left + width - containerWidth);
 		}
-	},
+	}
 
 	/**
 	 * Calculate a single offset movement in the table - up, down, left and
 	 * right and then perform the focus if possible
 	 *
-	 * @param  {object}  e           Event object
-	 * @param  {string}  direction   Movement direction
-	 * @param  {boolean} keyBlurable `true` if the key press can result in the
-	 *   table being blurred. This is so arrow keys won't blur the table, but
-	 *   tab will.
-	 * @private
+	 * @param e           Event object
+	 * @param direction   Movement direction
+	 * @param keyBlurable `true` if the key press can result in the table being
+	 *   blurred. This is so arrow keys won't blur the table, but tab will.
 	 */
-	_shift: function (e, direction, keyBlurable) {
+	private _shift (e: Event, direction: string, keyBlurable?: boolean) {
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
 		var rows = pageInfo.recordsDisplay;
@@ -1090,7 +1115,7 @@ $.extend(KeyTable.prototype, {
 			column = columns[currCol]; // row is the display, column is an index
 
 		// If the direction is rtl then the logic needs to be inverted from this point forwards
-		if ($(dt.table().node()).css('direction') === 'rtl') {
+		if (dom.s(dt.table().node()).css('direction') === 'rtl') {
 			if (direction === 'right') {
 				direction = 'left';
 			}
@@ -1124,7 +1149,7 @@ $.extend(KeyTable.prototype, {
 			row++;
 		}
 
-		if (row >= 0 && row < rows && $.inArray(column, columns) !== -1) {
+		if (row >= 0 && row < rows && columns.includes(column)) {
 			if (e) {
 				e.preventDefault();
 			}
@@ -1141,18 +1166,17 @@ $.extend(KeyTable.prototype, {
 		else {
 			this._blur();
 		}
-	},
+	}
 
 	/**
 	 * Create and insert a hidden input element that can receive focus on behalf
 	 * of the table
 	 *
-	 * @private
 	 */
-	_tabInput: function () {
+	private _tabInput () {
 		var that = this;
 		var dt = this.s.dt;
-		var tabIndex = this.c.tabIndex !== null ? this.c.tabIndex : dt.settings()[0].iTabIndex;
+		var tabIndex = this.c.tabIndex !== null ? this.c.tabIndex : dt.settings()[0].tabIndex;
 
 		if (tabIndex == -1) {
 			return;
@@ -1162,10 +1186,12 @@ $.extend(KeyTable.prototype, {
 		if (!this.s.tabInput) {
 			var inputId = 'keytable-focus-capture-' + this.s.namespace.split('-')[1];
 			var input = '<input id="' + inputId + '" type="text" tabindex="' + tabIndex + '"/>'
-			var div = $('<div><label for="' + inputId + '">' + input + '</label></div>').css({
+			var div = dom.c('div').append(
+				dom.c('label').attr('for', inputId).text(input)
+			).css({
 				position: 'absolute',
-				height: 1,
-				width: 0,
+				height: '1px',
+				width: '0px',
 				overflow: 'hidden'
 			});
 
@@ -1184,201 +1210,29 @@ $.extend(KeyTable.prototype, {
 		var cell = this.s.dt
 			.cell(':eq(0)', '0:visible', { page: 'current', order: 'current' })
 			.node();
+
 		if (cell) {
-			$(cell).prepend(this.s.tabInput);
+			dom.s(cell).prepend(this.s.tabInput);
 		}
-	},
+	}
 
 	/**
 	 * Update fixed columns if they are enabled and if the cell we are
 	 * focusing is inside a fixed column
-	 * @param  {integer} column Index of the column being changed
-	 * @private
+	 * @param  column Index of the column being changed
 	 */
-	_updateFixedColumns: function (column) {
+	private _updateFixedColumns (column: number) {
 		var dt = this.s.dt;
 		var settings = dt.settings()[0];
+		var fc = (settings as any)._fixedColumns;
 
-		if (settings._oFixedColumns) {
-			var leftCols = settings._oFixedColumns.s.iLeftColumns;
-			var rightCols = settings.aoColumns.length - settings._oFixedColumns.s.iRightColumns;
+		if (fc) {
+			var leftCols = fc.s.iLeftColumns;
+			var rightCols = settings.columns.length - fc.s.iRightColumns;
 
 			if (column < leftCols || column >= rightCols) {
-				dt.fixedColumns().update();
+				(dt as any).fixedColumns().update();
 			}
 		}
 	}
-});
-
-/**
- * KeyTable default settings for initialisation
- *
- * @namespace
- * @name KeyTable.defaults
- * @static
- */
-KeyTable.defaults = {
-	/**
-	 * Can focus be removed from the table
-	 * @type {Boolean}
-	 */
-	blurable: true,
-
-	/**
-	 * Class to give to the focused cell
-	 * @type {String}
-	 */
-	className: 'focus',
-
-	/**
-	 * Enable or disable clipboard support
-	 * @type {Boolean}
-	 */
-	clipboard: true,
-
-	/**
-	 * Orthogonal data that should be copied to clipboard
-	 * @type {string}
-	 */
-	clipboardOrthogonal: 'display',
-
-	/**
-	 * Columns that can be focused. This is automatically merged with the
-	 * visible columns as only visible columns can gain focus.
-	 * @type {String}
-	 */
-	columns: '', // all
-
-	/**
-	 * Editor instance to automatically perform Excel like navigation
-	 * @type {Editor}
-	 */
-	editor: null,
-
-	/**
-	 * Trigger editing immediately on focus
-	 * @type {boolean}
-	 */
-	editOnFocus: false,
-
-	/**
-	 * Options to pass to Editor's inline method
-	 * @type {function}
-	 */
-	editorOptions: null,
-
-	/**
-	 * Select a cell to automatically select on start up. `null` for no
-	 * automatic selection
-	 * @type {cell-selector}
-	 */
-	focus: null,
-
-	/**
-	 * Array of keys to listen for
-	 * @type {null|array}
-	 */
-	keys: null,
-
-	/**
-	 * Tab index for where the table should sit in the document's tab flow
-	 * @type {integer|null}
-	 */
-	tabIndex: null
-};
-
-KeyTable.version = '2.12.2';
-
-$.fn.dataTable.KeyTable = KeyTable;
-$.fn.DataTable.KeyTable = KeyTable;
-
-DataTable.Api.register('cell.blur()', function () {
-	return this.iterator('table', function (ctx) {
-		if (ctx.keytable) {
-			ctx.keytable.blur();
-		}
-	});
-});
-
-DataTable.Api.register('cell().focus()', function () {
-	return this.iterator('cell', function (ctx, row, column) {
-		if (ctx.keytable) {
-			ctx.keytable.focus(row, column);
-		}
-	});
-});
-
-DataTable.Api.register('keys.disable()', function () {
-	return this.iterator('table', function (ctx) {
-		if (ctx.keytable) {
-			ctx.keytable.enable(false);
-		}
-	});
-});
-
-DataTable.Api.register('keys.enable()', function (opts) {
-	return this.iterator('table', function (ctx) {
-		if (ctx.keytable) {
-			ctx.keytable.enable(opts === undefined ? true : opts);
-		}
-	});
-});
-
-DataTable.Api.register('keys.enabled()', function (opts) {
-	var ctx = this.context;
-
-	if (ctx.length) {
-		return ctx[0].keytable ? ctx[0].keytable.enabled() : false;
-	}
-
-	return false;
-});
-
-DataTable.Api.register('keys.move()', function (dir) {
-	return this.iterator('table', function (ctx) {
-		if (ctx.keytable) {
-			ctx.keytable._shift(null, dir, false);
-		}
-	});
-});
-
-// Cell selector
-DataTable.ext.selector.cell.push(function (settings, opts, cells) {
-	var focused = opts.focused;
-	var kt = settings.keytable;
-	var out = [];
-
-	if (!kt || focused === undefined) {
-		return cells;
-	}
-
-	for (var i = 0, ien = cells.length; i < ien; i++) {
-		if (
-			(focused === true && kt.focused(cells[i])) ||
-			(focused === false && !kt.focused(cells[i]))
-		) {
-			out.push(cells[i]);
-		}
-	}
-
-	return out;
-});
-
-// Attach a listener to the document which listens for DataTables initialisation
-// events so we can automatically initialise
-$(document).on('preInit.dt.dtk', function (e, settings, json) {
-	if (e.namespace !== 'dt') {
-		return;
-	}
-
-	var init = settings.oInit.keys;
-	var defaults = DataTable.defaults.keys;
-
-	if (init || defaults) {
-		var opts = $.extend({}, defaults, init);
-
-		if (init !== false) {
-			new KeyTable(settings, opts);
-		}
-	}
-});
+}
