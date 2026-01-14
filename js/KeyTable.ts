@@ -15,9 +15,13 @@
  * For details please refer to: http://www.datatables.net
  */
 
-
 import DataTable, { Api, ApiCellMethods, CellIdx, Context, Dom } from 'datatables.net';
 import { Config, Defaults, Settings } from './interface';
+
+// Sanity check 
+if (!DataTable.versionCheck('3')) {
+	throw 'Warning: Select requires DataTables 3 or newer';
+}
 
 var namespaceCounter = 0;
 var editorNamespaceCounter = 0;
@@ -438,7 +442,7 @@ export default class KeyTable {
 
 		var cell = this.s.lastFocus.cell;
 
-		dom.s(cell.node()).classAdd(this.c.className);
+		dom.s(cell.node()).classRemove(this.c.className);
 		this.s.lastFocus = null;
 
 		if (!noEvents) {

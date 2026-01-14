@@ -2,15 +2,10 @@
  * © SpryMedia Ltd - datatables.net/license
  */
 
-import DataTable, { CellIdx, Context } from "datatables.net";
+import DataTable, { CellIdx, Context } from 'datatables.net';
 import KeyTable from "./KeyTable";
 import './interface';
 import { Defaults } from "./interface";
-
-// Sanity check 
-if (!DataTable.versionCheck('3')) {
-	throw 'Warning: Select requires DataTables 3 or newer';
-}
 
 const dom = DataTable.dom;
 const util = DataTable.util;
@@ -96,7 +91,7 @@ dom.s(document).on('preInit.dt.dtk', function (e, settings, json) {
 		return;
 	}
 
-	var init = settings.oInit.keys;
+	var init = settings.init.keys;
 	var defaults = DataTable.defaults.keys;
 
 	if (init || defaults) {
