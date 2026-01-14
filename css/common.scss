@@ -1,0 +1,26 @@
+
+table.dataTable tbody {
+	th.focus,
+	td.focus {
+		outline-width: var(--dtkt-focus_outline-width);
+		outline-style: solid;
+		outline-color: var(--dtkt-focus_outline-color);
+		outline-offset: calc(var(--dtkt-focus_outline-width) * -1);
+	}
+
+	tr.selected {
+		th.focus,
+		td.focus {
+			outline-color: var(--dtkt-focus_outline-color-selected);
+		}
+	}
+}
+
+div.dtk-focus-alt {
+	table.dataTable tbody {
+		th.focus,
+		td.focus {
+			outline-color: var(--dtkt-focus-alt_outline-color);
+		}
+	}
+}

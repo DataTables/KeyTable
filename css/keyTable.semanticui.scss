@@ -1,4 +1,7 @@
+@use 'defaults.scss';
+@use 'common.scss';
 
-$keytable-focus: #888 !default;
-
-@use 'keyTable.dataTables.scss' with ($keytable-focus: $keytable-focus);
+:root {
+	--dtkt-focus_outline-color: #888;
+	--dtkt-focus_outline-color-selected: #555555;
+}
