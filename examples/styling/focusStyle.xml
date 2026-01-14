@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example table-type="html" order="1">
 
-<css lib="datatables">
-	table.dataTable td.focus {
-		outline: 1px solid #ac1212;
-		outline-offset: -3px;
-		background-color: #f8e6e6 !important;
-	}
+<css lib="datatables keytable">
+
+:root table {
+	--dtkt-focus_outline-width: 1px;
+	--dtkt-focus_outline-color: rgb(253, 13, 13);
+	--dtkt-focus_outline-color-selected: #cc0000;
+	--dtkt-focus_background: #cc410028;
+}
+
 </css>
 <js lib="jquery datatables keytable">
 <![CDATA[
@@ -30,9 +33,25 @@ new DataTable('#example', {
 
 <info><![CDATA[
 
-When KeyTable adds focus to a table's cell it adds a class (defined by `kt-init keys.className` - default `-string focus`). This class can be used to provide styling information to highlight the focused cell to the end user. The provided stylesheets use [CSS `box-shadow`](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow) to show focus, but any CSS property can be used.
+When KeyTable adds focus to a table's cell it adds a class (defined by `-init
+keys.className` - default `-string focus`). This class can be used to provide
+styling information to highlight the focused cell to the end user. The
+stylesheets provided for KeyTable use this class and an [`outline`
+style](https://developer.mozilla.org/en-US/docs/Web/CSS/outline) to show the end
+user where the focus is in the table.
 
-This example uses a [thin outline](https://developer.mozilla.org/en-US/docs/Web/CSS/outline) with a red colour and a light red background to highlight the focused cell. Click the _CSS_ tab below the table to see the CSS used.
+The stylesheets make use of CSS variables, allowing you to easily provide your
+own customisation for the styling (you can of course just write an override
+style for the class as well). The CSS variables used are:
+
+* `--dtkt-focus_outline-width`
+* `--dtkt-focus_outline-color`
+* `--dtkt-focus_outline-color-selected`
+* `--dtkt-focus_background`
+
+This example uses the CSS variables to set a red colour and a light red
+background to highlight the focused cell. Click the _CSS_ tab below the table to
+see the CSS used.
 
 ]]></info>
 

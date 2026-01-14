@@ -6,6 +6,7 @@ table.dataTable tbody {
 		outline-style: solid;
 		outline-color: var(--dtkt-focus_outline-color);
 		outline-offset: calc(var(--dtkt-focus_outline-width) * -1);
+		background: var(--dtkt-focus_background);
 	}
 
 	tr.selected {
@@ -21,6 +22,7 @@ div.dtk-focus-alt {
 		th.focus,
 		td.focus {
 			outline-color: var(--dtkt-focus-alt_outline-color);
+			background: var(--dtkt-focus-alt_background);
 		}
 	}
 }
