@@ -1,4 +1,3 @@
-
 /**
  * @summary     KeyTable
  * @description Spreadsheet like keyboard navigation for DataTables
@@ -15,10 +14,16 @@
  * For details please refer to: http://www.datatables.net
  */
 
-import DataTable, { Api, ApiCellMethods, CellIdx, Context, Dom } from 'datatables.net';
+import DataTable, {
+	Api,
+	ApiCellMethods,
+	CellIdx,
+	Context,
+	Dom
+} from 'datatables.net';
 import { Config, Defaults, Settings } from './interface';
 
-// Sanity check 
+// Sanity check
 if (!DataTable.versionCheck('3')) {
 	throw 'Warning: Select requires DataTables 3 or newer';
 }
@@ -96,9 +101,13 @@ export default class KeyTable {
 	private s: Settings;
 
 	constructor(dt: Context | Api, opts: Config) {
-
 		// User and defaults configuration object
-		this.c = util.object.assignDeep({}, DataTable.defaults.keys, KeyTable.defaults, opts);
+		this.c = util.object.assignDeep(
+			{},
+			DataTable.defaults.keys,
+			KeyTable.defaults,
+			opts
+		);
 
 		// Internal settings
 		this.s = {
@@ -128,7 +137,7 @@ export default class KeyTable {
 	/**
 	 * Blur the table's cell focus
 	 */
-	public blur () {
+	public blur() {
 		this._blur();
 	}
 
@@ -137,14 +146,14 @@ export default class KeyTable {
 	 *
 	 * @param state Can be `true`, `false` or `-string navigation-only`
 	 */
-	public enable (state: boolean | 'navigation-only' | 'tab-only') {
+	public enable(state: boolean | 'navigation-only' | 'tab-only') {
 		this.s.enable = state;
 	}
 
 	/**
 	 * Get enable status
 	 */
-	public enabled () {
+	public enabled() {
 		return this.s.enable;
 	}
 
@@ -154,7 +163,7 @@ export default class KeyTable {
 	 * @param row    Row index
 	 * @param column Column index
 	 */
-	public focus (row: number, column: number) {
+	public focus(row: number, column: number) {
 		this._focus(this.s.dt.cell(row, column), null);
 	}
 
@@ -163,7 +172,7 @@ export default class KeyTable {
 	 * @param  cell Cell index to check
 	 * @returns true if focused, false otherwise
 	 */
-	public focused (cell: CellIdx) {
+	public focused(cell: CellIdx) {
 		var lastFocus = this.s.lastFocus;
 
 		if (!lastFocus) {
@@ -181,7 +190,7 @@ export default class KeyTable {
 	/**
 	 * Initialise the KeyTable instance
 	 */
-	private _init () {
+	private _init() {
 		this._tabInput();
 
 		var that = this;
@@ -196,19 +205,23 @@ export default class KeyTable {
 		}
 
 		// Click to focus
-		dom.s(dt.table().body()).on('click' + namespace, 'th, td', function (e) {
-			if (that.s.enable === false) {
-				return;
+		dom.s(dt.table().body()).on(
+			'click' + namespace,
+			'th, td',
+			function (e) {
+				if (that.s.enable === false) {
+					return;
+				}
+
+				var cell = dt.cell(this);
+
+				if (!cell.any()) {
+					return;
+				}
+
+				that._focus(cell, null, false, e);
 			}
-
-			var cell = dt.cell(this);
-
-			if (!cell.any()) {
-				return;
-			}
-
-			that._focus(cell, null, false, e);
-		});
+		);
 
 		// Key events
 		dom.s(document).on('keydown' + namespace, function (e) {
@@ -293,23 +306,30 @@ export default class KeyTable {
 
 			// Active editing on double click - it will already have focus from
 			// the click event handler above
-			dom.s(dt.table().body()).on('dblclick' + namespace, 'th, td', function (e) {
-				if (that.s.enable === false) {
-					return;
+			dom.s(dt.table().body()).on(
+				'dblclick' + namespace,
+				'th, td',
+				function (e) {
+					if (that.s.enable === false) {
+						return;
+					}
+
+					var cell = dt.cell(this);
+
+					if (!cell.any()) {
+						return;
+					}
+
+					if (
+						that.s.lastFocus &&
+						this !== that.s.lastFocus.cell.node()
+					) {
+						return;
+					}
+
+					that._editor(null, e, true);
 				}
-
-				var cell = dt.cell(this);
-
-				if (!cell.any()) {
-					return;
-				}
-
-				if (that.s.lastFocus && this !== that.s.lastFocus.cell.node()) {
-					return;
-				}
-
-				that._editor(null, e, true);
-			});
+			);
 
 			// While Editor is busy processing, we don't want to process any key events
 			editor
@@ -326,7 +346,9 @@ export default class KeyTable {
 
 		// Stave saving
 		dt.on('stateSaveParams' + namespace, function (e, s, d) {
-			d.keyTable = that.s.lastFocus ? that.s.lastFocus.cell.index() : null;
+			d.keyTable = that.s.lastFocus
+				? that.s.lastFocus.cell.index()
+				: null;
 		});
 
 		dt.on('column-visibility' + namespace, function (e) {
@@ -349,9 +371,12 @@ export default class KeyTable {
 		// When the table is about to do a draw we need to block key
 		// handling. This is only important for async draws - i.e.
 		// server-side processing.
-		dt.on('preDraw' + namespace + ' scroller-will-draw' + namespace, function (e) {
-			that.s.dtDrawing = true;
-		});
+		dt.on(
+			'preDraw' + namespace + ' scroller-will-draw' + namespace,
+			function (e) {
+				that.s.dtDrawing = true;
+			}
+		);
 
 		// Redraw - retain focus on the current cell
 		dt.on('draw' + namespace, function (e) {
@@ -417,12 +442,12 @@ export default class KeyTable {
 		// Wait until init is done
 		dt.one('init', () => {
 			if (state && state.keyTable) {
-					var cell = dt.cell(state.keyTable);
+				var cell = dt.cell(state.keyTable);
 
-					// Ensure that the saved cell still exists
-					if (cell.any()) {
-						cell.focus();
-					}
+				// Ensure that the saved cell still exists
+				if (cell.any()) {
+					cell.focus();
+				}
 			}
 			else if (this.c.focus) {
 				dt.cell(this.c.focus).focus();
@@ -435,7 +460,7 @@ export default class KeyTable {
 	 *
 	 * @param noEvents Don't trigger updates / events (for destroying)
 	 */
-	private _blur (noEvents: boolean = false) {
+	private _blur(noEvents: boolean = false) {
 		if (!this.s.enable || !this.s.lastFocus) {
 			return;
 		}
@@ -455,7 +480,7 @@ export default class KeyTable {
 	/**
 	 * Clipboard interaction handlers
 	 */
-	private _clipboard () {
+	private _clipboard() {
 		var dt = this.s.dt;
 		var that = this;
 		var namespace = this.s.namespace;
@@ -492,7 +517,10 @@ export default class KeyTable {
 				var editor = that.c.editor;
 				var pastedText;
 
-				if (focused && (!activeEl || activeEl.nodeName.toLowerCase() === 'body')) {
+				if (
+					focused &&
+					(!activeEl || activeEl.nodeName.toLowerCase() === 'body')
+				) {
 					e.preventDefault();
 
 					if (e.clipboardData && e.clipboardData.getData) {
@@ -505,7 +533,11 @@ export default class KeyTable {
 						var options = that._inlineOptions(focused.cell.index());
 
 						editor
-							.inline(options.cell, options.field, options.options)
+							.inline(
+								options.cell,
+								options.field,
+								options.options
+							)
 							.set(editor.displayed()[0], pastedText)
 							.submit();
 					}
@@ -523,7 +555,7 @@ export default class KeyTable {
 	 * Get an array of the column indexes that KeyTable can operate on. This
 	 * is a merge of the user supplied columns and the visible columns.
 	 */
-	private _columns () {
+	private _columns() {
 		var dt = this.s.dt;
 		var user = dt.columns(this.c.columns).indexes();
 		var out: number[] = [];
@@ -544,7 +576,7 @@ export default class KeyTable {
 	 * @param key Key code for the pressed key
 	 * @param orig Original event
 	 */
-	private _editor (key: number | null, orig: Event, hardEdit: boolean) {
+	private _editor(key: number | null, orig: Event, hardEdit: boolean) {
 		// If nothing focused, we can't take any action
 		if (!this.s.lastFocus) {
 			return;
@@ -601,7 +633,9 @@ export default class KeyTable {
 					if (!hardEdit) {
 						dom.s<HTMLInputElement>(
 							'div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea'
-						).get(0).select();
+						)
+							.get(0)
+							.select();
 					}
 
 					// Reduce the keys the Keys listens for
@@ -614,7 +648,10 @@ export default class KeyTable {
 							return;
 						}
 
-						if (editor.displayed() && cell.node() === editCell.node()) {
+						if (
+							editor.displayed() &&
+							cell.node() === editCell.node()
+						) {
 							editor.submit();
 						}
 					});
@@ -640,11 +677,16 @@ export default class KeyTable {
 						dt.keys.enable(true);
 						dt.off('key-blur.editor');
 						editor.off(namespace);
-						dom.s(dt.table().container()).classRemove('dtk-focus-alt');
+						dom.s(dt.table().container()).classRemove(
+							'dtk-focus-alt'
+						);
 
 						if (that.s.returnSubmit) {
 							that.s.returnSubmit = false;
-							that._emitEvent('key-return-submit', [dt, editCell]);
+							that._emitEvent('key-return-submit', [
+								dt,
+								editCell
+							]);
 						}
 					});
 				})
@@ -672,7 +714,7 @@ export default class KeyTable {
 		}
 	}
 
-	private _inlineOptions (cellIdx: CellIdx) {
+	private _inlineOptions(cellIdx: CellIdx) {
 		if (this.c.editorOptions) {
 			return this.c.editorOptions(cellIdx);
 		}
@@ -690,7 +732,7 @@ export default class KeyTable {
 	 * @param name Event name
 	 * @param args Event arguments
 	 */
-	private _emitEvent (name: string, args: any[]) {
+	private _emitEvent(name: string, args: any[]) {
 		return this.s.dt.trigger(name, args);
 	}
 
@@ -706,7 +748,12 @@ export default class KeyTable {
 	 * @param shiftKey Should the viewport be moved to show cell
 	 * @param originalEvent Triggering event
 	 */
-	private _focus (row: number | ApiCellMethods<any>, column: number | null, shift?: boolean, originalEvent?: Event | null) {
+	private _focus(
+		row: number | ApiCellMethods<any>,
+		column: number | null,
+		shift?: boolean,
+		originalEvent?: Event | null
+	) {
 		var that = this;
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
@@ -729,7 +776,10 @@ export default class KeyTable {
 			// Convert the cell to a row and column
 			var index = row.index();
 			column = index.column;
-			row = dt.rows({ filter: 'applied', order: 'applied' }).indexes().indexOf(index.row);
+			row = dt
+				.rows({ filter: 'applied', order: 'applied' })
+				.indexes()
+				.indexOf(index.row);
 
 			// Don't focus rows that were filtered out.
 			if (row < 0) {
@@ -765,7 +815,7 @@ export default class KeyTable {
 		}
 
 		// In the available columns?
-		if (column !== null && ! this._columns().includes(column)) {
+		if (column !== null && !this._columns().includes(column)) {
 			return;
 		}
 
@@ -777,11 +827,17 @@ export default class KeyTable {
 
 		// Get the cell from the current position - ignoring any cells which might
 		// not have been rendered (therefore can't use `:eq()` selector).
-		var cells = dt.cells(null, column, { search: 'applied', order: 'applied' }).flatten();
+		var cells = dt
+			.cells(null, column, { search: 'applied', order: 'applied' })
+			.flatten();
 		var cell = dt.cell(cells[row]);
 
 		// Prefocus check - this event allows a focus action to be disallowed.
-		var preFocus = this._emitEvent('key-prefocus', [this.s.dt, cell, originalEvent || null]);
+		var preFocus = this._emitEvent('key-prefocus', [
+			this.s.dt,
+			cell,
+			originalEvent || null
+		]);
 		if (preFocus.indexOf(false) !== -1) {
 			return;
 		}
@@ -789,7 +845,11 @@ export default class KeyTable {
 		if (lastFocus) {
 			// Don't trigger a refocus on the same cell
 			if (lastFocus.node === cell.node()) {
-				this._emitEvent('key-refocus', [this.s.dt, cell, originalEvent || null]);
+				this._emitEvent('key-refocus', [
+					this.s.dt,
+					cell,
+					originalEvent || null
+				]);
 				return;
 			}
 
@@ -826,7 +886,12 @@ export default class KeyTable {
 			cell: cell,
 			node: cell.node(),
 			relative: {
-				row: info.start + dt.rows({ page: 'current' }).indexes().indexOf(cell.index().row),
+				row:
+					info.start +
+					dt
+						.rows({ page: 'current' })
+						.indexes()
+						.indexOf(cell.index().row),
 				column: cell.index().column
 			}
 		};
@@ -840,7 +905,7 @@ export default class KeyTable {
 	 *
 	 * @param e Event
 	 */
-	private _key (e: KeyboardEvent) {
+	private _key(e: KeyboardEvent) {
 		// If we are waiting for a draw to happen from another key event, then
 		// do nothing for this new key press.
 		if (this.s.waitingForDraw) {
@@ -850,13 +915,19 @@ export default class KeyTable {
 
 		// Ignore key presses in an Editor inline create row - it is not
 		// navigatable by KeyTable
-		if (dom.s(e.target as HTMLElement).closest('.dte-inlineAdd').count()) {
+		if (
+			dom
+				.s(e.target as HTMLElement)
+				.closest('.dte-inlineAdd')
+				.count()
+		) {
 			return;
 		}
 
 		var enable = this.s.enable;
 		this.s.returnSubmit =
-			(enable === 'navigation-only' || enable === 'tab-only') && e.keyCode === 13
+			(enable === 'navigation-only' || enable === 'tab-only') &&
+			e.keyCode === 13
 				? true
 				: false;
 
@@ -865,7 +936,10 @@ export default class KeyTable {
 			return;
 		}
 
-		if ((e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey) && !(e.ctrlKey && e.altKey)) {
+		if (
+			(e.keyCode === 0 || e.ctrlKey || e.metaKey || e.altKey) &&
+			!(e.ctrlKey && e.altKey)
+		) {
 			return;
 		}
 
@@ -918,7 +992,9 @@ export default class KeyTable {
 					e.preventDefault();
 
 					this._keyAction(function () {
-						dt.page(e.keyCode === 33 ? 'previous' : 'next').draw(false);
+						dt.page(e.keyCode === 33 ? 'previous' : 'next').draw(
+							false
+						);
 					});
 				}
 				break;
@@ -933,7 +1009,13 @@ export default class KeyTable {
 						var colIndexes = that._columns();
 
 						that._focus(
-							dt.cell(indexes[e.keyCode === 35 ? indexes.length - 1 : colIndexes[0]]),
+							dt.cell(
+								indexes[
+									e.keyCode === 35
+										? indexes.length - 1
+										: colIndexes[0]
+								]
+							),
 							null,
 							true,
 							e
@@ -984,7 +1066,12 @@ export default class KeyTable {
 			default:
 				// Everything else - pass through only when fully enabled
 				if (enable === true) {
-					this._emitEvent('key', [dt, e.keyCode, this.s.lastFocus?.cell, e]);
+					this._emitEvent('key', [
+						dt,
+						e.keyCode,
+						this.s.lastFocus?.cell,
+						e
+					]);
 				}
 				break;
 		}
@@ -997,7 +1084,7 @@ export default class KeyTable {
 	 *
 	 * @param action Function to trigger when ready
 	 */
-	private _keyAction (action: Function) {
+	private _keyAction(action: Function) {
 		var editor = this.c.editor;
 
 		if (editor && editor.mode() && editor.display()) {
@@ -1011,7 +1098,7 @@ export default class KeyTable {
 	/**
 	 * Remove focus from all tables other than this one
 	 */
-	private _removeOtherFocus () {
+	private _removeOtherFocus() {
 		var thisTable = this.s.dt.table().node();
 
 		DataTable.tables({ api: true }).iterator('table', function (settings) {
@@ -1031,14 +1118,18 @@ export default class KeyTable {
 	 * @param posOff    `position` or `offset` - which to use for the
 	 *   calculation. `offset` for the document, otherwise `position`
 	 */
-	private _scroll (containerIn: Window | HTMLElement, scrollerIn: HTMLElement, cell: Dom, posOff: 'position' | 'offset') {
+	private _scroll(
+		containerIn: Window | HTMLElement,
+		scrollerIn: HTMLElement,
+		cell: Dom,
+		posOff: 'position' | 'offset'
+	) {
 		var offset = cell[posOff]();
 		var height = cell.height('outer');
 		var width = cell.width('outer');
 		var scroller = dom.s(scrollerIn);
-		var container = containerIn === window
-			? dom.w
-			: dom.s(containerIn as HTMLElement);
+		var container =
+			containerIn === window ? dom.w : dom.s(containerIn as HTMLElement);
 
 		var scrollTop = scroller.scrollTop();
 		var scrollLeft = scroller.scrollLeft();
@@ -1072,7 +1163,10 @@ export default class KeyTable {
 		}
 
 		// Right correction
-		if (offset.left + width > scrollLeft + containerWidth && width < containerWidth) {
+		if (
+			offset.left + width > scrollLeft + containerWidth &&
+			width < containerWidth
+		) {
 			scroller.scrollLeft(offset.left + width - containerWidth);
 		}
 	}
@@ -1086,7 +1180,7 @@ export default class KeyTable {
 	 * @param keyBlurable `true` if the key press can result in the table being
 	 *   blurred. This is so arrow keys won't blur the table, but tab will.
 	 */
-	private _shift (e: Event, direction: string, keyBlurable?: boolean) {
+	private _shift(e: Event, direction: string, keyBlurable?: boolean) {
 		var dt = this.s.dt;
 		var pageInfo = dt.page.info();
 		var rows = pageInfo.recordsDisplay;
@@ -1113,7 +1207,10 @@ export default class KeyTable {
 			currRow += pageInfo.start;
 		}
 
-		var currCol = dt.columns(columns).indexes().indexOf(currentCell.index().column);
+		var currCol = dt
+			.columns(columns)
+			.indexes()
+			.indexOf(currentCell.index().column);
 
 		var row = currRow,
 			column = columns[currCol]; // row is the display, column is an index
@@ -1177,10 +1274,13 @@ export default class KeyTable {
 	 * of the table
 	 *
 	 */
-	private _tabInput () {
+	private _tabInput() {
 		var that = this;
 		var dt = this.s.dt;
-		var tabIndex = this.c.tabIndex !== null ? this.c.tabIndex : dt.settings()[0].tabIndex;
+		var tabIndex =
+			this.c.tabIndex !== null
+				? this.c.tabIndex
+				: dt.settings()[0].tabIndex;
 
 		if (tabIndex == -1) {
 			return;
@@ -1188,19 +1288,27 @@ export default class KeyTable {
 
 		// Only create the input element once on first class
 		if (!this.s.tabInput) {
-			var inputId = 'keytable-focus-capture-' + this.s.namespace.split('-')[1];
-			var input = '<input id="' + inputId + '" type="text" tabindex="' + tabIndex + '"/>'
-			var div = dom.c('div').append(
-				dom.c('label').attr('for', inputId).text(input)
-			).css({
-				position: 'absolute',
-				height: '1px',
-				width: '0px',
-				overflow: 'hidden'
-			});
+			var inputId =
+				'keytable-focus-capture-' + this.s.namespace.split('-')[1];
+			var input = dom
+				.c('input')
+				.attr('id', inputId)
+				.attr('type', 'text')
+				.attr('tabindex', tabIndex);
+			var div = dom
+				.c('div')
+				.append(dom.c('label').attr('for', inputId).append(input))
+				.css({
+					position: 'absolute',
+					height: '1px',
+					width: '0px',
+					overflow: 'hidden'
+				});
 
 			div.find('input').on('focus', function (e) {
-				var cell = dt.cell(':eq(0)', that._columns(), { page: 'current' });
+				var cell = dt.cell(':eq(0)', that._columns(), {
+					page: 'current'
+				});
 
 				if (cell.any()) {
 					that._focus(cell, null, true, e);
@@ -1225,7 +1333,7 @@ export default class KeyTable {
 	 * focusing is inside a fixed column
 	 * @param  column Index of the column being changed
 	 */
-	private _updateFixedColumns (column: number) {
+	private _updateFixedColumns(column: number) {
 		var dt = this.s.dt;
 		var settings = dt.settings()[0];
 		var fc = (settings as any)._fixedColumns;

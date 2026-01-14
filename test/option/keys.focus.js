@@ -20,7 +20,7 @@ describe('KeyTable - keys.focus', function() {
 		it('Can select a cell - first cell', function() {
 			table = $('#example').DataTable({
 				keys: {
-					focus: ':eq(0)'
+					focus: 'tr:first-child td:first-child'
 				},
 				// DD-1181 - remove displayStart once fixed
 				displayStart: 5
