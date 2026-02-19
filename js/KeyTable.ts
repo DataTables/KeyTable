@@ -25,7 +25,7 @@ import { Config, Defaults, Settings } from './interface';
 
 // Sanity check
 if (!DataTable.versionCheck('3')) {
-	throw 'Warning: Select requires DataTables 3 or newer';
+	throw 'Warning: KeyTable requires DataTables 3 or newer';
 }
 
 var namespaceCounter = 0;
@@ -960,7 +960,7 @@ export default class KeyTable {
 		var scrolling = this.s.dt.settings()[0].scroll.y ? true : false;
 
 		// If we are not listening for this key, do nothing
-		if (this.c.keys && this.c.keys.includes(e.keyCode)) {
+		if (this.c.keys && ! this.c.keys.includes(e.keyCode)) {
 			return;
 		}
 
