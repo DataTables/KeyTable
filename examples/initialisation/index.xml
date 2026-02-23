@@ -3,7 +3,7 @@
 
 <title lib="KeyTable">KeyTable examples</title>
 
-<js lib="jquery" />
+<js lib="datatables" />
 <info><![CDATA[
 
 The examples shown in this section demonstrate the basic initialisation and features of KeyTable.
