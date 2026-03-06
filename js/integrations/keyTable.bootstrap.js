@@ -1,3 +1,3 @@
-/*! Bootstrap 3 styling wrapper for KeyTable
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable Bootstrap 3 styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

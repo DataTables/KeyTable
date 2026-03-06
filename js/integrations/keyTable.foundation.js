@@ -1,3 +1,3 @@
-/*! Foundation styling wrapper for KeyTable
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable Foundation styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

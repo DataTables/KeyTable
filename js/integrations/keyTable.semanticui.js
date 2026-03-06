@@ -1,3 +1,3 @@
-/*! Semanic UI styling wrapper for KeyTable
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable Fomantic styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

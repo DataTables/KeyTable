@@ -1,3 +1,3 @@
-/*! jQuery UI styling wrapper for KeyTable
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable jQuery UI styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

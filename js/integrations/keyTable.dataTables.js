@@ -1,3 +1,3 @@
-/*! DataTables styling wrapper for KeyTable
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable default styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

@@ -1,38 +1,20 @@
-/**
- * @summary     KeyTable
- * @description Spreadsheet like keyboard navigation for DataTables
- * @version     3.0.0-dev
- * @author      SpryMedia Ltd
- *
- * This source file is free software, available under the following license:
- *   MIT license - http://datatables.net/license/mit
- *
- * This source file is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- *
- * For details please refer to: http://www.datatables.net
- */
-
 import DataTable, {
 	Api,
 	ApiCellMethods,
 	CellIdx,
 	Context,
-	Dom
+	Dom,
+	util
 } from 'datatables.net';
 import { Config, Defaults, Settings } from './interface';
 
 // Sanity check
-if (!DataTable.versionCheck('3')) {
+if (!DataTable || !DataTable.versionCheck('3')) {
 	throw 'Warning: KeyTable requires DataTables 3 or newer';
 }
 
 var namespaceCounter = 0;
 var editorNamespaceCounter = 0;
-
-const dom = DataTable.dom;
-const util = DataTable.util;
 
 export default class KeyTable {
 	public static defaults: Defaults = {
@@ -94,7 +76,7 @@ export default class KeyTable {
 		tabIndex: null
 	};
 
-	public static version: '3.0.0-dev';
+	public static version = '3.0.0-dev';
 
 	private c: Defaults;
 
@@ -195,7 +177,7 @@ export default class KeyTable {
 
 		var that = this;
 		var dt = this.s.dt;
-		var table = dom.s(dt.table().node());
+		var table = Dom.s(dt.table().node());
 		var namespace = this.s.namespace;
 		var editorBlock = false;
 
@@ -205,7 +187,7 @@ export default class KeyTable {
 		}
 
 		// Click to focus
-		dom.s(dt.table().body()).on(
+		Dom.s(dt.table().body()).on(
 			'click' + namespace,
 			'th, td',
 			function (e) {
@@ -224,7 +206,7 @@ export default class KeyTable {
 		);
 
 		// Key events
-		dom.s(document).on('keydown' + namespace, function (e) {
+		Dom.s(document).on('keydown' + namespace, function (e) {
 			if (!editorBlock && !that.s.dtDrawing) {
 				that._key(e);
 			}
@@ -235,8 +217,8 @@ export default class KeyTable {
 
 		// Click blur
 		if (this.c.blurable) {
-			dom.s(document).on('mousedown' + namespace, function (e) {
-				let target = dom.s(e.target);
+			Dom.s(document).on('mousedown' + namespace, function (e) {
+				let target = Dom.s(e.target);
 
 				// Click on the search input will blur focus
 				if (target.closest('.dt-search').count()) {
@@ -306,7 +288,7 @@ export default class KeyTable {
 
 			// Active editing on double click - it will already have focus from
 			// the click event handler above
-			dom.s(dt.table().body()).on(
+			Dom.s(dt.table().body()).on(
 				'dblclick' + namespace,
 				'th, td',
 				function (e) {
@@ -425,11 +407,11 @@ export default class KeyTable {
 			// Event tidy up
 			dt.off(namespace);
 
-			dom.s(dt.table().body())
+			Dom.s(dt.table().body())
 				.off('click' + namespace, 'th, td')
 				.off('dblclick' + namespace, 'th, td');
 
-			dom.s(document)
+			Dom.s(document)
 				.off('mousedown' + namespace)
 				.off('keydown' + namespace)
 				.off('copy' + namespace)
@@ -467,7 +449,7 @@ export default class KeyTable {
 
 		var cell = this.s.lastFocus.cell;
 
-		dom.s(cell.node()).classRemove(this.c.className);
+		Dom.s(cell.node()).classRemove(this.c.className);
 		this.s.lastFocus = null;
 
 		if (!noEvents) {
@@ -492,7 +474,7 @@ export default class KeyTable {
 		}
 
 		if (opts === true || (opts && opts.copy)) {
-			dom.s(document).on('copy' + namespace, function (ejq) {
+			Dom.s(document).on('copy' + namespace, function (ejq) {
 				var e = ejq.originalEvent;
 				var selection = window.getSelection()?.toString();
 				var focused = that.s.lastFocus;
@@ -510,7 +492,7 @@ export default class KeyTable {
 		}
 
 		if (opts === true || (opts && opts.paste)) {
-			dom.s(document).on('paste' + namespace, function (ejq) {
+			Dom.s(document).on('paste' + namespace, function (ejq) {
 				var e = ejq.originalEvent;
 				var focused = that.s.lastFocus;
 				var activeEl = document.activeElement;
@@ -594,7 +576,7 @@ export default class KeyTable {
 		var namespace = this.s.namespace + 'e' + editorNamespaceCounter++;
 
 		// Do nothing if there is already an inline edit in this cell
-		if (dom.s(editCell.node()).find('div.DTE').count()) {
+		if (Dom.s(editCell.node()).find('div.DTE').count()) {
 			return;
 		}
 
@@ -631,7 +613,7 @@ export default class KeyTable {
 
 					// Excel style - select all text
 					if (!hardEdit) {
-						dom.s<HTMLInputElement>(
+						Dom.s<HTMLInputElement>(
 							'div.DTE_Field_InputControl input, div.DTE_Field_InputControl textarea'
 						)
 							.get(0)
@@ -658,7 +640,7 @@ export default class KeyTable {
 
 					// Highlight the cell a different colour on full edit
 					if (hardEdit) {
-						dom.s(dt.table().container()).classAdd('dtk-focus-alt');
+						Dom.s(dt.table().container()).classAdd('dtk-focus-alt');
 					}
 
 					// If the dev cancels the submit, we need to return focus
@@ -677,7 +659,7 @@ export default class KeyTable {
 						dt.keys.enable(true);
 						dt.off('key-blur.editor');
 						editor.off(namespace);
-						dom.s(dt.table().container()).classRemove(
+						Dom.s(dt.table().container()).classRemove(
 							'dtk-focus-alt'
 						);
 
@@ -704,7 +686,7 @@ export default class KeyTable {
 		if (key === 13) {
 			hardEdit = true;
 
-			dom.s(document).one('keyup', function () {
+			Dom.s(document).one('keyup', function () {
 				// immediately removed
 				editInline();
 			});
@@ -860,7 +842,7 @@ export default class KeyTable {
 		// Clear focus from other tables
 		this._removeOtherFocus();
 
-		var node = dom.s(cell.node());
+		var node = Dom.s(cell.node());
 		node.classAdd(this.c.className);
 
 		if (column !== null) {
@@ -916,7 +898,7 @@ export default class KeyTable {
 		// Ignore key presses in an Editor inline create row - it is not
 		// navigatable by KeyTable
 		if (
-			dom
+			Dom
 				.s(e.target as HTMLElement)
 				.closest('.dte-inlineAdd')
 				.count()
@@ -977,7 +959,7 @@ export default class KeyTable {
 			case 27: // esc
 				// If there is an inline edit in the cell, let it blur first,
 				// a second escape will then blur keytable
-				if (dom.s(lastFocus.node).find('div.DTE').count()) {
+				if (Dom.s(lastFocus.node).find('div.DTE').count()) {
 					return;
 				}
 
@@ -1127,9 +1109,9 @@ export default class KeyTable {
 		var offset = cell[posOff]();
 		var height = cell.height('outer');
 		var width = cell.width('outer');
-		var scroller = dom.s(scrollerIn);
+		var scroller = Dom.s(scrollerIn);
 		var container =
-			containerIn === window ? dom.w : dom.s(containerIn as HTMLElement);
+			containerIn === window ? Dom.w : Dom.s(containerIn as HTMLElement);
 
 		var scrollTop = scroller.scrollTop();
 		var scrollLeft = scroller.scrollLeft();
@@ -1216,7 +1198,7 @@ export default class KeyTable {
 			column = columns[currCol]; // row is the display, column is an index
 
 		// If the direction is rtl then the logic needs to be inverted from this point forwards
-		if (dom.s(dt.table().node()).css('direction') === 'rtl') {
+		if (Dom.s(dt.table().node()).css('direction') === 'rtl') {
 			if (direction === 'right') {
 				direction = 'left';
 			}
@@ -1290,14 +1272,14 @@ export default class KeyTable {
 		if (!this.s.tabInput) {
 			var inputId =
 				'keytable-focus-capture-' + this.s.namespace.split('-')[1];
-			var input = dom
+			var input = Dom
 				.c('input')
 				.attr('id', inputId)
 				.attr('type', 'text')
 				.attr('tabindex', tabIndex);
-			var div = dom
+			var div = Dom
 				.c('div')
-				.append(dom.c('label').attr('for', inputId).append(input))
+				.append(Dom.c('label').attr('for', inputId).append(input))
 				.css({
 					position: 'absolute',
 					height: '1px',
@@ -1324,7 +1306,7 @@ export default class KeyTable {
 			.node();
 
 		if (cell) {
-			dom.s(cell).prepend(this.s.tabInput);
+			Dom.s(cell).prepend(this.s.tabInput);
 		}
 	}
 

@@ -1,14 +1,12 @@
-/*! KeyTable 3.0.0-dev
- * © SpryMedia Ltd - datatables.net/license
+/*! KeyTable for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */
 
-import DataTable, { CellIdx, Context } from 'datatables.net';
+import DataTable, { CellIdx, Context, Dom, util } from 'datatables.net';
 import KeyTable from "./KeyTable";
 import './interface';
 import { Defaults } from "./interface";
 
-const dom = DataTable.dom;
-const util = DataTable.util;
 
 DataTable.KeyTable = KeyTable;
 
@@ -86,7 +84,7 @@ DataTable.ext.selector.cell.push(function (settings: Context, opts: {focused?: b
 
 // Attach a listener to the document which listens for DataTables initialisation
 // events so we can automatically initialise
-dom.s(document).on('preInit.dt.dtk', function (e, settings, json) {
+Dom.s(document).on('preInit.dt.dtk', function (e, settings, json) {
 	if (e.namespace !== 'dt') {
 		return;
 	}
