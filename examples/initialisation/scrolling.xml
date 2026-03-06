@@ -2,18 +2,7 @@
 <dt-example table-type="html" order="3">
 
 <css lib="datatables keytable" />
-<js lib="jquery datatables keytable">
-<![CDATA[
-$('#example').DataTable({
-	keys: true,
-	paging: false,
-	scrollY: 300
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables keytable">
 <![CDATA[
 new DataTable('#example', {
 	keys: true,
@@ -22,7 +11,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">Scrolling table</title>
 

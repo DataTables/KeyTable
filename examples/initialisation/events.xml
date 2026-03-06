@@ -2,30 +2,7 @@
 <dt-example table-type="html" order="2">
 
 <css lib="datatables keytable" />
-<js lib="jquery datatables keytable">
-<![CDATA[
-var events = $('#events');
-var table = $('#example').DataTable({
-	keys: true
-});
-
-table
-	.on('key', function (e, datatable, key, cell, originalEvent) {
-		events.prepend(
-			'<div>Key press: ' + key + ' for cell <i>' + cell.data() + '</i></div>'
-		);
-	})
-	.on('key-focus', function (e, datatable, cell) {
-		events.prepend('<div>Cell focus: <i>' + cell.data() + '</i></div>');
-	})
-	.on('key-blur', function (e, datatable, cell) {
-		events.prepend('<div>Cell blur: <i>' + cell.data() + '</i></div>');
-	});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables keytable">
 <![CDATA[
 function message(str) {
 	let events = document.querySelector('#events');
@@ -51,7 +28,7 @@ table
 	});
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">Events</title>
 

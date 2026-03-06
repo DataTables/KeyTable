@@ -2,20 +2,7 @@
 <dt-example table-type="html" order="4">
 
 <css lib="datatables scroller keytable" />
-<js lib="jquery datatables scroller keytable">
-<![CDATA[
-$('#example').DataTable({
-	deferRender: true,
-	keys: true,
-	scrollCollapse: true,
-	scroller: true,
-	scrollY: 200
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables scroller keytable">
 <![CDATA[
 new DataTable('#example', {
 	deferRender: true,
@@ -26,7 +13,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">Scroller integration</title>
 

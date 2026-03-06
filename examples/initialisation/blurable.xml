@@ -2,18 +2,7 @@
 <dt-example table-type="html" order="7">
 
 <css lib="datatables keytable" />
-<js lib="jquery datatables keytable">
-<![CDATA[
-$('#example').DataTable({
-	keys: {
-		blurable: false
-	}
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables keytable">
 <![CDATA[
 new DataTable('#example', {
 	keys: {
@@ -22,7 +11,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">Keep focus (no blur)</title>
 

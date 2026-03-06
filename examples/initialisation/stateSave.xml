@@ -2,17 +2,7 @@
 <dt-example table-type="html" order="6">
 
 <css lib="datatables keytable" />
-<js lib="jquery datatables keytable">
-<![CDATA[
-$('#example').DataTable({
-	keys: true,
-	stateSave: true
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables keytable">
 <![CDATA[
 new DataTable('#example', {
 	keys: true,
@@ -20,7 +10,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">State saving</title>
 

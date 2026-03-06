@@ -11,23 +11,14 @@
 }
 
 </css>
-<js lib="jquery datatables keytable">
-<![CDATA[
-$('#example').DataTable({
-	keys: true
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables keytable">
 <![CDATA[
 new DataTable('#example', {
 	keys: true
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="KeyTable">Focus cell custom styling</title>
 
