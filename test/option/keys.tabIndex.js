@@ -9,7 +9,7 @@ describe('KeyTable - keys.tabIndex', function() {
 
 		dt.html('basic_id');
 		it('Default index - 0', function() {
-			$.fx.off = true; // disables lightbox animation
+			DataTable.Dom.transition = true; // disables lightbox animation
 
 			editor = new $.fn.dataTable.Editor({
 				table: '#example',
@@ -28,7 +28,7 @@ describe('KeyTable - keys.tabIndex', function() {
 
 		dt.html('basic_id');
 		it('Add tab index', function() {
-			$.fx.off = true; // disables lightbox animation
+			DataTable.Dom.transition = true; // disables lightbox animation
 
 			editor = new $.fn.dataTable.Editor({
 				table: '#example',

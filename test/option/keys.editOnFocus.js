@@ -9,7 +9,7 @@ describe('KeyTable - keys.editOnFocus', function() {
 
 		dt.html('basic_id');
 		it('Check the defaults - false', function() {
-			$.fx.off = true; // disables lightbox animation
+			DataTable.Dom.transition = true; // disables lightbox animation
 
 			editor = new $.fn.dataTable.Editor({
 				table: '#example',
@@ -30,7 +30,7 @@ describe('KeyTable - keys.editOnFocus', function() {
 
 		dt.html('basic_id');
 		it('Check false', function() {
-			$.fx.off = true; // disables lightbox animation
+			DataTable.Dom.transition = true; // disables lightbox animation
 
 			editor = new $.fn.dataTable.Editor({
 				table: '#example',
@@ -52,7 +52,7 @@ describe('KeyTable - keys.editOnFocus', function() {
 
 		dt.html('basic_id');
 		it('Check true', function() {
-			$.fx.off = true; // disables lightbox animation
+			DataTable.Dom.transition = true; // disables lightbox animation
 
 			editor = new $.fn.dataTable.Editor({
 				table: '#example',
