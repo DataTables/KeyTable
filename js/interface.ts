@@ -108,7 +108,7 @@ export interface Defaults {
 	/**
 	 * Select the columns that can gain focus
 	 *
-	 * The columns that can gain focus. This accepts all of the options of column-selector
+	 * The columns that can gain focus. This accepts all of the options of DataTable.ColumnSelector
 	 * such as class name selector, jQuery pseudo selects and column index selectors.
 	 */
 	columns: any;
@@ -136,7 +136,7 @@ export interface Defaults {
 	 * Cell to receive initial focus in the table
 	 *
 	 * The cell that will receive focus when the table is initialised. This accepts all of
-	 * the options of cell-selector such as class name selector, jQuery pseudo selects and
+	 * the options of DataTable.CellSelector such as class name selector, jQuery pseudo selects and
 	 * cell index selectors.
 	 */
 	focus: any;
