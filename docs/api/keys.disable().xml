@@ -10,7 +10,7 @@
 		<description>
 			Disable KeyTable. Please note that this disallows future interactions with the table (until re-enabled), but does not cause the table to blur (i.e. loose focus). If a cell has focus, that focus will be retained after this method has been called.
 		</description>
-		<returns type="DataTables.Api">DataTables API instance</returns>
+		<returns type="DataTable.Api">DataTables API instance</returns>
 	</type>
 
 	<description>

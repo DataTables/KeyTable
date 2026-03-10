@@ -4,9 +4,9 @@
 	<summary>Cell to receive initial focus in the table</summary>
 	<since>KeyTable 2.0.0</since>
 
-	<type type="cell-selector">
+	<type type="DataTable.CellSelector">
 		<description>
-			The cell that will receive focus when the table is initialised. This accepts all of the options of `dt-type cell-selector` such as class name selector, jQuery pseudo selects and cell index selectors.
+			The cell that will receive focus when the table is initialised. This accepts all of the options of `dt-type DataTable.CellSelector` such as class name selector, jQuery pseudo selects and cell index selectors.
 		</description>
 	</type>
 

@@ -17,7 +17,7 @@
 			* `false` - Fully disable KeyTable (`kt-api keys.disable()`)
 			* `-string navigation-only` - Respond to navigation inputs only
 		</parameter>
-		<returns type="DataTables.Api">DataTables API instance</returns>
+		<returns type="DataTable.Api">DataTables API instance</returns>
 	</type>
 
 	<description>

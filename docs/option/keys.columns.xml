@@ -4,9 +4,9 @@
 	<summary>Select the columns that can gain focus</summary>
 	<since>2.0.0</since>
 
-	<type type="column-selector">
+	<type type="DataTable.ColumnSelector">
 		<description>
-			The columns that can gain focus. This accepts all of the options of `dt-type column-selector` such as class name selector, jQuery pseudo selects and column index selectors.
+			The columns that can gain focus. This accepts all of the options of `dt-type DataTable.ColumnSelector` such as class name selector, jQuery pseudo selects and column index selectors.
 		</description>
 	</type>
 

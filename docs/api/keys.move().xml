@@ -18,7 +18,7 @@
 			* `-string left` - Move left
 			* `-string right` - You guessed it, move right
 		</parameter>
-		<returns type="DataTables.Api">DataTables API instance</returns>
+		<returns type="DataTable.Api">DataTables API instance</returns>
 	</type>
 
 	<description>

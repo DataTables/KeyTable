@@ -10,11 +10,11 @@
 		<description>
 			Focus on the selected cell.
 		</description>
-		<returns type="DataTables.Api">DataTables API instance</returns>
+		<returns type="DataTable.Api">DataTables API instance</returns>
 	</type>
 
 	<description>
-		This method provides the ability to programmatically give a cell focus. The cell to give focus to is selected by the `dt-api cell()` method and the `dt-type cell-selector` given to it.
+		This method provides the ability to programmatically give a cell focus. The cell to give focus to is selected by the `dt-api cell()` method and the `dt-type DataTable.CellSelector` given to it.
 
 		If the selected cell is not in the DataTable's current page, the paging will be adjusted to make it visible and the table redrawn.
 
