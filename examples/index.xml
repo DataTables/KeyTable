@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example order="0">
 
-<title lib="KeyTable">Spreadsheet like keyboard navigation for DataTables</title>
+<title lib="KeyTable">KeyTable examples</title>
 
 <js lib="datatables" />
 <info><![CDATA[
