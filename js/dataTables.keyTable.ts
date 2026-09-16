@@ -84,7 +84,7 @@ DataTable.ext.selector.cell.push(function (settings: Context, opts: {focused?: b
 
 // Attach a listener to the document which listens for DataTables initialisation
 // events so we can automatically initialise
-Dom.s(document).on('preInit.dt.dtk', function (e, settings, json) {
+Dom.on('preInit.dt.dtk', function (e, settings, json) {
 	if (e.namespace !== 'dt') {
 		return;
 	}

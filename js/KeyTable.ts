@@ -9,8 +9,8 @@ import DataTable, {
 import { Config, Defaults, Settings } from './interface';
 
 // Sanity check
-if (!DataTable || !DataTable.versionCheck('3')) {
-	throw 'Warning: KeyTable requires DataTables 3 or newer';
+if (!DataTable || !DataTable.versionCheck('3.1')) {
+	throw 'Warning: KeyTable requires DataTables 3.1 or newer';
 }
 
 var namespaceCounter = 0;
