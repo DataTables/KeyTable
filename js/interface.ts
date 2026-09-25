@@ -64,8 +64,14 @@ declare module 'datatables.net' {
 		keytable: KeyTable;
 	}
 
+	interface State {
+		/** Index of the focused cell */
+		keyTable?: CellIdx;
+	}
+
 	interface StateLoad {
-		keyTable: CellIdx;
+		/** Index of the focused cell */
+		keyTable?: CellIdx;
 	}
 }
 
