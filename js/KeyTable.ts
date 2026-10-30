@@ -76,7 +76,7 @@ export default class KeyTable {
 		tabIndex: null
 	};
 
-	public static version = '3.1.1';
+	public static version = '3.1.2';
 
 	private c: Defaults;
 
